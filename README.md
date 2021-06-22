@@ -7,7 +7,7 @@ The scripts are adapted from Cecil et al. (2014) cumulative environmental risk s
 The construction of the score has 3 main steps:
 
 1. Run '0.functions.R' script to obtain the necessary functions.
-2. Dichotomise items used in the construction of the score (sections. 1.1 to 1.4).
+2. Dichotomise items used in the construction of the score (sections 1.1 to 1.4).
 3. Create ELS scores for prenatal and postnattal periods (sections 2.1. to 2.2).
 
 The rest of the scripts are used to assess associations between ELS and psycho-cardiometabolic (PCM) multimorbidity 
