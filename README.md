@@ -1,8 +1,8 @@
-# cumulative-ELS-score
+# Cumulative ELS score in ALSPAC
 
-A set of scripts for building cumulative early life stress (ELS) score for prenatal and postnatal periods using ALSPAC data.
+This repository contains a set of scripts for building cumulative early life stress (ELS) score for prenatal and postnatal periods using ALSPAC data.
 
-The scripts are adapted from Cecil et al. (2014) cumulative environmental risk scores and harmonised with the equivalent score in Generation R (see https://github.com/SereDef/cumulative-ELS-score#cumulative-els-score).
+The scripts are adapted from Cecil et al. (2014) cumulative environmental risk scores and harmonised with the equivalent ELS score in Generation R (see https://github.com/SereDef/cumulative-ELS-score#cumulative-els-score).
 
 The construction of the score has 3 main steps:
 
