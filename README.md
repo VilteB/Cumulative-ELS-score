@@ -1,4 +1,4 @@
-# ELS and PCM multimorbidity in ALSPAC
+# ELS and PCM multimorbidity 
 
 This repository contains a set of scripts for building cumulative early life stress (ELS) score for prenatal and postnatal periods using ALSPAC data.
 
