@@ -10,7 +10,7 @@ The construction of the score has 3 main steps:
 2. Dichotomise items used in the construction of the score (sections 1.1 to 1.4).
 3. Create ELS scores for prenatal and postnattal periods (sections 2.1. to 2.2).
 
-The rest of the scripts are used to assess associations between ELS and psycho-cardiometabolic (PCM) multimorbidity 
+The rest of the scripts are used to assess associations between ELS and psycho-cardiometabolic (PCM) multimorbidity:
 
 1. The '3.1.PCM_outcomes_covs_aux.R' script retrieves all necesasry outcome covariates and auxiliary variables.
 2. The '3.2.Dataset_contruction.R' script builds the final dataset that will be used for the analysis of the association between ELS and PCM multimorbidity in ALSPAC children.
