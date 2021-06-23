@@ -295,7 +295,7 @@ ELS_PCM_essentials = ELS_PCM[, c('cidB2957',
 ################################################################################
 
 # Save the dataset in an .rds file, in the directory where the raw data are stored
-save(ELS_PCM_essentials, file = 'ELSPCM_dataset.rds')
+save(ELS_PCM_essentials, file = 'ELSPCM_dataset.RData')
 
 # Saving all (not just essentials)
 # save(ELS_PCM, file ="ELSPCM_all.RData")
