@@ -355,10 +355,8 @@ predictormatrix[c('divorce_pre',	'p_rejected_child_pre',	'p_went_away_pre',	'sep
 # visit the sequence
 VisSeq <- imp0$visitSequence
 
+# A test run with only 2 iterations and 1 dataset to check for issues
 
-# Run the actual imputation. To ensure convergence among the variables but retain
-# low computational load, we do 60 iterations using 30 imputed datasets (following 
-# Isabel's approach)
 imputation <- mice(ELSPCM, m = 1, # nr of imputed datasets
                    maxit = 2, #nr of iteration taken to impute missing values
                    seed = 310896, # set a seed for the random number generation in case i need to generate the same dataset again
@@ -366,6 +364,11 @@ imputation <- mice(ELSPCM, m = 1, # nr of imputed datasets
                    visitSequence = VisSeq, 
                    predictorMatrix = predictormatrix)
 
+# results in:
+# 'mice detected that your data are (nearly) multi-collinear. It applied a ridge penalty to continue calculations, 
+# but the results can be unstable. Does your dataset contain duplicates, linear transformation, or factors with unique respondent names?'
+
+# ALL BELOW NOT YET RUN IN ALSPAC
 
 
 # Run the actual imputation. To ensure convergence among the variables but retain
@@ -377,6 +380,36 @@ imputation <- mice(ELSPCM, m = 30, # nr of imputed datasets
                    method = meth,
                    visitSequence = VisSeq, 
                    predictorMatrix = predictormatrix)
+
+################### OPTIONAL CHECKS (beware: it takes time) ####################
+# # Inspecting the distribution of observed and imputed values
+# stripplot(imputation, pch = 20, cex = 1.2) # red dots are imputed values
+# # A scatter plot is also useful to spot unusual patterns in two vars
+# xyplot(imputation, pre_life_events ~ post_life_events | .imp, pch = 20, cex = 1.4)
+
+
+# Standardize prenatal and postnatal stress to obtain standard betas from regression
+# First temporarily transform mids object into a datalist object
+datlist <- miceadds::mids2datlist(imputation)
+# Scale those bad boyz
+sdatlist <- miceadds::scale_datlist(datlist, orig_var=c('prenatal_stress', 'postnatal_stress'), 
+                                    trafo_var=paste0(c('prenatal_stress', 'postnatal_stress'), "_z") )
+# Reconvert to mids object
+imp <- miceadds::datlist2mids(sdatlist)
+
+
+################################################################################
+#### ------------------------- complete and save -------------------------- ####
+################################################################################
+
+# I save the mids object (i.e. list of imputed datasets)
+save(imp, file='imputation_list.RData')
+
+# I also save the last imputed dataset for sanity checks
+ELS_PCM_imputed <- complete(imp, 30) 
+save(ELS_PCM_imputed,  file='ELSPCM_imputed.RData')
+
+################################################################################
 
 
 
