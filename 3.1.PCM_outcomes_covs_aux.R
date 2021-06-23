@@ -201,7 +201,7 @@ PCM_outcome$fat_mass_z.24y <- as.numeric(scale(PCM_outcome$fat_mass.24y))
 
 # Variables that will be used in the covariate models of this project are those 
 # marked with ###. they include: 'sex', 'age_child', 'm_smoking', 'm_drinking' 
-# and 'm_bmi_berore_pregnancy'.
+# and 'm_bmi_before_pregnancy'.
 
 # For the other demographic auxiliary variables (used for imputation): when they 
 # were assessed both prenatally and postnatally, both measures are included.
