@@ -70,13 +70,13 @@ sub2 <- after_postnatal - after_prenatal # -3008
 
 ################ for ALSPAC: do separately per time point ###############
 
-postnatal_miss50$intern_score_z=postnatal_miss50$intern_score_z.22y
+postnatal_miss50$intern_score_z=postnatal_miss50$intern_score_z.10y
 
 intern_miss <- postnatal_miss50[!is.na(postnatal_miss50$intern_score_z),] 
 after_intern <- nrow(intern_miss)
 sub3 <- after_intern - after_postnatal # -5832 
 
-intern_miss$fat_mass_z=intern_miss$fat_mass_z.24y
+intern_miss$fat_mass_z=intern_miss$fat_mass_z.10y
 
 # Exclude children with missing { CMR score } fat mass*
 cmr_miss <- intern_miss[!is.na(intern_miss$fat_mass_z),] 
