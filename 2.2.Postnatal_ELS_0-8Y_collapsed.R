@@ -533,6 +533,8 @@ postnatal_stress$post_percent_missing = apply(postnatal_stress[,3:ncol(postnatal
 # Running the domainscore function will add two extra columns to postnatal_stress dataframe: 
 # one containing the % of missingnes per participant and the other containing the domain score 
 
+# Source the domainscore function
+#source("0.functions.R")
 
 # LE
 postnatal_stress[,c('post_LE_percent_missing','post_life_events')] <- domainscore(postnatal_stress[,c(

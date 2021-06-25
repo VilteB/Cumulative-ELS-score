@@ -17,6 +17,10 @@ library(tidyverse)
 
 # first, exclude duplicated values (based on first 4 column names; keep first and remove second occurence)
 alspac.table = alspac.table %>% distinct(cidB2957,qlet,kz021,ff1ms100, .keep_all = T)
+# cidB2957 = unique pregnancy identifier (shared by mothers, children, partners) 
+# qlet = children can be distinguished from others via 'qlet', which is birth order (within pregnancy)
+# kz021 = sex 
+# ff1ms100 = Height (mm) form focus on fathers (FOF1) - why are we including this?
 
 # remote siblings (all qlet=B)
 alspac.table=alspac.table[alspac.table$qlet=="A",]
@@ -31,7 +35,7 @@ table(duplicated(alspac.table$cidB2957))
 # This will permit the variables to be accessed directly without having to use the dollar sign, as here: 'nameofdata$variablename'
 
 
-Prenatal_LifeEvents <- data.frame(alspac.table[,c("cidB2957", # add mothers ID here 
+Prenatal_LifeEvents <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
                                                   "qlet", 
                                                   'partner_died_pre',
                                                   'smbd_important_died_pre',
@@ -54,7 +58,7 @@ Prenatal_LifeEvents <- data.frame(alspac.table[,c("cidB2957", # add mothers ID h
 # 2. CONTEXTUAL RISKS
 
 
-Prenatal_ContextualRisks  <- data.frame(alspac.table[,c("cidB2957", # add mothers ID here,
+Prenatal_ContextualRisks  <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
                                                         "qlet",
                                                         'income_reduced_pre',
                                                         'homeless_pregnancy',
@@ -72,7 +76,7 @@ Prenatal_ContextualRisks  <- data.frame(alspac.table[,c("cidB2957", # add mother
 
 
 
-Prenatal_ParentalRisks  <- data.frame(alspac.table[,c("cidB2957", # add mothers ID here,
+Prenatal_ParentalRisks  <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
                                                       "qlet",
                                                       'criminal_record_parent_pre',
                                                       'm_attempted_suicide_pre',
@@ -88,7 +92,7 @@ Prenatal_ParentalRisks  <- data.frame(alspac.table[,c("cidB2957", # add mothers 
 # 4. INTERPERSONAL RISKS
 
 
-Prenatal_InterpersonalRisks <- data.frame(alspac.table[,c("cidB2957", # add mothers ID here,
+Prenatal_InterpersonalRisks <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
                                                           "qlet",
                                                           'divorce_pre',
                                                           'p_rejected_child_pre',
@@ -123,27 +127,8 @@ prenatal_stress <- Reduce(function(x,y) merge(x = x, y = y, by = c('cidB2957','q
                                Prenatal_InterpersonalRisks))
 
 # ####################################################################################################################################################
-# 
-# # 6. LINK IDM to IDC 
-# 
-# # In order to later merge the prenatal dataset with postnatal variables, the code below links
-# # pregnancy ID (IDM) to the child ID (IDC) (according to Esther this will most likely not be required for ALSPAC data)
-# 
-# child_general <- readquick("nameofchilddataset.sav") # read in the data containing mother and child IDs 
-# # if you use the readquick function you need to obtain it from SereDef 'Setup_and_functions.R' script at https://github.com/SereDef/cumulative-ELS-score 
-# 
-# child_id <- data.frame(child_general$IDM, child_general$IDC) # extract mother and child IDs
-# colnames(child_id) <- c("IDM","IDC") # rename the columns to 'IDM' and 'IDC'
-# 
-# 
-# # ATTENTION! Only need to run the line below if you are using the prenatal score together with postnatal outcomes/scores. 
-# # Note: this will probably change the number of observations
-# 
-# prenatal_stress <- merge(child_id, prenatal_stress, by = 'IDM', all.x = T) 
-# 
-# ####################################################################################################################################################
 
-# 7. SUMMARY STATISTICS 
+# 6. SUMMARY STATISTICS 
 
 # Let's have a look at risk distribution and missing data per indicator (as per Serena's script) 
 
@@ -159,7 +144,7 @@ for (i in 3:ncol(prenatal_stress)) { # ATTENTION, if not merged with child_id, c
 
 ####################################################################################################################################################
 
-# 8. MISSINGNESS
+# 7. MISSINGNESS
 
 # Calculate the percentage missing data (obtained from SereDef 'Setup_and_functions.R' script at https://github.com/SereDef/cumulative-ELS-score  
 percent_missing <- function(var) { sum(is.na(var)) / length(var) * 100 }
@@ -173,7 +158,7 @@ prenatal_stress$pre_percent_missing = apply(prenatal_stress[,3:ncol(prenatal_str
 
 ####################################################################################################################################################
 
-# 9. CREATE UN-WEIGHTED DOMAIN SCORES 
+# 8. CREATE UN-WEIGHTED DOMAIN SCORES 
 
 # ATTENTION! Here we use the default argument of domainscore function: calculating  a 
 # *mean domain score* (range = 0 to 1) that is NOT adjusted for 25% missingness as in 
@@ -188,31 +173,8 @@ prenatal_stress$pre_percent_missing = apply(prenatal_stress[,3:ncol(prenatal_str
 # Running the domainscore function will add two extra columns to prenatal_stress dataframe: 
 # one containing the % of missingnes per participant and the other containing the domain score 
 
-# calculate the domain scores
-domainscore <- function(df, score_type = 'mean_simple'){
-  # dataframe with all the included items
-  df <- data.frame(df)
-  # check if all variables in df are dichotomized 
-  for (i in 1:ncol(df)){
-    if (range(df[,i], na.rm = T)[1] == 1 & range(df[,i], na.rm = T)[2] == 2){ df[,i] <- df[,i] - 1}
-    else {
-      if (range(df[,i], na.rm = T)[1] != 0 | range(df[,i], na.rm = T)[2] != 1 ){
-        stop('Items are not dichotomized') } 
-    }
-  }
-  # calculate number of missing items per participant
-  domain_miss = apply(df, 1, percent_missing)
-  # calculate the domain score
-  if (score_type == 'mean_simple') { 
-    score <- rowMeans(df, na.rm = F) 
-  } else if (score_type == 'sum_simple') {
-    score <- rowSums(df, na.rm = F)
-  } else if (score_type == 'sum_weighted') { 
-    score <- ifelse(domain_miss >= 25, NA, 
-                    rowSums(df, na.rm = T) * length(df)/(length(df) - rowSums(is.na(df)))) 
-  }
-  return(c(domain_miss, score))
-}
+# source the domainscore function
+source("0.functions.R")
 
 # NOTE: repmeas and domainscore functions require dichotomized variables 
 # (0 and 1, or 1 and 2). They assume that the highest value indicates the risk!
@@ -288,7 +250,7 @@ prenatal_stress[,c('pre_IS_percent_missing','pre_interpersonal_risks')] <- domai
 
 ####################################################################################################################################################
 
-# 10. SAVE DATA
+# 9. SAVE DATA
 
 # Save the dataset in an .RData file, in the directory where you have the raw data
 save(prenatal_stress, file = 'prenatal_stress.RData')

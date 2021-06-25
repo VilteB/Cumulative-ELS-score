@@ -409,20 +409,4 @@ corbetw2mat(data.matrix(IR_prenatal_continuous), IR_prenatal_binary, what = "pai
 
 ####################################################################################################################################################
 
-# EW: check coding of extra variables
-
-vars = c("p1","b1","t1","p2","p3","p4","b2","b3","b4",
-         "t2","t3","t4","p5","b5","t5","p6","b6","t6",
-         "p7","p8","p9","b7","b8","b9","t7","t8","t9",
-         "p10","p11","b10","b11","t10","t11","p12",
-         "b12","t12","p13","b13","t13","p14","p15","b14","b15",
-         "t14","t15","p16","b16","p17","p18","b17","b18")
-
-for (i in vars){
-  print(table(alspac.table[,i]))
-  levels(alspac.table[,i])[levels(alspac.table[,i]) == "Consent withdrawn by mother"]=NA
-  alspac.table[,i]=as.numeric(levels(alspac.table[,i]))[alspac.table[,i]]
-  print(table(alspac.table[,i]))
-  
-}
 

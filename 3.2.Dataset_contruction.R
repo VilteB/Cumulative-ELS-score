@@ -49,7 +49,7 @@ ELS_PCM <- Reduce(function(x,y) merge(x = x, y = y, by = c('cidB2957', 'qlet'), 
 ## -------------------- Exclude participants (flowchart) -------------------- ##
 ################################################################################
 
-initial_sample <- nrow(ELS_PCM)
+initial_sample <- nrow(ELS_PCM) # 15442
 
 ## First exclusion step: remove participants whose missing value frequency is too high. 
 ## (i.e > 50% missing) for each developmental period. 
@@ -74,14 +74,14 @@ postnatal_miss50$intern_score_z=postnatal_miss50$intern_score_z.10y
 
 intern_miss <- postnatal_miss50[!is.na(postnatal_miss50$intern_score_z),] 
 after_intern <- nrow(intern_miss)
-sub3 <- after_intern - after_postnatal # -5832 
+sub3 <- after_intern - after_postnatal # -2563 
 
 intern_miss$fat_mass_z=intern_miss$fat_mass_z.10y
 
 # Exclude children with missing { CMR score } fat mass*
 cmr_miss <- intern_miss[!is.na(intern_miss$fat_mass_z),] 
 after_cmr <- nrow(cmr_miss)
-sub4 <- after_cmr - after_intern # -991
+sub4 <- after_cmr - after_intern # -1362
 
 ## Third step: exclude all twins and select the sibling with better data 
 
@@ -90,7 +90,7 @@ no_twins <- cmr_miss[cmr_miss$twin == 0, ]
 no_twins <- no_twins[!(is.na(no_twins$twin)), ]
 
 after_twins <- nrow(no_twins)
-sub5 <- after_twins - after_cmr # -78
+sub5 <- after_twins - after_cmr # -165 
 
 # # below not done for ALSPAC
 # 
@@ -137,11 +137,11 @@ sub6 <- after_siblings - after_twins  # 0
 
 # Flowchart
 flowchart <- list(initial_sample, sub1, after_prenatal, sub2, after_postnatal, sub3, 
-                  after_intern, sub4, after_cmr, sub5, after_twins, sub6, after_siblings)
+                  after_intern, sub4, after_cmr, sub5, after_twins, sub6, after_siblings)  # 4830 participants
 
 # Rename final dataset:
 ELS_PCM <- final
-cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"participants."))
+cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"participants.")) # 
 
 ################################################################################
 #### ------------------- Construct RISK GROUPS variable ------------------- ####
@@ -149,8 +149,8 @@ cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"partic
 
 # Compute groups 
 
-ELS_PCM$int = ifelse(ELS_PCM$intern_score_z > quantile(ELS_PCM$intern_score_z, probs = 0.8), 1, 0) # 375 risk, 1644  no risk 
-ELS_PCM$fat = ifelse(ELS_PCM$fat_mass_z > quantile(ELS_PCM$fat_mass_z, probs = 0.8), 1, 0) # 404 risk, 1615 no risk
+ELS_PCM$int = ifelse(ELS_PCM$intern_score_z > quantile(ELS_PCM$intern_score_z, probs = 0.8), 1, 0) #  186 risk, 4644 no risk 
+ELS_PCM$fat = ifelse(ELS_PCM$fat_mass_z > quantile(ELS_PCM$fat_mass_z, probs = 0.8), 1, 0) # 966 risk, 3864 no risk
 
 ELS_PCM$risk_groups = rep(NA, after_siblings)
 for (i in 1:after_siblings) {
@@ -164,7 +164,7 @@ ELS_PCM$risk_groups = as.factor(ELS_PCM$risk_groups)
 
 summary(ELS_PCM$risk_groups)  
 # 0    1    2    3 
-# 1340  275  304  100 
+# 3729  135  915   51 
 
 # # Let's first factor that bad boy
 # imp$risk_groups = factor(groups$risk_groups,
