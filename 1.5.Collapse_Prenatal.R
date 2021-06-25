@@ -111,12 +111,18 @@ alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 
 #m_attempted_suicide_pre
 alspac.table$m_attempted_suicide_pre <-	alspac.table$b597 # Attempted suicide since PREG
 
-# early_pregnancy
-alspac.table$early_pregnancy <- ifelse(as.numeric(alspac.table$a901) < 19, yes = 1, no = 0) # early parenthood
+# early_pregnancy = m_age in postnatal script
+# Because mz028b is a factor, we use as.character before as.numeric.
+# Factors are stored internally as integers with a table to give the factor level labels.
+alspac.table$mz028bn <- as.numeric(as.character(alspac.table$mz028b))
+alspac.table$early_pregnancy <- ifelse(alspac.table$mz028bn < 19, yes = 1, no = 0) # early parenthood 
 # mother age younger than 19 at baseline based on Cecil et al. (2014); Rijlaarsdam et al. (2016)
 
 # m_depression_pregnancy
-alspac.table$m_depression_pre	<- alspac.table$p12 # had depression
+#alspac.table$m_depression_pre	<- alspac.table$p12 # maternal psychopathology
+alspac.table$m_depression_pre <- alspac.table$b371a_rec # EPDS (>=13 risk, <13 no risk)
+#In previous lit, a total score of 13 or more is considered a flag for the need for follow up of possible depressive symptoms.
+
 
 # m_anxiety_pre
 alspac.table$m_anxiety_pre	<- repmeas(alspac.table[,c('b351a_rec', 'c573a_rec')]) # CCEI anxiety subscale (complete) 18w gest, 32w gest 

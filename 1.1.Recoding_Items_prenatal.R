@@ -409,4 +409,12 @@ corbetw2mat(data.matrix(IR_prenatal_continuous), IR_prenatal_binary, what = "pai
 
 ####################################################################################################################################################
 
+# Recoding prenatal depression variable for mother 
+alspac.table$b371n <- as.character(alspac.table$b371)
+alspac.table$b371a_rec  <- ifelse(alspac.table$b371n %in% c(13:28), 1,
+                                  ifelse(alspac.table$b371n == 'very depressed', 1, 
+                                         ifelse(alspac.table$b371n %in% c(1:12), 0,
+                                                ifelse(alspac.table$b371n == 'not depressed', 0, NA)))) # 1711 no risk, 10617 risk
+
+####################################################################################################################################################
 
