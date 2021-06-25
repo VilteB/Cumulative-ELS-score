@@ -521,11 +521,16 @@ alspac.table$m_attempted_suicide_9y <- alspac.table$p2028_rec
 
 
 # m_age (Age of mother at completion of questionnaire = early_parent)
-alspac.table$m_age <- ifelse(as.numeric(alspac.table$a901) < 19, yes = 1, no = 0) # mother age younger than 19 at baseline based on Cecil et al. (2014); Rijlaarsdam et al. (2016)
+# Because mz028b is a factor, we use as.character before as.numeric.
+# Factors are stored internally as integers with a table to give the factor level labels.
+
+alspac.table$mz028bn <- as.numeric(as.character(alspac.table$mz028b))
+alspac.table$m_age <- ifelse(alspac.table$mz028bn < 19, yes = 1, no = 0)  # mother age younger than 19 at baseline based on Cecil et al. (2014); Rijlaarsdam et al. (2016)
 
 
 # p_age (Age of PTNR at completion of questionnaire = early_parent)
-alspac.table$p_age <- ifelse(as.numeric(alspac.table$pb910) < 19, yes = 1, no = 0) # partner younger than 19 years at baseline based on Cecil et al. (2014); Rijlaarsdam et al. (2016)
+alspac.table$pb910n <- as.numeric(as.character(alspac.table$pb910))
+alspac.table$p_age <- ifelse(alspac.table$pb910n < 19, yes = 1, no = 0) # partner younger than 19 years at baseline based on Cecil et al. (2014); Rijlaarsdam et al. (2016)
 
 ####################################################################################################################################################
 
