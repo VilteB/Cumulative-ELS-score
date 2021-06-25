@@ -322,12 +322,24 @@ alspac.table$work_problems_9y <- repmeas(alspac.table[,c('p2012_rec', 'p2013_rec
 #alspac.table$material_deprivation_4y <- repmeas(alspac.table[,c("t2", "t3", "t4")]) # Housing adequacy, Housing Basic Living, Housing Defects
 
 # Housing adequacy, Housing Basic Living, Housing Defects
-alspac.table$housing_adequacy_2y <- alspac.table$b2 #	Housing adequacy 0-2y composite
-alspac.table$housing_adequacy_4y <-	alspac.table$t2	# Housing adequacy 2-4y composite
-alspac.table$housing_basic_living_2y <-	alspac.table$b3	# Housing Basic Living 0-2y  composite
-alspac.table$housing_basic_living_4y <-	alspac.table$t3	#  Housing Basic Living 2-4y composite
-alspac.table$housing_defects_2y	<- alspac.table$b4	# Housing Defects 0-2y composite
-alspac.table$housing_defects_4y	<-  alspac.table$t4	# Housing Defects 2-4y composite
+alspac.table$housing_adequacy_2y <- ifelse(alspac.table$b2 == 1, 1,
+                                           ifelse(alspac.table$b2 == 0, 0, NA)) #	Housing adequacy 0-2y composite
+
+alspac.table$housing_adequacy_4y <-	ifelse(alspac.table$t2 == 1, 1,
+                                           ifelse(alspac.table$t2 == 0, 0, NA)) # Housing adequacy 2-4y composite
+
+alspac.table$housing_basic_living_2y <-	ifelse(alspac.table$b3 == 1, 1,
+                                               ifelse(alspac.table$b3 == 0, 0, NA)) # Housing Basic Living 0-2y  composite
+
+alspac.table$housing_basic_living_4y <-	ifelse(alspac.table$t3 == 1, 1,
+                                               ifelse(alspac.table$t3 == 0, 0, NA)) #  Housing Basic Living 2-4y composite
+
+alspac.table$housing_defects_2y	<- ifelse(alspac.table$b4 == 1, 1,
+                                          ifelse(alspac.table$b4 == 0, 0, NA)) # Housing Defects 0-2y composite
+
+alspac.table$housing_defects_4y	<-  ifelse(alspac.table$t4 == 1, 1,
+                                           ifelse(alspac.table$t4 == 0, 0, NA)) # Housing Defects 2-4y composite
+
 ####################################################################################################################################################
 
 # SECTION 2

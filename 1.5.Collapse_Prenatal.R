@@ -12,6 +12,7 @@
 library(tidyverse)
 
 #load('alspac.table.Rdata')
+#source('0.functions.R')
 
 #make sure to load repmeas function from SereDef GitHub 'functions and setup'
 
@@ -81,13 +82,16 @@ alspac.table$homeless_pregnancy	<- alspac.table$b593	# Became homeless since PRE
 alspac.table$major_financial_problems_pre <-	alspac.table$b594a_rec # Major financial PROB since PREG
 
 # housing_adequacy_pre
-alspac.table$housing_adequacy_pre	<- alspac.table$p2 # Housing adequacy 
+alspac.table$housing_adequacy_pre	<- ifelse(alspac.table$p2 == 1, 1,
+                                            ifelse(alspac.table$p2 == 0, 0, NA)) # Housing adequacy 
 
 # housing_basic_living_pre
-alspac.table$housing_basic_living_pre	<- alspac.table$p3	# Housing Basic Living 
+alspac.table$housing_basic_living_pre	<- ifelse(alspac.table$p3 == 1, 1,
+                                                ifelse(alspac.table$p3 == 0, 0, NA)) # Housing Basic Living 
 
 # housing_defects_pre
-alspac.table$housing_defects_pre	<- alspac.table$p4	# Housing Defects 
+alspac.table$housing_defects_pre	<- ifelse(alspac.table$p4 == 1, 1,
+                                           ifelse(alspac.table$p4 == 0, 0, NA)) # Housing Defects 
 
 # m_education_pre
 table(alspac.table$c645a, exclude = NULL)  # Mums highest ed qualification
@@ -106,7 +110,8 @@ alspac.table$unemployed_pre	<- alspac.table$b584a_rec	# Lost job since PREG
 # PARENTAL RISKS
 
 #criminal_record_parent_pre
-alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14')]) #	In trouble with the law since PREG, Convicted of an offence since PREG, Crime trouble with police
+alspac.table$p14n <- as.numeric(as.character(p14))
+alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n')]) #	In trouble with the law since PREG, Convicted of an offence since PREG, Crime trouble with police
 
 #m_attempted_suicide_pre
 alspac.table$m_attempted_suicide_pre <-	alspac.table$b597 # Attempted suicide since PREG
@@ -173,20 +178,29 @@ alspac.table$argued_fam_friends_pre	<- alspac.table$b590a_rec	# Argued with fami
 #conflict_family_violence_pre
 alspac.table$conflict_family_violence_pre	<- repmeas(alspac.table[,c('b592a_rec', 'b596a_rec')])	# PTNR hurt mum since PREG, PTNR hurt CH since PREG
 
-alspac.table$marital_status_pregnancy <-	alspac.table$p7	# Partner Status 
+#marital_status_pregnancy
+alspac.table$marital_status_pregnancy <-	ifelse(alspac.table$p7 == 1, 1,
+                                                ifelse(alspac.table$p7 == 0, 0, NA)) # Partner Status 
+#family_affection
+alspac.table$family_affection	<- ifelse(alspac.table$p8 == 1, 1,
+                                        ifelse(alspac.table$p8 == 0, 0, NA)) 	# Partner Affection 
+#family_size_pregnanc
+alspac.table$family_size_pregnancy <-	ifelse(alspac.table$p10 == 1, 1,
+                                             ifelse(alspac.table$p10 == 0, 0, NA))	# Family Size  
+#family_problems
+alspac.table$family_problems	<- ifelse(alspac.table$p11 == 1, 1,
+                                       ifelse(alspac.table$p11 == 0, 0, NA)) # Family Major problems 
+#family_support
+alspac.table$family_support	<- ifelse(alspac.table$p16 == 1, 1,
+                                      ifelse(alspac.table$p16 == 0, 0, NA)) # Partner Support
+#social_network_emotional
+alspac.table$social_network_emotional	<- ifelse(alspac.table$p17 == 1, 1,
+                                                ifelse(alspac.table$p17 == 0, 0, NA))	# Social Network - Emotional 
+#social_network_practical
+alspac.table$social_network_practical	<- ifelse(alspac.table$p18 == 1, 1,
+                                                ifelse(alspac.table$p18 == 0, 0, NA)) # Social Network - Practical 
 
-alspac.table$family_affection	<- alspac.table$p8	# Partner Affection 
 
-alspac.table$family_size_pregnancy <-	alspac.table$p10	# Family Size 
-
-
-alspac.table$family_problems	<- alspac.table$p11	 # Family Major problems 
-
-alspac.table$family_support	<- alspac.table$p16	# Partner Support 
-
-alspac.table$social_network_emotional	<- alspac.table$p17	# Social Network - Emotional 
-
-alspac.table$social_network_practical	<- alspac.table$p18	 # Social Network - Practical 
 
 
 ####################################################################################################################################################

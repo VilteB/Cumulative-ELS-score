@@ -57,12 +57,12 @@ initial_sample <- nrow(ELS_PCM) # 15442
 # Exclude children with high missingness in the prenatal period
 prenatal_miss50 <- ELS_PCM[ELS_PCM$pre_percent_missing < 50,]
 after_prenatal <- nrow(prenatal_miss50)
-sub1 <- after_prenatal - initial_sample # -3514
+sub1 <- after_prenatal - initial_sample # -3515
 
 # Exclude children with high missingness in the postnatal period
 postnatal_miss50 <- prenatal_miss50[prenatal_miss50$post_percent_missing < 50,]
 after_postnatal <- nrow(postnatal_miss50)
-sub2 <- after_postnatal - after_prenatal # -3008
+sub2 <- after_postnatal - after_prenatal # -3006
 
 ## Second step: excluded children with missing internalizing or { CMR scores }. 
 
@@ -74,7 +74,7 @@ postnatal_miss50$intern_score_z=postnatal_miss50$intern_score_z.10y
 
 intern_miss <- postnatal_miss50[!is.na(postnatal_miss50$intern_score_z),] 
 after_intern <- nrow(intern_miss)
-sub3 <- after_intern - after_postnatal # -2563 
+sub3 <- after_intern - after_postnatal # -2564
 
 intern_miss$fat_mass_z=intern_miss$fat_mass_z.10y
 
@@ -141,7 +141,7 @@ flowchart <- list(initial_sample, sub1, after_prenatal, sub2, after_postnatal, s
 
 # Rename final dataset:
 ELS_PCM <- final
-cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"participants.")) # 
+cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"participants.")) 
 
 ################################################################################
 #### ------------------- Construct RISK GROUPS variable ------------------- ####
@@ -208,6 +208,7 @@ domainonly <- ELS_PCM[, c('pre_life_events', 'pre_contextual_risk',
                           'post_life_events', 'post_contextual_risk', 'post_parental_risk', 'post_interpersonal_risk', 'post_direct_victimization')]
 summary(domainonly)
 
+library(mice)
 # Heatmap of missing values together with table
 missingpattern <- md.pairs(domainonly) # outputs four tables: ($rr) how many datapoints are observed
 # ($rm) observed and missing, ($mr) missing versus observed and ($mm) is missing vs missing
@@ -222,7 +223,6 @@ pheatmap(as.matrix(missingpattern$mm), display_numbers = T, number_format = "%.0
 # is sensitive to the order of the variables in the set (even though this may be 
 # a version-specific issue)
 
-### below still needs to be run for ALSPAC
 
 ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 
                                  # all variables for prenatal risk
@@ -298,7 +298,7 @@ ELS_PCM_essentials = ELS_PCM[, c('cidB2957',
 save(ELS_PCM_essentials, file = 'ELSPCM_dataset.RData')
 
 # Saving all (not just essentials)
-# save(ELS_PCM, file ="ELSPCM_all.RData")
+#save(ELS_PCM, file ="ELSPCM_all.RData")
 
 
 

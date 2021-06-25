@@ -14,6 +14,7 @@
 ####################################################################################################################################################
 
 library(tidyverse)
+#load('alspac.table.collapsed.Rdata')
 
 # first, exclude duplicated values (based on first 4 column names; keep first and remove second occurence)
 alspac.table = alspac.table %>% distinct(cidB2957,qlet,kz021,ff1ms100, .keep_all = T)
@@ -174,7 +175,7 @@ prenatal_stress$pre_percent_missing = apply(prenatal_stress[,3:ncol(prenatal_str
 # one containing the % of missingnes per participant and the other containing the domain score 
 
 # source the domainscore function
-source("0.functions.R")
+#source("0.functions.R")
 
 # NOTE: repmeas and domainscore functions require dichotomized variables 
 # (0 and 1, or 1 and 2). They assume that the highest value indicates the risk!

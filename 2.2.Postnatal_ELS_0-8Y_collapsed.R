@@ -892,11 +892,11 @@ postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- d
 # 10. SAVE DATA
 
 # Save the dataset in an .rds file, in the directory where you have the raw data
-save(postnatal_stress, file = 'postnatal_stress_collapsed.RData')
-save(postnatal_summary, file  = 'postnatal_summary_collapsed.RData')
+save(postnatal_stress, file = 'postnatal_stress.RData')
+save(postnatal_summary, file  = 'postnatal_summary.RData')
 
 # Or save the dataset in a .csv format, in the directory where you have the raw data
-write.csv(postnatal_stress, file = "postnatal_stress_collapsed.csv", row.names = FALSE, quote = FALSE)
-write.csv(postnatal_summary, file = "postnatal_summary_collapsed.csv", row.names = T, quote = FALSE)
+write.csv(postnatal_stress, file = "postnatal_stress.csv", row.names = FALSE, quote = FALSE)
+write.csv(postnatal_summary, file = "postnatal_summary.csv", row.names = T, quote = FALSE)
 
 ####################################################################################################################################################
