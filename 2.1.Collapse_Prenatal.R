@@ -40,8 +40,6 @@ alspac.table$moved_pre <-	alspac.table$b591a_rec	# Moved house since PREG
 # blood_loss
 alspac.table$blood_loss <- alspac.table$b599a_rec	# Bled & thought might miscarry
 
-# examination
-alspac.table$examination	<- alspac.table$b601a_rec	# Test to see if baby abnormal
 
 # pregnancy_worried
 alspac.table$pregnancy_worried <-	alspac.table$b602a_rec # Test result suggesting POSS abnormality
@@ -61,8 +59,9 @@ alspac.table$abortion_pre	<- alspac.table$b605a_rec # Tried to have abortion
 # married_pre
 alspac.table$married_pre <-	alspac.table$b595a_rec	# Got married since PREG
 
-# twins_pre
-alspac.table$twins_pre <-	alspac.table$b603a_rec	# Told having twins
+
+# unemployed_pre
+alspac.table$unemployed_pre	<- alspac.table$b584a_rec	# Lost job since PREG
 
 
 ####################################################################################################################################################
@@ -99,8 +98,6 @@ table(alspac.table$c645a, exclude = NULL)  # Mums highest ed qualification
 alspac.table$m_education_pre <- ifelse(alspac.table$c645a %in% c("CSE", "Vocational", "O level", "A level"), 1, ifelse(alspac.table$c645a == "Degree", 0, NA))
 
 
-# unemployed_pre
-alspac.table$unemployed_pre	<- alspac.table$b584a_rec	# Lost job since PREG
 
 ####################################################################################################################################################
 
@@ -113,6 +110,9 @@ alspac.table$unemployed_pre	<- alspac.table$b584a_rec	# Lost job since PREG
 alspac.table$p14n <- as.numeric(as.character(p14))
 alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n')]) #	In trouble with the law since PREG, Convicted of an offence since PREG, Crime trouble with police
 
+criminal_record_partner_pre	b586a_rec, pb188a_rec	 PTNR in trouble with law since PREG |  Convicted of an offence since PREG 
+
+
 #m_attempted_suicide_pre
 alspac.table$m_attempted_suicide_pre <-	alspac.table$b597 # Attempted suicide since PREG
 
@@ -122,6 +122,8 @@ alspac.table$m_attempted_suicide_pre <-	alspac.table$b597 # Attempted suicide si
 alspac.table$mz028bn <- as.numeric(as.character(alspac.table$mz028b))
 alspac.table$early_pregnancy <- ifelse(alspac.table$mz028bn < 19, yes = 1, no = 0) # early parenthood 
 # mother age younger than 19 at baseline based on Cecil et al. (2014); Rijlaarsdam et al. (2016)
+
+# MOTHER 
 
 # m_depression_pregnancy
 #alspac.table$m_depression_pre	<- alspac.table$p12 # maternal psychopathology
@@ -151,6 +153,35 @@ alspac.table$m_interpersonal_sensitivity_pre <- ifelse(alspac.table$b916n >= 22,
 # checking if recoding worked
 data.frame(alspac.table$m_interpersonal_sensitivity_pre, alspac.table$b916) # looks good
 
+# PARTNER 
+
+# p_depression_pre
+alspac.table$p_depression_pre <- alspac.table$pb261a_rec # EPDS total score partner mode imputed (>=13 risk, <13 no risk) [check if this split applies for males]
+
+# p_anxiety_pre
+alspac.table$p_anxiety_pre <- alspac.table$pb234a_rec # CCEI anxiety subscale II partner [9 to 16 (based on previous lit. cut-off) but check if applies to males]
+
+
+# p_interpersonal_sensitivity, using 80th percentile
+
+# Higher scores = greater interpersonal sensitivity, based on items such as 'feel insecure when saying goodbye'
+
+# checking the distribution, since normally distributed, 80th percentile
+plot(alspac.table$pb551) 
+
+# changing a factor to numeric without changing values 
+alspac.table$pb551 <- as.numeric(levels(alspac.table$pb551))[alspac.table$pb551] 
+quantile(alspac.table$pb551, .8, na.rm = T) # 80th percentile is 95
+
+
+alspac.table$p_interpersonal_sensitivity_pre <- ifelse(alspac.table$pb551 >= 95, 1, 
+                                                   ifelse(alspac.table$pb551 < 95, 0, NA)) 
+
+# checking if recoding worked
+data.frame(alspac.table$p_interpersonal_sensitivity_pre, alspac.table$pb551) # looks good
+
+
+
 ####################################################################################################################################################
 
 # COLLAPSING VARIABLES 
@@ -158,7 +189,7 @@ data.frame(alspac.table$m_interpersonal_sensitivity_pre, alspac.table$b916) # lo
 # INTERPERSONAL RISKS
 
 #divorce_pregnancy
-alspac.table$divorce_pre <-	alspac.table$b578 # Divorced since PREG
+alspac.table$divorce_pre <-	repmeas(alspac.table[,c('b578', 'b587')]) # Divorced since PREG,  Separated since PREG
 
 #p_rejected_child_pre
 alspac.table$p_rejected_child_pre <- alspac.table$b579a_rec	# PTNR rejected PREG
@@ -166,8 +197,6 @@ alspac.table$p_rejected_child_pre <- alspac.table$b579a_rec	# PTNR rejected PREG
 #p_went_away_pre
 alspac.table$p_went_away_pre	<-  alspac.table$b585a_rec #	PTNR went away since PREG
 
-#separated_pre
-alspac.table$separated_pre	<- alspac.table$b587	# Separated since PREG
 
 #conflict_in_family_pre
 alspac.table$conflict_in_family_pre	<- repmeas(alspac.table[,c('b589a_rec', 'b607a_rec', 'b608')])	# Argued with PTNR since PREG, PTNR was EMOT cruel to mum since PREG, PTNR was EMOT cruel to child since PREG

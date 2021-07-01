@@ -44,14 +44,13 @@ Prenatal_LifeEvents <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID
                                                   'sick_or_accident_pre',
                                                   'moved_pre',
                                                   'blood_loss',
-                                                  'examination',
                                                   'pregnancy_worried',
                                                   'baby_worried',
                                                   'burglary_or_car_theft_pre',
                                                   'work_problems_pre',
                                                   'abortion_pre',
                                                   'married_pre',
-                                                  'twins_pre')])
+                                                  'unemployed_pre')])
 
 
 ####################################################################################################################################################
@@ -67,8 +66,7 @@ Prenatal_ContextualRisks  <- data.frame(alspac.table[,c("cidB2957", # pregnancy 
                                                         'housing_adequacy_pre',
                                                         'housing_basic_living_pre',
                                                         'housing_defects_pre',
-                                                        'm_education_pre',
-                                                        'unemployed_pre')])
+                                                        'm_education_pre')])
 
 
 ####################################################################################################################################################
@@ -98,7 +96,6 @@ Prenatal_InterpersonalRisks <- data.frame(alspac.table[,c("cidB2957", # pregnanc
                                                           'divorce_pre',
                                                           'p_rejected_child_pre',
                                                           'p_went_away_pre',
-                                                          'separated_pre',
                                                           'conflict_in_family_pre',
                                                           'argued_fam_friends_pre',
                                                           'conflict_family_violence_pre',
@@ -189,14 +186,13 @@ prenatal_stress[,c('pre_LE_percent_missing','pre_life_events')] <- domainscore(p
   'sick_or_accident_pre',
   'moved_pre',
   'blood_loss',
-  'examination',
   'pregnancy_worried',
   'baby_worried',
   'burglary_or_car_theft_pre',
   'work_problems_pre',
   'abortion_pre',
   'married_pre',
-  'twins_pre')])
+  'unemployed_pre')])
 
 
 
@@ -210,8 +206,7 @@ prenatal_stress[,c('pre_CR_percent_missing','pre_contextual_risk')] <- domainsco
   'housing_adequacy_pre',
   'housing_basic_living_pre',
   'housing_defects_pre',
-  'm_education_pre',
-  'unemployed_pre')]) 
+  'm_education_pre')]) 
 
 
 
@@ -235,7 +230,6 @@ prenatal_stress[,c('pre_IS_percent_missing','pre_interpersonal_risks')] <- domai
   'divorce_pre',
   'p_rejected_child_pre',
   'p_went_away_pre',
-  'separated_pre',
   'conflict_in_family_pre',
   'argued_fam_friends_pre',
   'conflict_family_violence_pre',

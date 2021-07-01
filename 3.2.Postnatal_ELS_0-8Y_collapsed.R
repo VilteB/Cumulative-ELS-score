@@ -39,8 +39,7 @@ table(duplicated(alspac.table$cidB2957))
 ####################################################################################################################################################
 
 
-# Construct LE8weeks 
-# items used LE at 8 weeks in ALSPAC mothers and children
+# Construct LE
 
 # 8wk = 8wk
 # 18m = 8m, 18m 
@@ -53,7 +52,7 @@ table(duplicated(alspac.table$cidB2957))
 
 #ASLPAC variables are not YES/NO, here, 1-4 = YES, 5 = NO, all others = NA
 
-LE8weeks <- data.frame(alspac.table[,c('cidB2957', #add ALSPAC family ID here!
+LE_all <- data.frame(alspac.table[,c('cidB2957', # pregnancy ID
                                        'qlet',
                                        'sick_or_accident_8wk',
                                        'family_member_ill_8wk',
@@ -62,55 +61,40 @@ LE8weeks <- data.frame(alspac.table[,c('cidB2957', #add ALSPAC family ID here!
                                        'smbd_important_died_8wk',
                                        'moved_8wk',
                                        'burglary_or_car_theft_8wk',
-                                       'work_problems_8wk')])
-                                              
-                                              
-
-#LE 18 month (includes 8m) variables are dichotomised, 1=Y, 0=N, 
-LE18months <- data.frame(alspac.table[,c('cidB2957', #family ID
-                                        'qlet',
-                                        'sick_or_accident_18m',
-                                        'family_member_ill_8m',
-                                        'smbd_important_ill_8m',
-                                        'partner_died_8m',
-                                        'smbd_important_died_8m',
-                                        'pet_died_18m',
-                                        'separated_from_parent_18m',
-                                        'started_nursery_18m',
-                                        'acquired_new_parent_18m',
-                                        'change_carer_18m',
-                                        'moved_18m',
-                                        'm_pregnant_8m',
-                                        'new_sibling_18m',
-                                        'separated_from_smbd_18m',
-                                        'ch_had_fright_18m',
-                                        'work_problems_8m')])
-
-
-#LE 30 month (includes 21m) variables are dichotomised, 1=Y, 0=N, 
-LE30months <- data.frame(alspac.table[,c("cidB2957", # family ID 
-                                         "qlet",
-                                         'sick_or_accident_30m',
-                                         'family_member_ill_21m',
-                                         'smbd_important_ill_21m',
-                                         'partner_died_21m',
-                                         'smbd_important_died_21m',
-                                         'pet_died_30m',
-                                         'separated_from_parent_30m',
-                                         'started_nursery_30m',
-                                         'acquired_new_parent_30m',
-                                         'change_carer_30m',
-                                         'moved_30m',
-                                         'm_pregnant_21m',
-                                         'new_sibling_30m',
-                                         'separated_from_smbd_30m',
-                                         'burglary_or_car_theft_21m',
-                                         'ch_had_fright_30m',
-                                         'work_problems_21m')])
-
-#LE 3 years is a dichotomised variable, 1=Y, 0=N 
-LE3years <- data.frame(alspac.table[,c("cidB2957", #family ID
-                                       "qlet",
+                                       'work_problems_8wk',
+                                       'sick_or_accident_18m',
+                                       'family_member_ill_8m',
+                                       'smbd_important_ill_8m',
+                                       'partner_died_8m',
+                                       'smbd_important_died_8m',
+                                       'pet_died_18m',
+                                       'separated_from_parent_18m',
+                                       'started_nursery_18m',
+                                       'acquired_new_parent_18m',
+                                       'change_carer_18m',
+                                       'moved_18m',
+                                       'm_pregnant_8m',
+                                       'new_sibling_18m',
+                                       'separated_from_smbd_18m',
+                                       'ch_had_fright_18m',
+                                       'work_problems_8m',
+                                       'sick_or_accident_30m',
+                                       'family_member_ill_21m',
+                                       'smbd_important_ill_21m',
+                                       'partner_died_21m',
+                                       'smbd_important_died_21m',
+                                       'pet_died_30m',
+                                       'separated_from_parent_30m',
+                                       'started_nursery_30m',
+                                       'acquired_new_parent_30m',
+                                       'change_carer_30m',
+                                       'moved_30m',
+                                       'm_pregnant_21m',
+                                       'new_sibling_30m',
+                                       'separated_from_smbd_30m',
+                                       'burglary_or_car_theft_21m',
+                                       'ch_had_fright_30m',
+                                       'work_problems_21m',
                                        'sick_or_accident_3y',
                                        'family_member_ill_3y',
                                        'smbd_important_ill_3y',
@@ -127,12 +111,7 @@ LE3years <- data.frame(alspac.table[,c("cidB2957", #family ID
                                        'separated_from_smbd_3y',
                                        'burglary_or_car_theft_3y',
                                        'ch_had_fright_3y',
-                                       'work_problems_3y')])
-
-
-#LE 4 years is a binary variable, Y=1, N=0
-LE4years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
-                                       "qlet",
+                                       'work_problems_3y',
                                        'sick_or_accident_4y',
                                        'family_member_ill_4y',
                                        'smbd_important_ill_4y',
@@ -149,11 +128,7 @@ LE4years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
                                        'separated_from_smbd_4y',
                                        'burglary_or_car_theft_4y',
                                        'ch_had_fright_4y',
-                                       'work_problems_4y')])
-
-#LE 5 years is a binary variable, Y=1, N=0
-LE5years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
-                                       "qlet",
+                                       'work_problems_4y',
                                        'sick_or_accident_5y',
                                        'family_member_ill_5y',
                                        'smbd_important_ill_5y',
@@ -170,12 +145,7 @@ LE5years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
                                        'separated_from_smbd_5y',
                                        'burglary_or_car_theft_5y',
                                        'ch_had_fright_5y',
-                                       'work_problems_5y')])
-
-
-#LE 6 years is a binary variable, Y=1, N=0
-LE6years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
-                                       "qlet",
+                                       'work_problems_5y',
                                        'sick_or_accident_6y',
                                        'family_member_ill_6y',
                                        'smbd_important_ill_6y',
@@ -191,11 +161,7 @@ LE6years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
                                        'separated_from_smbd_6y',
                                        'burglary_or_car_theft_6y',
                                        'ch_had_fright_6y',
-                                       'work_problems_6y')])
-
-#LE 9 years is a binary variable, Y=1, N=0
-LE9years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
-                                       "qlet",
+                                       'work_problems_6y',
                                        'sick_or_accident_9y',
                                        'family_member_ill_9y',
                                        'smbd_important_ill_9y',
@@ -211,18 +177,16 @@ LE9years <- data.frame(alspac.table[,c("cidB2957", # add ALPSAC mother ID here
                                        'separated_from_smbd_8y',
                                        'burglary_or_car_theft_9y',
                                        'ch_had_fright_8y',
-                                       'work_problems_9y')])
+                                       'work_problems_9y',
+                                       'unemployed_8wk',
+                                       'unemployed_8m',
+                                       'unemployed_21m',
+                                       'unemployed_3y',
+                                       'unemployed_4y',
+                                       'unemployed_5y',
+                                       'unemployed_6y',
+                                       'unemployed_9y')])
 
-
-
-####################################################################################################################################################
-
-
-# Combining all life event variables with pregnancy ID
-
-LE_all <- Reduce(function(x,y) merge(x = x, y = y, by = c('cidB2957','qlet'),  all.x = TRUE), 
-                list(LE8weeks, LE18months, LE30months, LE3years, LE4years, 
-                     LE5years, LE6years, LE9years))
                         
 ####################################################################################################################################################
 
@@ -239,14 +203,6 @@ CR_all <- data.frame(alspac.table[,c("cidB2957",
                                      'housing_basic_living_4y',
                                      'housing_defects_2y',
                                      'housing_defects_4y',
-                                     'unemployed_8wk',
-                                     'unemployed_8m',
-                                     'unemployed_21m',
-                                     'unemployed_3y',
-                                     'unemployed_4y',
-                                     'unemployed_5y',
-                                     'unemployed_6y',
-                                     'unemployed_9y',
                                      'income_reduced_8wk',
                                      'income_reduced_8m',
                                      'income_reduced_21m',
@@ -409,15 +365,7 @@ IR_all <- data.frame(alspac.table[,c("cidB2957",
                                      'argued_fam_friends_4y',
                                      'argued_fam_friends_5y',
                                      'argued_fam_friends_6y',
-                                     'argued_fam_friends_9y',
-                                     'separated_8wk',
-                                     'separated_8m',
-                                     'separated_21m',
-                                     'separated_3y',
-                                     'separated_4y',
-                                     'separated_5y',
-                                     'separated_6y',
-                                     'separated_9y')])
+                                     'argued_fam_friends_9y')])
 
 ####################################################################################################################################################
 
@@ -661,7 +609,15 @@ postnatal_stress[,c('post_LE_percent_missing','post_life_events')] <- domainscor
                                          'separated_from_smbd_8y',
                                          'burglary_or_car_theft_9y',
                                          'ch_had_fright_8y',
-                                         'work_problems_9y')])
+                                         'work_problems_9y',
+                                         'unemployed_8wk',
+                                         'unemployed_8m',
+                                         'unemployed_21m',
+                                         'unemployed_3y',
+                                         'unemployed_4y',
+                                         'unemployed_5y',
+                                         'unemployed_6y',
+                                         'unemployed_9y')])
 
 
 
@@ -673,14 +629,6 @@ postnatal_stress[,c('post_CR_percent_missing','post_contextual_risk')] <- domain
   'housing_basic_living_4y',
   'housing_defects_2y',
   'housing_defects_4y',
-  'unemployed_8wk',
-  'unemployed_8m',
-  'unemployed_21m',
-  'unemployed_3y',
-  'unemployed_4y',
-  'unemployed_5y',
-  'unemployed_6y',
-  'unemployed_9y',
   'income_reduced_8wk',
   'income_reduced_8m',
   'income_reduced_21m',
@@ -828,15 +776,7 @@ postnatal_stress[,c('post_IR_percent_missing','post_interpersonal_risk')] <- dom
   'argued_fam_friends_4y',
   'argued_fam_friends_5y',
   'argued_fam_friends_6y',
-  'argued_fam_friends_9y',
-  'separated_8wk',
-  'separated_8m',
-  'separated_21m',
-  'separated_3y',
-  'separated_4y',
-  'separated_5y',
-  'separated_6y',
-  'separated_9y')])
+  'argued_fam_friends_9y')])
 
 # DV
 postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- domainscore(postnatal_stress[,c(

@@ -305,6 +305,27 @@ alspac.table$work_problems_6y <- repmeas(alspac.table[,c('l4012a_rec', 'l4013a_r
 
 alspac.table$work_problems_9y <- repmeas(alspac.table[,c('p2012_rec', 'p2013_rec')]) # PTNR had PROBS at work, PROBS at work mum
 
+####################################################################################################################################################
+
+# unemployed
+
+alspac.table$unemployed_8wk <- repmeas(alspac.table[,c('e411a_rec', 'e414a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+alspac.table$unemployed_8m <- repmeas(alspac.table[,c('f231a_rec', 'f234a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+alspac.table$unemployed_21m <- repmeas(alspac.table[,c('g311a_rec', 'g314a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+alspac.table$unemployed_3y <- repmeas(alspac.table[,c('h221a_rec', 'h224a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+alspac.table$unemployed_4y <- repmeas(alspac.table[,c('j311a_rec', 'j314a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+alspac.table$unemployed_5y <- repmeas(alspac.table[,c('k4011a_rec', 'k4014a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+alspac.table$unemployed_6y <- repmeas(alspac.table[,c('l4011a_rec', 'l4014a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+alspac.table$unemployed_9y <- repmeas(alspac.table[,c('p2011_rec', 'p2014_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
+
+####################################################################################################################################################
 
 
 ####################################################################################################################################################
@@ -342,29 +363,8 @@ alspac.table$housing_defects_4y	<-  ifelse(alspac.table$t4 == 1, 1,
 
 ####################################################################################################################################################
 
+
 # SECTION 2
-
-# unemployed
-
-alspac.table$unemployed_8wk <- repmeas(alspac.table[,c('e411a_rec', 'e414a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-alspac.table$unemployed_8m <- repmeas(alspac.table[,c('f231a_rec', 'f234a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-alspac.table$unemployed_21m <- repmeas(alspac.table[,c('g311a_rec', 'g314a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-alspac.table$unemployed_3y <- repmeas(alspac.table[,c('h221a_rec', 'h224a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-alspac.table$unemployed_4y <- repmeas(alspac.table[,c('j311a_rec', 'j314a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-alspac.table$unemployed_5y <- repmeas(alspac.table[,c('k4011a_rec', 'k4014a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-alspac.table$unemployed_6y <- repmeas(alspac.table[,c('l4011a_rec', 'l4014a_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-alspac.table$unemployed_9y <- repmeas(alspac.table[,c('p2011_rec', 'p2014_rec')]) # unemployed	PTNR lost job, unemployed	Lost job
-
-####################################################################################################################################################
-
-# SECTION 3
 
 # renaming to match GenR
 
@@ -401,7 +401,7 @@ alspac.table$income_reduced_9y <- alspac.table$p2018_rec
 
 ####################################################################################################################################################
 
-# SECTION 4
+# SECTION 3
 
 # m_education 
 
@@ -420,7 +420,7 @@ alspac.table$p_education <- ifelse(alspac.table$c666 %in% c("None", "CSE", "Voca
 
 ####################################################################################################################################################
 
-# SECTION 5
+# SECTION 4
 
 # neighbourhood_problems
 
@@ -621,19 +621,8 @@ data.frame(alspac.table$m_interpersonal_sensitivity, alspac.table$b916) # looks 
 
 # Higher scores = greater interpersonal sensitivity, based on items such as 'feel insecure when saying goodbye'
 
-# checking the distribution, since normally distributed, 80th percentile
-plot(alspac.table$pb551) 
+alspac.table$p_interpersonal_sensitivity <- alspac.table$p_interpersonal_sensitivity_pre # should I remove this since we don't have it for postnatal? 
 
-# changing a factor to numeric without changing values 
-alspac.table$pb551 <- as.numeric(levels(alspac.table$pb551))[alspac.table$pb551] 
-quantile(alspac.table$pb551, .8, na.rm = T) # 80th percentile is 95
-
-
-alspac.table$p_interpersonal_sensitivity <- ifelse(alspac.table$pb551 >= 95, 1, 
-                                                   ifelse(alspac.table$pb551 < 95, 0, NA)) 
-
-# checking if recoding worked
-data.frame(alspac.table$p_interpersonal_sensitivity, alspac.table$pb551) # looks good
 
 
 ####################################################################################################################################################
@@ -655,14 +644,15 @@ data.frame(alspac.table$p_interpersonal_sensitivity, alspac.table$pb551) # looks
 #alspac.table$divorce_childhood_9y <- repmeas(alspac.table[,c('p2008_rec', 'p2009_rec', 'p2015_rec')]) # Divorced, Partner rejected child, Partner went away
 
 # Divorce
-alspac.table$divorce_8wk	<- alspac.table$e408a_rec # divorced
-alspac.table$divorce_8m	<- alspac.table$f228a_rec # divorced
-alspac.table$divorce_21m <- alspac.table$g308a_rec # divorced
-alspac.table$divorce_3y	<- alspac.table$h218a_rec # divorced
-alspac.table$divorce_4y <- alspac.table$j308a_rec # divorced
-alspac.table$divorce_5y	<- alspac.table$k4008a_rec # divorced
-alspac.table$divorce_6y	<- alspac.table$l4008a_rec # divorced
-alspac.table$divorce_9y	<- alspac.table$p2008_rec # divorced
+alspac.table$divorce_8wk <- alspac.table$e417a_rec # Respondent separated from partner
+alspac.table$divorce_8m	<- repmeas(alspac.table[,c(f228a_re, f237a_rec)]) # divorced, Respondent separated from partner
+alspac.table$divorce_21m <- repmeas(alspac.table[,c(g308a_rec, g317a_rec)]) # divorced, Respondent separated from partner
+alspac.table$divorce_3y	<- repmeas(alspac.table[,c(h218a_rec, h227a_rec)]) # divorced, Respondent separated from partner
+alspac.table$divorce_4y <- repmeas(alspac.table[,c(j308a_rec, j317a_rec)]) # divorced, Respondent separated from partner
+alspac.table$divorce_5y	<- repmeas(alspac.table[,c(k4008a_rec, k4017a_rec)]) # divorced, Respondent separated from partner
+alspac.table$divorce_6y	<- repmeas(alspac.table[,c(l4008a_rec, l4017a_rec)]) # divorced, Respondent separated from partner
+alspac.table$divorce_9y	<- repmeas(alspac.table[,c(p2008_rec, p2017_rec)]) # divorced, Respondent separated from partner
+
 
 # Partner rejected child 
 alspac.table$p_rejected_child_8wk	<- alspac.table$e409a_rec	 # Partner rejected child 
@@ -746,26 +736,11 @@ alspac.table$m_new_partner_5y <- alspac.table$k4025a_rec # Mum got married
 alspac.table$m_new_partner_6y <- repmeas(alspac.table[,c('l4025a_rec', 'l4040a_rec')]) # Mum got married, Mother found new partner
 alspac.table$m_new_partner_9y <- repmeas(alspac.table[,c('p2025_rec', 'p2040_rec')]) # Mum got married, Mother found new partner
 
-####################################################################################################################################################
 
+
+####################################################################################################################################################
 
 # SECTION 5
-
-# separated
-
-alspac.table$separated_8wk <- alspac.table$e417a_rec # Respondent separated from partner
-alspac.table$separated_8m <- alspac.table$f237a_rec # Respondent separated from partner
-alspac.table$separated_21m <- alspac.table$g317a_rec # Respondent separated from partner
-alspac.table$separated_3y <- alspac.table$h227a_rec # Respondent separated from partner
-alspac.table$separated_4y <- alspac.table$j317a_rec # Respondent separated from partner
-alspac.table$separated_5y <- alspac.table$k4017a_rec # Respondent separated from partner
-alspac.table$separated_6y <- alspac.table$l4017a_rec # Respondent separated from partner
-alspac.table$separated_9y <- alspac.table$p2017_rec # Respondent separated from partner
-
-
-####################################################################################################################################################
-
-# SECTION 6
 
 # argued_fam_friends
 
