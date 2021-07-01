@@ -175,21 +175,20 @@ for (i in 1:after_siblings) {
   } else if (ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 1) { ELS_PCM$risk_groups[i] = 2 # High fat mass only
   } else if (ELS_PCM$int[i] == 1 & ELS_PCM$fat[i] == 1) { ELS_PCM$risk_groups[i] = 3 # multimorbid
   } else if (ELS_PCM$int[i] == 'NA' & ELS_PCM$fat[i] == 'NA') { ELS_PCM$risk_groups[i] = 'NA' # missing
-  } else if (ELS_PCM$int[i] == 1 || ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 'NA') { ELS_PCM$risk_groups[i] = 'NA' # missing
-  } else if (ELS_PCM$int[i] == 'NA' & ELS_PCM$fat[i] == 1 || ELS_PCM$fat[i] == 0 ) { ELS_PCM$risk_groups[i] = 'NA' # missing
-  } else { ELS_PCM$risk_groups[i] = 'NA' }
+  } else if (ELS_PCM$int[i] == 1 || ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 'NA') { ELS_PCM$risk_groups[i] = NA # missing
+  } else if (ELS_PCM$int[i] == 'NA' & ELS_PCM$fat[i] == 1 || ELS_PCM$fat[i] == 0 ) { ELS_PCM$risk_groups[i] = NA # missing
+  } else { ELS_PCM$risk_groups[i] = NA }
 }
 
 ELS_PCM$risk_groups = as.factor(ELS_PCM$risk_groups)
 
 summary(ELS_PCM$risk_groups)  
-# 0    1    2    3 
-# 3729  135  915   51 
 
-# # Let's first factor that bad boy
-# imp$risk_groups = factor(groups$risk_groups,
-#                          levels = c(0:3),
-#                          labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
+
+# Let's first factor that bad boy
+imp$risk_groups = factor(groups$risk_groups,
+                          levels = c(0:3),
+                          labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
 
 # #display groups
 # attach(groups); plot(intern_score_z, fat_mass_z,
