@@ -163,32 +163,34 @@ cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"partic
 # Compute groups
 
 #below gives an error: 'missing values and NaN's not allowed if 'na.rm' is FALSE'
-#this is because we didn't exclude participants based on outcomes, so unless we set na.rm=T, we cannot calculate  the risk groups
-#I am therefore setting na.rm=T, which means that participants with NA for the outcome will be NA for risk_group
+#this is because we didn't exclude participants based on outcomes, so unless we set na.rm=T, we cannot calculate the risk groups
+#I am therefore setting na.rm=T, which means that participants with missing internalising score and/or fat mass will remain NA
 ELS_PCM$int = ifelse(ELS_PCM$intern_score_z > quantile(ELS_PCM$intern_score_z, probs = 0.8, na.rm=TRUE), 1, 0) 
 ELS_PCM$fat = ifelse(ELS_PCM$fat_mass_z > quantile(ELS_PCM$fat_mass_z, probs = 0.8, na.rm=TRUE), 1, 0) 
 
-ELS_PCM$risk_groups = rep(NA, after_siblings)
-for (i in 1:after_siblings) {
-  if (ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 0) { ELS_PCM$risk_groups[i] = 0 # healthy
-  } else if (ELS_PCM$int[i] == 1 & ELS_PCM$fat[i] == 0) { ELS_PCM$risk_groups[i] = 1 # High intenalizing  only
-  } else if (ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 1) { ELS_PCM$risk_groups[i] = 2 # High fat mass only
-  } else if (ELS_PCM$int[i] == 1 & ELS_PCM$fat[i] == 1) { ELS_PCM$risk_groups[i] = 3 # multimorbid
-  } else if (ELS_PCM$int[i] == 'NA' & ELS_PCM$fat[i] == 'NA') { ELS_PCM$risk_groups[i] = 'NA' # missing
-  } else if (ELS_PCM$int[i] == 1 || ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 'NA') { ELS_PCM$risk_groups[i] = NA # missing
-  } else if (ELS_PCM$int[i] == 'NA' & ELS_PCM$fat[i] == 1 || ELS_PCM$fat[i] == 0 ) { ELS_PCM$risk_groups[i] = NA # missing
-  } else { ELS_PCM$risk_groups[i] = NA }
-}
+# this function ignores the missing values, for example, if int = 1 but fat mass = NA, participant will be assigned a 1
+# and if int = NA and fat mass = 1, participant will be assigned a 2 
+ELS_PCM$risk_groups = ifelse((is.na(ELS_PCM$int) & ELS_PCM$fat == 1),2,
+                              ifelse((is.na(ELS_PCM$int) & ELS_PCM$fat == 0),0,
+                                     ifelse((ELS_PCM$int == 1 & is.na(ELS_PCM$fat)),1,
+                                            ifelse((ELS_PCM$int == 0 & is.na(ELS_PCM$fat)),0,
+                                                   ifelse(ELS_PCM$int == 0 & ELS_PCM$fat == 0,0,
+                                                          ifelse(ELS_PCM$int == 1 & ELS_PCM$fat == 0,1,
+                                                                 ifelse(ELS_PCM$int == 0 & ELS_PCM$fat == 1,2,
+                                                                        ifelse(ELS_PCM$int == 1 & ELS_PCM$fat == 1,3, NA))))))))
 
 ELS_PCM$risk_groups = as.factor(ELS_PCM$risk_groups)
 
-summary(ELS_PCM$risk_groups)  
+summary(ELS_PCM$risk_groups) 
+                                                                                                    
+# creating a data frame to explore risk group values next to original variables 
+data.frame(ELS_PCM$int, ELS_PCM$fat, ELS_PCM$risk_groups) # looks good
 
 
-# Let's first factor that bad boy
-imp$risk_groups = factor(groups$risk_groups,
-                          levels = c(0:3),
-                          labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
+# Let's first factor that bad boy - COMMENTED OUT IN SERENA'S SCRIPT AS WELL (she stores it in imp$risk_groups)
+#risk_groups = factor(ELS_PCM$risk_groups,
+#                          levels = c(0:3),
+#                          labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
 
 # #display groups
 # attach(groups); plot(intern_score_z, fat_mass_z,
@@ -280,10 +282,10 @@ ELS_PCM_essentials = ELS_PCM[, c('cidB2957',
                                  # cumulative prenatal and postnatal stress exposure
                                  'prenatal_stress', 'postnatal_stress', 
                                  # outcome variables and covariates
-                                 'intern_score_z.10y', 'intern_score_z.13y', 'intern_score_z.15y', 'intern_score_z.17y', 'intern_score_z.22y', 
-                                 'fat_mass_z.10y', 'fat_mass_z.13y', 'fat_mass_z.15y', 'fat_mass_z.17y', 'fat_mass_z.24y', 
+                                 'intern_score_z', #'intern_score_z.10y', 'intern_score_z.13y', 'intern_score_z.15y', 'intern_score_z.17y', 'intern_score_z.22y', 
+                                 'fat_mass_z', #'fat_mass_z.10y', 'fat_mass_z.13y', 'fat_mass_z.15y', 'fat_mass_z.17y', 'fat_mass_z.24y', 
                                  'risk_groups',
-                                 'sex', 'age_child.10y', 'age_child.13y', 'age_child.15y', 'age_child.17y', 'age_child.23y',
+                                 'sex', 'age_child.10y', #'age_child.13y', 'age_child.15y', 'age_child.17y', 'age_child.23y',
                                  'm_bmi_before_pregnancy', 'm_smoking', 'm_drinking',
                                  # additional auxiliary variables for imputation
                                  'ethnicity', 'parity', 'gest_age_birth', 'gest_weight', # 'm_bmi_pregnancy', 'm_bmi_5yrs'
