@@ -21,23 +21,18 @@ alspac.table = alspac.table %>% distinct(cidB2957,qlet,kz021,ff1ms100, .keep_all
 # cidB2957 = unique pregnancy identifier (shared by mothers, children, partners) 
 # qlet = children can be distinguished from others via 'qlet', which is birth order (within pregnancy)
 # kz021 = sex 
-# ff1ms100 = Height (mm) form focus on fathers (FOF1) - why are we including this?
-
-# remote siblings (all qlet=B)
-alspac.table=alspac.table[alspac.table$qlet=="A",]
+# ff1ms100 = Height (mm) from focus on fathers (FOF1) - why are we including this?
 
 # check if any duplicated cidB2957s left
-table(duplicated(alspac.table$cidB2957))
+table(duplicated(alspac.table$cidB2957)) # yes because siblings haven't yet been removed (we will select a sibling based on data availability in the 'Dataset_construction.R' script)
 
-# 1. LIFE EVENTS
+####################################################################################################################################################
 
-# Steps 1-4 assign variables to the pertinent ELS domains (LE/CR/PR/IR) 
-# depending on the format of the data, you may want to write "attach(nameofdataframe)" and then use the code below. 
-# This will permit the variables to be accessed directly without having to use the dollar sign, as here: 'nameofdata$variablename'
+# 1. CREATE PRENATAL CUMULATIVE ELS RISK SCORE 
 
-
-Prenatal_LifeEvents <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
-                                                  "qlet", 
+# This section subsets all prenatal stress variables (LE/CR/PR/IR) into 'prenatal_stress'
+prenatal_stress <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
+                                                  "qlet", # sibling identifier
                                                   'partner_died_pre',
                                                   'smbd_important_died_pre',
                                                   'smbd_important_ill_pre',
@@ -50,88 +45,44 @@ Prenatal_LifeEvents <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID
                                                   'work_problems_pre',
                                                   'abortion_pre',
                                                   'married_pre',
-                                                  'unemployed_pre')])
+                                                  'unemployed_pre', # LE
+                                                  'income_reduced_pre',
+                                                  'homeless_pregnancy',
+                                                  'major_financial_problems_pre',
+                                                  'housing_adequacy_pre',
+                                                  'housing_basic_living_pre',
+                                                  'housing_defects_pre',
+                                                  'm_education_pre', # CR
+                                                  'criminal_record_parent_pre',
+                                                  'm_attempted_suicide_pre',
+                                                  'early_pregnancy',
+                                                  'm_depression_pre',
+                                                  'm_anxiety_pre',
+                                                  'm_interpersonal_sensitivity_pre',
+                                                  'p_depression_pre',
+                                                  'p_anxiety_pre',
+                                                  'p_interpersonal_sensitivity_pre', # PR 
+                                                  'divorce_pre',
+                                                  'p_rejected_child_pre',
+                                                  'p_went_away_pre',
+                                                  'conflict_in_family_pre',
+                                                  'argued_fam_friends_pre',
+                                                  'conflict_family_violence_pre',
+                                                  'marital_status_pregnancy',
+                                                  'family_affection',
+                                                  'family_size_pregnancy',
+                                                  'family_problems',
+                                                  'family_support',
+                                                  'social_network_emotional',
+                                                  'social_network_practical')]) # IR
 
 
-####################################################################################################################################################
-
-# 2. CONTEXTUAL RISKS
-
-
-Prenatal_ContextualRisks  <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
-                                                        "qlet",
-                                                        'income_reduced_pre',
-                                                        'homeless_pregnancy',
-                                                        'major_financial_problems_pre',
-                                                        'housing_adequacy_pre',
-                                                        'housing_basic_living_pre',
-                                                        'housing_defects_pre',
-                                                        'm_education_pre')])
-
-
-####################################################################################################################################################
-
-# 3. PARENTAL RISKS
-
-
-
-Prenatal_ParentalRisks  <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
-                                                      "qlet",
-                                                      'criminal_record_parent_pre',
-                                                      'm_attempted_suicide_pre',
-                                                      'early_pregnancy',
-                                                      'm_depression_pre',
-                                                      'm_anxiety_pre',
-                                                      'm_interpersonal_sensitivity_pre',
-                                                      'p_depression_pre',
-                                                      'p_anxiety_pre',
-                                                      'p_interpersonal_sensitivity_pre')]) 
-
- 
-####################################################################################################################################################
-
-
-# 4. INTERPERSONAL RISKS
-
-
-Prenatal_InterpersonalRisks <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID 
-                                                          "qlet",
-                                                          'divorce_pre',
-                                                          'p_rejected_child_pre',
-                                                          'p_went_away_pre',
-                                                          'conflict_in_family_pre',
-                                                          'argued_fam_friends_pre',
-                                                          'conflict_family_violence_pre',
-                                                          'marital_status_pregnancy',
-                                                          'family_affection',
-                                                          'family_size_pregnancy',
-                                                          'family_problems',
-                                                          'family_support',
-                                                          'social_network_emotional',
-                                                          'social_network_practical')]) 
-
-
-
-####################################################################################################################################################
-
-
-# 5. CREATE PRENATAL CUMULATIVE RISK SCORE 
-
-# This function merges together all prenatal ELS domains according to the 'cidB2957' column 
-# results in a dataframe with all relevant items for prenatal stress.
-# tech-tip from Serena: use Reduce because merge can only take two dataframes at a time 
-
-prenatal_stress <- Reduce(function(x,y) merge(x = x, y = y, by = c('cidB2957','qlet'),  all.x = TRUE), 
-                          list(Prenatal_LifeEvents,
-                               Prenatal_ContextualRisks,
-                               Prenatal_ParentalRisks,
-                               Prenatal_InterpersonalRisks))
 
 # ####################################################################################################################################################
 
-# 6. SUMMARY STATISTICS 
+# 2. SUMMARY STATISTICS 
 
-# Let's have a look at risk distribution and missing data per indicator (as per Serena's script) 
+# Let's have a look at risk distribution and missing data per indicator
 
 prenatal_summary = data.frame(row.names=c("no risk","risk","NA","%risk","%miss"))
 
@@ -145,7 +96,7 @@ for (i in 3:ncol(prenatal_stress)) { # ATTENTION, if not merged with child_id, c
 
 ####################################################################################################################################################
 
-# 7. MISSINGNESS
+# 3. MISSINGNESS
 
 # Calculate the percentage missing data (obtained from SereDef 'Setup_and_functions.R' script at https://github.com/SereDef/cumulative-ELS-score  
 percent_missing <- function(var) { sum(is.na(var)) / length(var) * 100 }
@@ -159,7 +110,7 @@ prenatal_stress$pre_percent_missing = apply(prenatal_stress[,3:ncol(prenatal_str
 
 ####################################################################################################################################################
 
-# 8. CREATE UN-WEIGHTED DOMAIN SCORES 
+# 4. CREATE UN-WEIGHTED DOMAIN SCORES 
 
 # ATTENTION! Here we use the default argument of domainscore function: calculating  a 
 # *mean domain score* (range = 0 to 1) that is NOT adjusted for 25% missingness as in 
@@ -251,7 +202,7 @@ prenatal_stress[,c('pre_IS_percent_missing','pre_interpersonal_risks')] <- domai
 
 ####################################################################################################################################################
 
-# 9. SAVE DATA
+# 5. SAVE DATA
 
 # Save the dataset in an .RData file, in the directory where you have the raw data
 save(prenatal_stress, file = 'prenatal_stress.RData')

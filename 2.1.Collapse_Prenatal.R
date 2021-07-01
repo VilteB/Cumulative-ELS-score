@@ -107,7 +107,7 @@ alspac.table$m_education_pre <- ifelse(alspac.table$c645a %in% c("CSE", "Vocatio
 # PARENTAL RISKS
 
 #criminal_record_parent_pre
-alspac.table$p14n <- as.numeric(as.character(p14))
+alspac.table$p14n <- as.numeric(as.character(p14)) # will give an error that 'NAs introduced by coercion' due to 'Cosent withdrawn by mother' now also being counted as NA
 
 #original:
 #alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n')]) #	In trouble with the law since PREG, Convicted of an offence since PREG, Crime trouble with police
