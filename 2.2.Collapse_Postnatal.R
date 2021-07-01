@@ -680,21 +680,21 @@ alspac.table$p_went_away_9y	<- alspac.table$p2015_rec	# Partner went away
 
 # conflict_in_family
 
-alspac.table$conflict_in_family_8wk <- repmeas(alspac.table[,c('e419a_rec', 'e437a_rec')]) # Argued with partner, Partner emotionally cruel to mum
+alspac.table$conflict_in_family_8wk <- alspac.table$e437a_rec # Partner emotionally cruel to mum
 
-alspac.table$conflict_in_family_8m <- repmeas(alspac.table[,c('f239a_rec', 'f256a_rec')]) # Argued with partner, Partner emotionally cruel to mum
+alspac.table$conflict_in_family_8m <- alspac.table$f239a_rec # Partner emotionally cruel to mum
 
-alspac.table$conflict_in_family_21m <- repmeas(alspac.table[,c('g319a_rec', 'g336a_rec')]) # Argued with partner, Partner emotionally cruel to mum, Mum/PTNR shouted at one another
+alspac.table$conflict_in_family_21m <- alspac.table$g336a_rec # Partner emotionally cruel to mum
 
-alspac.table$conflict_in_family_3y <- repmeas(alspac.table[,c('h229a_rec', 'h246a_rec', 'h580a_rec')]) # Argued with partner, Partner emotionally cruel to mum
+alspac.table$conflict_in_family_3y <- alspac.table$h246a_rec # Partner emotionally cruel to mum
 
-alspac.table$conflict_in_family_4y <- repmeas(alspac.table[,c('j319a_rec', 'j336a_rec')]) # Argued with partner, Partner emotionally cruel to mum
+alspac.table$conflict_in_family_4y <- alspac.table$j336a_rec # Partner emotionally cruel to mum
 
-alspac.table$conflict_in_family_5y <- repmeas(alspac.table[,c('k4019a_rec', 'k4036a_rec')]) # Argued with partner, Partner emotionally cruel to mum
+alspac.table$conflict_in_family_5y <- alspac.table$k4036a_rec # Partner emotionally cruel to mum
 
-alspac.table$conflict_in_family_6y <- repmeas(alspac.table[,c('l4019a_rec', 'l4036a_rec')]) # Argued with partner, Partner emotionally cruel to mum
+alspac.table$conflict_in_family_6y <- alspac.table$l4036a_rec # Partner emotionally cruel to mum
 
-alspac.table$conflict_in_family_9y <- repmeas(alspac.table[,c('p2019_rec', 'p2036_rec', 'p3153_rec')]) # Argued with partner, Partner emotionally cruel to mum, Mum/PTNR shouted at one another
+alspac.table$conflict_in_family_9y <- alspac.table$p2036_rec #Partner emotionally cruel to mum
 
 
 ####################################################################################################################################################

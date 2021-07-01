@@ -186,7 +186,7 @@ alspac.table$p_went_away_pre	<-  alspac.table$b585a_rec #	PTNR went away since P
 
 
 #conflict_in_family_pre
-alspac.table$conflict_in_family_pre	<- repmeas(alspac.table[,c('b589a_rec', 'b607a_rec', 'b608')])	# Argued with PTNR since PREG, PTNR was EMOT cruel to mum since PREG, PTNR was EMOT cruel to child since PREG
+alspac.table$conflict_in_family_pre	<- repmeas(alspac.table[,c('b607a_rec', 'b608')])	# PTNR was EMOT cruel to mum since PREG, PTNR was EMOT cruel to child since PREG
 
 #argued_fam_friends_pre
 alspac.table$argued_fam_friends_pre	<- alspac.table$b590a_rec	# Argued with family or friends since PREG
