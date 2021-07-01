@@ -10,7 +10,7 @@
 
 # RECODE TO BINARY
 # MOTHER-BASED LIFE EVENTS
-
+detach(alspac.table)
 # our R data file uses factor levels (not numeric) 
 # define levels first
 yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+")

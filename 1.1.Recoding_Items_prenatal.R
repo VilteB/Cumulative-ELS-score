@@ -8,7 +8,7 @@
 library(foreign)
 
 # Reading in the data
-alspac.table <- read.spss("ALSPAC_data_VB_copy.sav", use.value.label=TRUE, to.data.frame=TRUE) 
+alspac.table <- read.spss("X:/Psychology/ResearchProjects/EWalton/EarlyCause/data/ALSPAC/EarlyCause_AHupdated_CIDB2957_25MAY21.sav", use.value.label=TRUE, to.data.frame=TRUE) 
 
 ####################################################################################################################################################
 
