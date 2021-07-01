@@ -251,8 +251,7 @@ no = c("didnt happen")
 # now check if these levels are present and no other levels were missed out 
 vars = c("b577", # In trouble with the law since PREG
          "b586", # PTNR in trouble with law since PREG
-         #"b597", # Attempted suicide since PREG; EW: already binary
-         #"b598", # Convicted of an offence since PREG; EW: already binary
+         "pb188", # PTNR convicted of an offence since PREG 
          "b605") # Tried to have abortion
 
 for (i in vars){
@@ -410,11 +409,48 @@ corbetw2mat(data.matrix(IR_prenatal_continuous), IR_prenatal_binary, what = "pai
 ####################################################################################################################################################
 
 # Recoding prenatal depression variable for mother 
-alspac.table$b371n <- as.character(alspac.table$b371)
+alspac.table$b371n <- as.character(alspac.table$b371) # not adding as.numeric to avoid converting labels
 alspac.table$b371a_rec  <- ifelse(alspac.table$b371n %in% c(13:28), 1,
                                   ifelse(alspac.table$b371n == 'very depressed', 1, 
                                          ifelse(alspac.table$b371n %in% c(1:12), 0,
-                                                ifelse(alspac.table$b371n == 'not depressed', 0, NA)))) # 1711 no risk, 10617 risk
+                                                ifelse(alspac.table$b371n == 'not depressed', 0, NA))))
+
+
+# Recoding prenatal depression variable for partner (EPDS)
+# EPDS total score partner mode imputed (>12 risk, <=12 no risk) based on ALSPAC FAI documentation
+alspac.table$pb261n <- as.numeric(as.character(alspac.table$pb261))
+alspac.table$pb261a_rec  <- ifelse(alspac.table$pb261n %in% c(13:27), 1,
+                                   ifelse(alspac.table$pb261n %in% c(0:12), 0, NA)) 
+
+# Recoding prenatal anxiety variable for partner (CCEI)
+# A cut point which has been used previously in ALSPAC (Heron et al., 2004): >8 is risk, <= 8 no risk
+alspac.table$pb234n <- as.character(alspac.table$pb234)
+alspac.table$pb234a_rec  <- ifelse(alspac.table$pb234n %in% c(9:15), 1,
+                                   ifelse(alspac.table$pb234n == 'Very anxious', 1,
+                                          ifelse(alspac.table$pb234n %in% c(0:8), 0, 
+                                                 ifelse(alspac.table$pb234n == 'Not anxious', 0, NA)))) 
+
+
+# p_interpersonal_sensitivity, using 80th percentile
+
+# Higher scores = greater interpersonal sensitivity, based on items such as 'feel insecure when saying goodbye'
+
+# checking the distribution and dichotomising based on 80th percentile
+plot(alspac.table$pb551) 
+
+# changing a factor to numeric without changing values 
+alspac.table$pb551n <- as.numeric(as.character(alspac.table$pb551)) 
+quantile(alspac.table$pb551n, .8, na.rm = T) # 80th percentile is 95
+
+alspac.table$pb551a_rec <- ifelse(alspac.table$pb551n >= 95, 1, 
+                                  ifelse(alspac.table$pb551n < 95, 0, NA)) 
+
+# checking if recoding worked
+data.frame(alspac.table$pb551a_rec, alspac.table$pb551) # looks good
+
 
 ####################################################################################################################################################
+
+
+
 

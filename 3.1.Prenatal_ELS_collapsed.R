@@ -82,7 +82,10 @@ Prenatal_ParentalRisks  <- data.frame(alspac.table[,c("cidB2957", # pregnancy ID
                                                       'early_pregnancy',
                                                       'm_depression_pre',
                                                       'm_anxiety_pre',
-                                                      'm_interpersonal_sensitivity_pre')]) 
+                                                      'm_interpersonal_sensitivity_pre',
+                                                      'p_depression_pre',
+                                                      'p_anxiety_pre',
+                                                      'p_interpersonal_sensitivity_pre')]) 
 
  
 ####################################################################################################################################################
@@ -219,7 +222,10 @@ prenatal_stress[,c('pre_PR_percent_missing','pre_parental_risks')] <- domainscor
   'early_pregnancy',
   'm_depression_pre',
   'm_anxiety_pre',
-  'm_interpersonal_sensitivity_pre')]) 
+  'm_interpersonal_sensitivity_pre',
+  'p_depression_pre',
+  'p_anxiety_pre',
+  'p_interpersonal_sensitivity_pre')]) 
 
 
 

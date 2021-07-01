@@ -130,7 +130,7 @@ alspac.table$early_pregnancy <- ifelse(alspac.table$mz028bn < 19, yes = 1, no = 
 
 # m_depression_pregnancy
 #alspac.table$m_depression_pre	<- alspac.table$p12 # maternal psychopathology
-alspac.table$m_depression_pre <- alspac.table$b371a_rec # EPDS (>=13 risk, <13 no risk)
+alspac.table$m_depression_pre <- alspac.table$b371a_rec # EPDS (>12 risk, <12 no risk)
 #In previous lit, a total score of 13 or more is considered a flag for the need for follow up of possible depressive symptoms.
 
 
@@ -138,6 +138,7 @@ alspac.table$m_depression_pre <- alspac.table$b371a_rec # EPDS (>=13 risk, <13 n
 alspac.table$m_anxiety_pre	<- repmeas(alspac.table[,c('b351a_rec', 'c573a_rec')]) # CCEI anxiety subscale (complete) 18w gest, 32w gest 
 # (this the only collapse across time exception due to it being the only variable from the prenatal score measured twice in pregnancy)
 # cor(alspac.table$b351a_rec, alspac.table$c573a_rec, use='complete.obs') # 0.4625
+
 
 # m_interpersonal_sensitivity, 80th percentile (Interpersonal awareness score)
 
@@ -159,31 +160,14 @@ data.frame(alspac.table$m_interpersonal_sensitivity_pre, alspac.table$b916) # lo
 # PARTNER 
 
 # p_depression_pre
-alspac.table$p_depression_pre <- alspac.table$pb261a_rec # EPDS total score partner mode imputed (>=13 risk, <13 no risk) [check if this split applies for males]
+alspac.table$p_depression_pre <- alspac.table$pb261a_rec # EPDS total score partner mode imputed (>12 risk, <=12 no risk) based on ALSPAC FAI documentation
+
 
 # p_anxiety_pre
-alspac.table$p_anxiety_pre <- alspac.table$pb234a_rec # CCEI anxiety subscale II partner [9 to 16 (based on previous lit. cut-off) but check if applies to males]
+alspac.table$p_anxiety_pre <- alspac.table$pb234a_rec # CCEI anxiety subscale II partner >8 is risk, <= 8 no risk
 
-
-# p_interpersonal_sensitivity, using 80th percentile
-
-# Higher scores = greater interpersonal sensitivity, based on items such as 'feel insecure when saying goodbye'
-
-# checking the distribution, since normally distributed, 80th percentile
-plot(alspac.table$pb551) 
-
-# changing a factor to numeric without changing values 
-alspac.table$pb551 <- as.numeric(levels(alspac.table$pb551))[alspac.table$pb551] 
-quantile(alspac.table$pb551, .8, na.rm = T) # 80th percentile is 95
-
-
-alspac.table$p_interpersonal_sensitivity_pre <- ifelse(alspac.table$pb551 >= 95, 1, 
-                                                   ifelse(alspac.table$pb551 < 95, 0, NA)) 
-
-# checking if recoding worked
-data.frame(alspac.table$p_interpersonal_sensitivity_pre, alspac.table$pb551) # looks good
-
-
+# p_interpersonal_sensitivity_pre
+alspac.table$p_interpersonal_sensitivity_pre <- alspac.table$pb551a_rec # 80th percentile
 
 ####################################################################################################################################################
 

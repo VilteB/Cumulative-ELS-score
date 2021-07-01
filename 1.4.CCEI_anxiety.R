@@ -192,9 +192,10 @@ table(alspac.table$CCEI_total_6y, exclude = NULL) # looks okay, 7066 NA
 #b351 to b351a_rec
 levels(alspac.table$b351) 
 
-alspac.table$b351a_rec <- ifelse(alspac.table$b351 %in% c(0:8), 0, ifelse(alspac.table$b351 %in% c(9:16), 1, NA))
+alspac.table$b351a_rec <- ifelse(alspac.table$b351 %in% c(0:8), 0, 
+                                 ifelse(alspac.table$b351 %in% c(9:16), 1, NA)) # CCEI anxiety subscale
 
-                                                                                                                                                          ifelse(alspac.table$b351 == "very anxious", 1, NA)))) 
+                                                                                                                                                        
 # checking if recoding worked
 data.frame(alspac.table$b351, alspac.table$b351a_rec) # looks good
 
