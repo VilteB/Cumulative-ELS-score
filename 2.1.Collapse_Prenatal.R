@@ -108,9 +108,12 @@ alspac.table$m_education_pre <- ifelse(alspac.table$c645a %in% c("CSE", "Vocatio
 
 #criminal_record_parent_pre
 alspac.table$p14n <- as.numeric(as.character(p14))
-alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n')]) #	In trouble with the law since PREG, Convicted of an offence since PREG, Crime trouble with police
 
-criminal_record_partner_pre	b586a_rec, pb188a_rec	 PTNR in trouble with law since PREG |  Convicted of an offence since PREG 
+#original:
+#alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n')]) #	In trouble with the law since PREG, Convicted of an offence since PREG, Crime trouble with police
+
+#partner vars added:
+alspac.table$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n', 'b586a_rec', 'pb188a_rec')]) #	In trouble with the law since PREG, Convicted of an offence since PREG, Crime trouble with police |  PTNR in trouble with law since PREG |  P convicted of an offence since PREG 
 
 
 #m_attempted_suicide_pre
