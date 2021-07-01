@@ -49,7 +49,7 @@ ELS_PCM <- Reduce(function(x,y) merge(x = x, y = y, by = c('cidB2957', 'qlet'), 
 ## -------------------- Exclude participants (flowchart) -------------------- ##
 ################################################################################
 
-initial_sample <- nrow(ELS_PCM) # 15442
+initial_sample <- nrow(ELS_PCM) 
 
 ## First exclusion step: remove participants whose missing value frequency is too high. 
 ## (i.e > 50% missing) for each developmental period. 
@@ -57,12 +57,12 @@ initial_sample <- nrow(ELS_PCM) # 15442
 # Exclude children with high missingness in the prenatal period
 prenatal_miss50 <- ELS_PCM[ELS_PCM$pre_percent_missing < 50,]
 after_prenatal <- nrow(prenatal_miss50)
-sub1 <- after_prenatal - initial_sample # -3515
+sub1 <- after_prenatal - initial_sample 
 
 # Exclude children with high missingness in the postnatal period
 postnatal_miss50 <- prenatal_miss50[prenatal_miss50$post_percent_missing < 50,]
 after_postnatal <- nrow(postnatal_miss50)
-sub2 <- after_postnatal - after_prenatal # -3006
+sub2 <- after_postnatal - after_prenatal 
 
 ## Second step: excluded children with missing internalizing or { CMR scores }. 
 
@@ -70,27 +70,36 @@ sub2 <- after_postnatal - after_prenatal # -3006
 
 ################ for ALSPAC: do separately per time point ###############
 
+# NOTE: DECIDED NOT TO EXCLUDE BASED ON OUTCOMES BEFORE IMPUTATION SO COMMENTING BELOW SECTION OUT
+
+
 postnatal_miss50$intern_score_z=postnatal_miss50$intern_score_z.10y
 
-intern_miss <- postnatal_miss50[!is.na(postnatal_miss50$intern_score_z),] 
-after_intern <- nrow(intern_miss)
-sub3 <- after_intern - after_postnatal # -2564
+#intern_miss <- postnatal_miss50[!is.na(postnatal_miss50$intern_score_z),] 
+#after_intern <- nrow(intern_miss)
+#sub3 <- after_intern - after_postnatal 
 
-intern_miss$fat_mass_z=intern_miss$fat_mass_z.10y
+
+#intern_miss$fat_mass_z=intern_miss$fat_mass_z.10y
+postnatal_miss50$fat_mass_z=postnatal_miss50$fat_mass_z.10y
 
 # Exclude children with missing { CMR score } fat mass*
-cmr_miss <- intern_miss[!is.na(intern_miss$fat_mass_z),] 
-after_cmr <- nrow(cmr_miss)
-sub4 <- after_cmr - after_intern # -1362
+#cmr_miss <- intern_miss[!is.na(intern_miss$fat_mass_z),] 
+#after_cmr <- nrow(cmr_miss)
+#sub4 <- after_cmr - after_intern 
 
 ## Third step: exclude all twins and select the sibling with better data 
 
 # Exclude twins
-no_twins <- cmr_miss[cmr_miss$twin == 0, ]
+#no_twins <- cmr_miss[cmr_miss$twin == 0, ]
+#no_twins <- no_twins[!(is.na(no_twins$twin)), ]
+
+# Exclude twins
+no_twins <- postnatal_miss50[postnatal_miss50$twin == 0, ]
 no_twins <- no_twins[!(is.na(no_twins$twin)), ]
 
 after_twins <- nrow(no_twins)
-sub5 <- after_twins - after_cmr # -165 
+sub5 <- after_twins - after_postnatal
 
 # # below not done for ALSPAC
 # 
@@ -133,11 +142,15 @@ sub5 <- after_twins - after_cmr # -165
 #final <- no_twins[no_twins$IDC %notin% worse_sibling, ]
 final <- no_twins
 after_siblings <- nrow(final)
-sub6 <- after_siblings - after_twins  # 0
+sub6 <- after_siblings - after_twins 
 
 # Flowchart
-flowchart <- list(initial_sample, sub1, after_prenatal, sub2, after_postnatal, sub3, 
-                  after_intern, sub4, after_cmr, sub5, after_twins, sub6, after_siblings)  # 4830 participants
+#flowchart <- list(initial_sample, sub1, after_prenatal, sub2, after_postnatal, sub3, 
+#                  after_intern, sub4, after_cmr, sub5, after_twins, sub6, after_siblings)  # 4830 participants
+
+# Flowchart without excluding outcomes
+flowchart <- list(initial_sample, sub1, after_prenatal, sub2, after_postnatal,
+                   sub5, after_twins, sub6, after_siblings)  
 
 # Rename final dataset:
 ELS_PCM <- final
@@ -147,17 +160,24 @@ cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"partic
 #### ------------------- Construct RISK GROUPS variable ------------------- ####
 ################################################################################
 
-# Compute groups 
+# Compute groups
 
-ELS_PCM$int = ifelse(ELS_PCM$intern_score_z > quantile(ELS_PCM$intern_score_z, probs = 0.8), 1, 0) #  186 risk, 4644 no risk 
-ELS_PCM$fat = ifelse(ELS_PCM$fat_mass_z > quantile(ELS_PCM$fat_mass_z, probs = 0.8), 1, 0) # 966 risk, 3864 no risk
+#below gives an error: 'missing values and NaN's not allowed if 'na.rm' is FALSE'
+#this is because we didn't exclude participants based on outcomes, so unless we set na.rm=T, we cannot calculate  the risk groups
+#I am therefore setting na.rm=T, which means that participants with NA for the outcome will be NA for risk_group
+ELS_PCM$int = ifelse(ELS_PCM$intern_score_z > quantile(ELS_PCM$intern_score_z, probs = 0.8, na.rm=TRUE), 1, 0) 
+ELS_PCM$fat = ifelse(ELS_PCM$fat_mass_z > quantile(ELS_PCM$fat_mass_z, probs = 0.8, na.rm=TRUE), 1, 0) 
 
 ELS_PCM$risk_groups = rep(NA, after_siblings)
 for (i in 1:after_siblings) {
   if (ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 0) { ELS_PCM$risk_groups[i] = 0 # healthy
   } else if (ELS_PCM$int[i] == 1 & ELS_PCM$fat[i] == 0) { ELS_PCM$risk_groups[i] = 1 # High intenalizing  only
   } else if (ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 1) { ELS_PCM$risk_groups[i] = 2 # High fat mass only
-  } else { ELS_PCM$risk_groups[i] = 3 } # multimorbid
+  } else if (ELS_PCM$int[i] == 1 & ELS_PCM$fat[i] == 1) { ELS_PCM$risk_groups[i] = 3 # multimorbid
+  } else if (ELS_PCM$int[i] == 'NA' & ELS_PCM$fat[i] == 'NA') { ELS_PCM$risk_groups[i] = 'NA' # missing
+  } else if (ELS_PCM$int[i] == 1 || ELS_PCM$int[i] == 0 & ELS_PCM$fat[i] == 'NA') { ELS_PCM$risk_groups[i] = 'NA' # missing
+  } else if (ELS_PCM$int[i] == 'NA' & ELS_PCM$fat[i] == 1 || ELS_PCM$fat[i] == 0 ) { ELS_PCM$risk_groups[i] = 'NA' # missing
+  } else { ELS_PCM$risk_groups[i] = 'NA' }
 }
 
 ELS_PCM$risk_groups = as.factor(ELS_PCM$risk_groups)

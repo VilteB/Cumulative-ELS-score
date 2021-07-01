@@ -536,7 +536,7 @@ alspac.table$m_attempted_suicide_9y <- alspac.table$p2028_rec
 # Because mz028b is a factor, we use as.character before as.numeric.
 # Factors are stored internally as integers with a table to give the factor level labels.
 
-alspac.table$mz028bn <- as.numeric(as.character(alspac.table$mz028b))
+alspac.table$mz028bn <- as.numeric(as.character(alspac.table$mz028b)) # Error comes up that NAs introduced by coercion because 'consent withdrawn by mother' becomes NA (it is expected)
 alspac.table$m_age <- ifelse(alspac.table$mz028bn < 19, yes = 1, no = 0)  # mother age younger than 19 at baseline based on Cecil et al. (2014); Rijlaarsdam et al. (2016)
 
 
@@ -633,25 +633,15 @@ alspac.table$p_interpersonal_sensitivity <- alspac.table$p_interpersonal_sensiti
 
 # SECTION 1
 
-# divorce_childhood (also splitting to separate variables to align with the prenatal script)
-#alspac.table$divorce_childhood_8wk <- repmeas(alspac.table[,c('e408a_rec', 'e409a_rec', 'e415a_rec')]) # Divorced, Partner rejected child, Partner went away
-#alspac.table$divorce_childhood_8m <- repmeas(alspac.table[,c('f228a_rec', 'f229a_rec', 'f235a_rec')]) # Divorced, Partner rejected child, Partner went away
-#alspac.table$divorce_childhood_21m <- repmeas(alspac.table[,c('g308a_rec', 'g309a_rec', 'g315a_rec')]) # Divorced, Partner rejected child, Partner went away
-#alspac.table$divorce_childhood_3y <- repmeas(alspac.table[,c('h218a_rec', 'h219a_rec', 'h225a_rec')]) # Divorced, Partner rejected child, Partner went away
-#alspac.table$divorce_childhood_4y <- repmeas(alspac.table[,c('j308a_rec', 'j309a_rec', 'j315a_rec')]) # Divorced, Partner rejected child, Partner went away
-#alspac.table$divorce_childhood_5y <- repmeas(alspac.table[,c('k4008a_rec', 'k4009a_rec', 'k4015a_rec')]) # Divorced, Partner rejected child, Partner went away
-#alspac.table$divorce_childhood_6y <- repmeas(alspac.table[,c('l4008a_rec', 'l4009a_rec', 'l4015a_rec')]) # Divorced, Partner rejected child, Partner went away
-#alspac.table$divorce_childhood_9y <- repmeas(alspac.table[,c('p2008_rec', 'p2009_rec', 'p2015_rec')]) # Divorced, Partner rejected child, Partner went away
-
 # Divorce
 alspac.table$divorce_8wk <- alspac.table$e417a_rec # Respondent separated from partner
-alspac.table$divorce_8m	<- repmeas(alspac.table[,c(f228a_re, f237a_rec)]) # divorced, Respondent separated from partner
-alspac.table$divorce_21m <- repmeas(alspac.table[,c(g308a_rec, g317a_rec)]) # divorced, Respondent separated from partner
-alspac.table$divorce_3y	<- repmeas(alspac.table[,c(h218a_rec, h227a_rec)]) # divorced, Respondent separated from partner
-alspac.table$divorce_4y <- repmeas(alspac.table[,c(j308a_rec, j317a_rec)]) # divorced, Respondent separated from partner
-alspac.table$divorce_5y	<- repmeas(alspac.table[,c(k4008a_rec, k4017a_rec)]) # divorced, Respondent separated from partner
-alspac.table$divorce_6y	<- repmeas(alspac.table[,c(l4008a_rec, l4017a_rec)]) # divorced, Respondent separated from partner
-alspac.table$divorce_9y	<- repmeas(alspac.table[,c(p2008_rec, p2017_rec)]) # divorced, Respondent separated from partner
+alspac.table$divorce_8m	<- repmeas(alspac.table[,c('f228a_rec', 'f237a_rec')]) # divorced, Respondent separated from partner
+alspac.table$divorce_21m <- repmeas(alspac.table[,c('g308a_rec', 'g317a_rec')]) # divorced, Respondent separated from partner
+alspac.table$divorce_3y	<- repmeas(alspac.table[,c('h218a_rec', 'h227a_rec')]) # divorced, Respondent separated from partner
+alspac.table$divorce_4y <- repmeas(alspac.table[,c('j308a_rec', 'j317a_rec')]) # divorced, Respondent separated from partner
+alspac.table$divorce_5y	<- repmeas(alspac.table[,c('k4008a_rec', 'k4017a_rec')]) # divorced, Respondent separated from partner
+alspac.table$divorce_6y	<- repmeas(alspac.table[,c('l4008a_rec', 'l4017a_rec')]) # divorced, Respondent separated from partner
+alspac.table$divorce_9y	<- repmeas(alspac.table[,c('p2008_rec', 'p2017_rec')]) # divorced, Respondent separated from partner
 
 
 # Partner rejected child 
