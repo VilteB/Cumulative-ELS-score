@@ -195,7 +195,7 @@ pheatmap(as.matrix(missingpattern$mm), display_numbers = T, number_format = "%.0
 # a version-specific issue)
 
 
-ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 
+ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 'qlet' 
                                  # all variables for prenatal risk
                                  'partner_died_pre',	'smbd_important_died_pre',	'smbd_important_ill_pre',	'sick_or_accident_pre',	'moved_pre',	'blood_loss',	'pregnancy_worried',	'baby_worried',	'burglary_or_car_theft_pre',	'work_problems_pre', 'abortion_pre',	'married_pre', 'unemployed_pre', #LE
                                  'income_reduced_pre',	'homeless_pregnancy',	'major_financial_problems_pre',	'housing_adequacy_pre',	'housing_basic_living_pre',	'housing_defects_pre',	'm_education_pre',	#CR
