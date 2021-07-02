@@ -16,10 +16,10 @@
 # Point to useful libraries
 library(pheatmap) # optional 
 
-# load data from previous scripts
-#load("PCM_project.RData")
-#load('postnatal_stress_collapsed.RData')
+#load data from previous scripts
 #load('prenatal_stress.RData')
+#load('postnatal_stress.RData')
+#load('PCM_project.RData')
 
 # This will come in handy for exclusion
 '%notin%' <- Negate('%in%')
@@ -28,12 +28,7 @@ library(pheatmap) # optional
 #if (exists("pathtodata") == F) { pathtodata = readline(prompt="Enter path to data: ") }
 
 ################################################################################
-# Load datasets
-# pre_risk <- readRDS(paste(pathtodata, 'prenatal_stress.rds', sep = ""))
-# post_risk <- readRDS(paste(pathtodata, 'postnatal_stress.rds', sep = ""))
-# outcome <- readRDS(paste(pathtodata,'PCM_allvars.rds', sep = ""))
-
-
+#rename
 pre_risk <- prenatal_stress
 post_risk <- postnatal_stress
 outcome <- PCM_project
@@ -54,103 +49,56 @@ initial_sample <- nrow(ELS_PCM)
 ## First exclusion step: remove participants whose missing value frequency is too high. 
 ## (i.e > 50% missing) for each developmental period. 
 
-# Exclude children with high missingness in the prenatal period
+# Exclude children with high missingness (> 50% missing) in the prenatal period
 prenatal_miss50 <- ELS_PCM[ELS_PCM$pre_percent_missing < 50,]
 after_prenatal <- nrow(prenatal_miss50)
 sub1 <- after_prenatal - initial_sample 
 
-# Exclude children with high missingness in the postnatal period
+# Exclude children with high missingness (> 50% missing) in the postnatal period
 postnatal_miss50 <- prenatal_miss50[prenatal_miss50$post_percent_missing < 50,]
 after_postnatal <- nrow(postnatal_miss50)
 sub2 <- after_postnatal - after_prenatal 
 
-## Second step: excluded children with missing internalizing or { CMR scores }. 
-
-# Exclude children with missing internalizing score
-
-################ for ALSPAC: do separately per time point ###############
-
-# NOTE: DECIDED NOT TO EXCLUDE BASED ON OUTCOMES BEFORE IMPUTATION SO COMMENTING BELOW SECTION OUT
-
-
-postnatal_miss50$intern_score_z=postnatal_miss50$intern_score_z.10y
-
-#intern_miss <- postnatal_miss50[!is.na(postnatal_miss50$intern_score_z),] 
-#after_intern <- nrow(intern_miss)
-#sub3 <- after_intern - after_postnatal 
-
-
-#intern_miss$fat_mass_z=intern_miss$fat_mass_z.10y
-postnatal_miss50$fat_mass_z=postnatal_miss50$fat_mass_z.10y
-
-# Exclude children with missing { CMR score } fat mass*
-#cmr_miss <- intern_miss[!is.na(intern_miss$fat_mass_z),] 
-#after_cmr <- nrow(cmr_miss)
-#sub4 <- after_cmr - after_intern 
-
-## Third step: exclude all twins and select the sibling with better data 
-
-# Exclude twins
-#no_twins <- cmr_miss[cmr_miss$twin == 0, ]
-#no_twins <- no_twins[!(is.na(no_twins$twin)), ]
-
 # Exclude twins
 no_twins <- postnatal_miss50[postnatal_miss50$twin == 0, ]
-no_twins <- no_twins[!(is.na(no_twins$twin)), ]
+no_twins <- no_twins[!(is.na(no_twins$twin)), ] 
 
-after_twins <- nrow(no_twins)
-sub5 <- after_twins - after_postnatal
+after_twins <- nrow(no_twins) # 8736 
+sub3 <- after_twins - after_postnatal 
 
-# # below not done for ALSPAC
-# 
-# # Select only one sibling (based on data availability or randomly).
-# # First, I determine a list of mothers that have more than one child in the set.
-# # NOTE: duplicated() is the best option I could find to determine which mother IDs
-# # recur more than once (very non-elegant, tbh, but using table() gets even uglier)
-# siblings_id = data.frame(no_twins$mother[duplicated(no_twins$mother)])
-# # duplicated() funtion does not allow to ignore NAs so I remove them manually.
-# # I also transform the numeric vector into a dataframe because of indexing problems.
-# siblings_id = siblings_id[!is.na(siblings_id),]; siblings_id = data.frame(siblings_id);
-# # Second, I create an empty vector to fill with the IDC of the sibling(s) with more 
-# # missing items or with a randomly picked sibling in case they have the same nr of missing. 
-# worse_sibling = rep(NA, dim(siblings_id)[1] + 1) # I will need the "+1" for triplets! 
-# # Loop through the mother IDs I previously identified and link them to IDCs
-# for (i in 1:dim(siblings_id)[1]) {
-#   siblings = no_twins[no_twins$mother == siblings_id[i,1], ] # identify the couples of siblings
-#   # For some reason when I run the line above 2 rows of NAs are created too, go figure. 
-#   # Let's get rid of them:
-#   siblings = siblings[rowSums(is.na(siblings)) != ncol(siblings), ]
-#   # There is one mother with 3 siblings, let's select the "best" one and get rid of the other two
-#   if (dim(siblings)[1] > 2) {
-#     nmiss = c( sum(is.na(siblings[1,])), sum(is.na(siblings[2,])), sum(is.na(siblings[3,])) )
-#     if (which.min(nmiss) == 1) { worse_sibling[i] = siblings[2,'IDC']
-#     worse_sibling[dim(siblings_id)[1] + 1] = siblings[3,'IDC']
-#     } else if (which.min(nmiss) == 2) { worse_sibling[i] = siblings[1,'IDC']
-#     worse_sibling[dim(siblings_id)[1] + 1] = siblings[3,'IDC']
-#     } else { worse_sibling[i] = siblings[1,'IDC'] 
-#     worse_sibling[dim(siblings_id)[1] + 1] = siblings[2,'IDC'] }
-#   }
-#   # otherwise, select the "worse" sibling (with more missing) and add to it the the black list
-#   if ( sum(is.na(siblings[1,])) > sum(is.na(siblings[2,])) ) {
-#     worse_sibling[i] = siblings[1,'IDC']
-#   } else if ( sum(is.na(siblings[1,])) == sum(is.na(siblings[2,])) ) {
-#     worse_sibling[i] = siblings[sample(1:2, 1),'IDC']
-#   } else { worse_sibling[i] = siblings[2,'IDC'] }
-# }
+# check how many duplicated IDs remain after removing twins
+sum(duplicated(no_twins$cidB2957)) # 108 duplicated IDs
 
-# Now we are finally ready to exclude siblings
-#final <- no_twins[no_twins$IDC %notin% worse_sibling, ]
-final <- no_twins
+# Exclude siblings (based on data availability and if data availability is same, select at random)
+
+# create a new columnn with child ID (ch_id)
+no_twins_id <- no_twins %>% mutate(ch_id = paste(cidB2957, qlet, sep = '_'))
+
+# Identify mothers registered with more than one child
+# 'fromLast = TRUE' specifies that "duplication should be considered from the reverse side"
+# #This way both duplicated values are set to TRUE (rather than just the second occurence)
+ind <- duplicated(no_twins_id$cidB2957) | duplicated(no_twins_id$cidB2957, fromLast = TRUE) 
+
+# selects mothers with duplicated IDs 
+no_twins_duplic <- no_twins_id[ind,]
+
+# counts number of NA per row and saves the result in a column called 'miss'
+no_twins_duplic <- no_twins_duplic %>% mutate(miss = rowSums(is.na(no_twins_duplic), dims = 1))
+
+# filter for participants with greater proportion of missing data (if number of NA is the same, slice_sample selects a random row)
+remove <- no_twins_duplic %>% group_by(cidB2957) %>% filter(miss==max(miss)) %>% slice_sample(n = 1) # this results in 108 siblings to be excluded 
+
+# removes siblings with greater proportion of missing data from the main dataset
+main_data <- no_twins_id [ ! no_twins_id$ch_id %in% remove$ch_id, ]
+dim(main_data) # as expected
+
+final <- main_data 
 after_siblings <- nrow(final)
-sub6 <- after_siblings - after_twins 
-
-# Flowchart
-#flowchart <- list(initial_sample, sub1, after_prenatal, sub2, after_postnatal, sub3, 
-#                  after_intern, sub4, after_cmr, sub5, after_twins, sub6, after_siblings)  # 4830 participants
+sub4 <- after_siblings - after_twins 
 
 # Flowchart without excluding outcomes
 flowchart <- list(initial_sample, sub1, after_prenatal, sub2, after_postnatal,
-                   sub5, after_twins, sub6, after_siblings)  
+                   sub3, after_twins, sub4, after_siblings)  
 
 # Rename final dataset:
 ELS_PCM <- final
@@ -165,8 +113,8 @@ cat(paste("Well, congrats! Your final dataset includes", after_siblings ,"partic
 #below gives an error: 'missing values and NaN's not allowed if 'na.rm' is FALSE'
 #this is because we didn't exclude participants based on outcomes, so unless we set na.rm=T, we cannot calculate the risk groups
 #I am therefore setting na.rm=T, which means that participants with missing internalising score and/or fat mass will remain NA
-ELS_PCM$int = ifelse(ELS_PCM$intern_score_z > quantile(ELS_PCM$intern_score_z, probs = 0.8, na.rm=TRUE), 1, 0) 
-ELS_PCM$fat = ifelse(ELS_PCM$fat_mass_z > quantile(ELS_PCM$fat_mass_z, probs = 0.8, na.rm=TRUE), 1, 0) 
+ELS_PCM$int = ifelse(ELS_PCM$intern_score_z.10y > quantile(ELS_PCM$intern_score_z.10y, probs = 0.8, na.rm=TRUE), 1, 0) 
+ELS_PCM$fat = ifelse(ELS_PCM$fat_mass_z.10y > quantile(ELS_PCM$fat_mass_z.10y, probs = 0.8, na.rm=TRUE), 1, 0) 
 
 # this function ignores the missing values, for example, if int = 1 but fat mass = NA, participant will be assigned a 1
 # and if int = NA and fat mass = 1, participant will be assigned a 2 
@@ -182,6 +130,8 @@ ELS_PCM$risk_groups = ifelse((is.na(ELS_PCM$int) & ELS_PCM$fat == 1),2,
 ELS_PCM$risk_groups = as.factor(ELS_PCM$risk_groups)
 
 summary(ELS_PCM$risk_groups) 
+#0      1   2      3   NA's 
+#5606  211 1075   50  1686 
                                                                                                     
 # creating a data frame to explore risk group values next to original variables 
 data.frame(ELS_PCM$int, ELS_PCM$fat, ELS_PCM$risk_groups) # looks good
@@ -245,7 +195,7 @@ pheatmap(as.matrix(missingpattern$mm), display_numbers = T, number_format = "%.0
 # a version-specific issue)
 
 
-ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 
+ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 'qlet' 
                                  # all variables for prenatal risk
                                  'partner_died_pre',	'smbd_important_died_pre',	'smbd_important_ill_pre',	'sick_or_accident_pre',	'moved_pre',	'blood_loss',	'pregnancy_worried',	'baby_worried',	'burglary_or_car_theft_pre',	'work_problems_pre', 'abortion_pre',	'married_pre', 'unemployed_pre', #LE
                                  'income_reduced_pre',	'homeless_pregnancy',	'major_financial_problems_pre',	'housing_adequacy_pre',	'housing_basic_living_pre',	'housing_defects_pre',	'm_education_pre',	#CR
@@ -282,8 +232,8 @@ ELS_PCM_essentials = ELS_PCM[, c('cidB2957',
                                  # cumulative prenatal and postnatal stress exposure
                                  'prenatal_stress', 'postnatal_stress', 
                                  # outcome variables and covariates
-                                 'intern_score_z', #'intern_score_z.10y', 'intern_score_z.13y', 'intern_score_z.15y', 'intern_score_z.17y', 'intern_score_z.22y', 
-                                 'fat_mass_z', #'fat_mass_z.10y', 'fat_mass_z.13y', 'fat_mass_z.15y', 'fat_mass_z.17y', 'fat_mass_z.24y', 
+                                 'intern_score_z.10y', # 'intern_score_z.13y', 'intern_score_z.15y', 'intern_score_z.17y', 'intern_score_z.22y', 
+                                 'fat_mass_z.10y', # 'fat_mass_z.13y', 'fat_mass_z.15y', 'fat_mass_z.17y', 'fat_mass_z.24y', 
                                  'risk_groups',
                                  'sex', 'age_child.10y', #'age_child.13y', 'age_child.15y', 'age_child.17y', 'age_child.23y',
                                  'm_bmi_before_pregnancy', 'm_smoking', 'm_drinking',
@@ -318,7 +268,7 @@ ELS_PCM_essentials = ELS_PCM[, c('cidB2957',
 save(ELS_PCM_essentials, file = 'ELSPCM_dataset.RData')
 
 # Saving all (not just essentials)
-#save(ELS_PCM, file ="ELSPCM_all.RData")
+save(ELS_PCM, file ="ELSPCM_all.RData")
 
 
 
