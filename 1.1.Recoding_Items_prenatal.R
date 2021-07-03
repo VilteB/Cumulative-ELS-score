@@ -408,18 +408,25 @@ corbetw2mat(data.matrix(IR_prenatal_continuous), IR_prenatal_binary, what = "pai
 
 ####################################################################################################################################################
 
-# Recoding prenatal depression variable for mother 
+# Recoding prenatal depression variables for mother 
+# EPDS total score mother mode imputed (>12 risk, <=12 no risk) based on ALSPAC FAI documentation
 alspac.table$b371n <- as.character(alspac.table$b371) # not adding as.numeric to avoid converting labels
-alspac.table$b371a_rec  <- ifelse(alspac.table$b371n %in% c(13:28), 1,
+alspac.table$b371a_rec  <- ifelse(alspac.table$b371n %in% c(13:29), 1,
                                   ifelse(alspac.table$b371n == 'very depressed', 1, 
                                          ifelse(alspac.table$b371n %in% c(1:12), 0,
                                                 ifelse(alspac.table$b371n == 'not depressed', 0, NA))))
+
+alspac.table$c601n <- as.character(alspac.table$c601) # not adding as.numeric to avoid converting labels
+alspac.table$c601a_rec  <- ifelse(alspac.table$c601n %in% c(13:29), 1,
+                                  ifelse(alspac.table$c601n == 'very depressed', 1, 
+                                         ifelse(alspac.table$c601n %in% c(1:12), 0,
+                                                ifelse(alspac.table$c601n == 'not depressed', 0, NA))))
 
 
 # Recoding prenatal depression variable for partner (EPDS)
 # EPDS total score partner mode imputed (>12 risk, <=12 no risk) based on ALSPAC FAI documentation
 alspac.table$pb261n <- as.numeric(as.character(alspac.table$pb261))
-alspac.table$pb261a_rec  <- ifelse(alspac.table$pb261n %in% c(13:27), 1,
+alspac.table$pb261a_rec  <- ifelse(alspac.table$pb261n %in% c(13:29), 1,
                                    ifelse(alspac.table$pb261n %in% c(0:12), 0, NA)) 
 
 # Recoding prenatal anxiety variable for partner (CCEI)

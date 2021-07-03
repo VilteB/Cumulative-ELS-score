@@ -550,25 +550,33 @@ alspac.table$p_age <- ifelse(alspac.table$pb910n < 19, yes = 1, no = 0) # partne
 
 # m_depression
 
-alspac.table$m_depression_8m <- alspac.table$f021a_rec # had depression
-alspac.table$m_depression_21m <- alspac.table$g021a_rec # had depression
-alspac.table$m_depression_3y <- alspac.table$h013a_rec # had depression
+#alspac.table$m_depression_8m <- alspac.table$f021a_rec # had depression
+#alspac.table$m_depression_21m <- alspac.table$g021a_rec # had depression
+#alspac.table$m_depression_3y <- alspac.table$h013a_rec # had depression
+#alspac.table$m_depression_4y <- alspac.table$j012a_rec # had depression
+#alspac.table$m_depression_5y <- alspac.table$k1011a_rec # had depression
+#alspac.table$m_depression_6y <- alspac.table$l3011a_rec # had depression
+#alspac.table$m_depression_9y <- alspac.table$p1011a_rec # had depression
+
+# m_depression
+alspac.table$m_depression_8wk <- alspac.table$e391a_rec # EPDS total score
+alspac.table$m_depression_8m <- repmeas(alspac.table[,c('f021a_rec', 'f201a_rec')])# had depression, EPDS total score
+alspac.table$m_depression_21m <- repmeas(alspac.table[,c('g021a_rec', 'g291a_rec')]) # had depression, EPDS total score
+alspac.table$m_depression_3y <- repmeas(alspac.table[,c('h013a_rec', 'h200ba_rec')]) # had depression, EPDS total score
 alspac.table$m_depression_4y <- alspac.table$j012a_rec # had depression
-alspac.table$m_depression_5y <- alspac.table$k1011a_rec # had depression
+alspac.table$m_depression_5y <- repmeas(alspac.table[,c('k1011a_rec', 'm_EPDS_total_5ya_rec')])  # had depression,  EPDS total score  5y
 alspac.table$m_depression_6y <- alspac.table$l3011a_rec # had depression
-alspac.table$m_depression_9y <- alspac.table$p1011a_rec # had depression
+alspac.table$m_depression_9y <- repmeas(alspac.table[,c('p1011a_rec', 'm_EPDS_total_8ya_rec')]) # had depression, EPDS total score 8y
 
 # p_depression (lots of NAs)
-
-alspac.table$p_depression_8m <- alspac.table$pd021a_rec # had depression
-alspac.table$p_depression_21m <- alspac.table$pe021a_rec # had depression
-alspac.table$p_depression_3y <- alspac.table$pf1011a_rec # had depression
+alspac.table$p_depression_8wk <- alspac.table$pc103a_rec #  EPDS total score 
+alspac.table$p_depression_8m <- repmeas(alspac.table[,c('pd021a_rec', 'pd201a_rec')]) # had depression, EPDS total score  
+alspac.table$p_depression_21m <- repmeas(alspac.table[,c('pe021a_rec', 'pe291a_rec')]) # had depression, EPDS total score 
+alspac.table$p_depression_3y <- repmeas(alspac.table[,c('pf1011a_rec', 'p_EPDS_total_3ya_rec')]) # had depression, EPDS total score
 alspac.table$p_depression_4y <- alspac.table$pg1011a_rec # had depression
-alspac.table$p_depression_5y <- alspac.table$ph1011a_rec # had depression
-alspac.table$p_depression_6y <- alspac.table$pj3011a_rec # had depression
-alspac.table$p_depression_8y <- alspac.table$pl1061a_rec # had depression
-alspac.table$p_depression_9y <- alspac.table$pm1011a_rec # had depression
-
+alspac.table$p_depression_5y <- repmeas(alspac.table[,c('ph1011a_rec', 'p_EPDS_total_5ya_rec ')]) # had depression, EPDS total score
+alspac.table$p_depression_6y <- repmeas(alspac.table[,c('pj3011a_rec', 'p_EPDS_total_6ya_rec ')]) # had depression, EPDS total score
+alspac.table$p_depression_9y <- repmeas(alspac.table[,c('pl1061a_rec', 'pm1011a_rec')]) # had depression 8y, had depression 9y
 
 #################################################################################################################################################
 

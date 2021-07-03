@@ -130,7 +130,7 @@ alspac.table$early_pregnancy <- ifelse(alspac.table$mz028bn < 19, yes = 1, no = 
 
 # m_depression_pregnancy
 #alspac.table$m_depression_pre	<- alspac.table$p12 # maternal psychopathology
-alspac.table$m_depression_pre <- alspac.table$b371a_rec # EPDS (>12 risk, <12 no risk)
+alspac.table$m_depression_pre <- repmeas(alspac.table[,c('b371a_rec', 'c601a_rec')]) # EPDS (>12 risk, <12 no risk) 18wk and  32wk
 #In previous lit, a total score of 13 or more is considered a flag for the need for follow up of possible depressive symptoms.
 
 
