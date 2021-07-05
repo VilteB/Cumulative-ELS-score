@@ -195,7 +195,7 @@ pheatmap(as.matrix(missingpattern$mm), display_numbers = T, number_format = "%.0
 # a version-specific issue)
 
 
-ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 'qlet' 
+ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 'qlet', 
                                  # all variables for prenatal risk
                                  'partner_died_pre',	'smbd_important_died_pre',	'smbd_important_ill_pre',	'sick_or_accident_pre',	'moved_pre',	'blood_loss',	'pregnancy_worried',	'baby_worried',	'burglary_or_car_theft_pre',	'work_problems_pre', 'abortion_pre',	'married_pre', 'unemployed_pre', #LE
                                  'income_reduced_pre',	'homeless_pregnancy',	'major_financial_problems_pre',	'housing_adequacy_pre',	'housing_basic_living_pre',	'housing_defects_pre',	'm_education_pre',	#CR
@@ -216,7 +216,7 @@ ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 'qlet'
                                  'major_financial_problems_8wk',	'major_financial_problems_8m',	'major_financial_problems_21m',	'major_financial_problems_3y',	'major_financial_problems_4y',	'major_financial_problems_5y',	'major_financial_problems_6y',	'major_financial_problems_9y',	'm_education',	'p_education',	'neighbourhood_problems_21m',	'neighbourhood_problems_3y', # CR
                                  'criminal_record_parent_8wk',	'criminal_record_parent_8m',	'criminal_record_parent_21m',	'criminal_record_parent_3y',	'criminal_record_parent_4y',	'criminal_record_parent_5y',	'criminal_record_parent_6y',	'criminal_record_parent_9y',	'miscarriage_or_abortion_8wk',	'miscarriage_or_abortion_8m',	'miscarriage_or_abortion_21m',	
                                  'miscarriage_or_abortion_3y',	'miscarriage_or_abortion_4y',	'miscarriage_or_abortion_5y',	'miscarriage_or_abortion_6y',	'miscarriage_or_abortion_9y',	'm_attempted_suicide_8wk',	'm_attempted_suicide_8m',	'm_attempted_suicide_21m',	'm_attempted_suicide_3y',	'm_attempted_suicide_4y',	'm_attempted_suicide_5y',	'm_attempted_suicide_6y',	
-                                 'm_attempted_suicide_9y',	'm_age',	'p_age',	'm_depression_8m',	'm_depression_21m',	'm_depression_3y',	'm_depression_4y',	'm_depression_5y',	'm_depression_6y',	'm_depression_9y',	'p_depression_8m',	'p_depression_21m',	'p_depression_3y',	'p_depression_4y',	'p_depression_5y',	'p_depression_6y',	'p_depression_8y',	'p_depression_9y',	
+                                 'm_attempted_suicide_9y',	'm_age',	'p_age', 'm_depression_8wk',	'm_depression_8m',	'm_depression_21m',	'm_depression_3y',	'm_depression_4y',	'm_depression_5y',	'm_depression_6y',	'm_depression_9y', 'p_depression_8wk',	'p_depression_8m',	'p_depression_21m',	'p_depression_3y',	'p_depression_4y',	'p_depression_5y',	'p_depression_6y',	'p_depression_9y',	
                                  'm_anxiety_8wk',	'm_anxiety_8m',	'm_anxiety_21m',	'm_anxiety_3y',	'm_anxiety_5y',	'm_anxiety_6y',	'p_anxiety_8m',	'p_anxiety_21m',	'p_anxiety_3y',	'p_anxiety_4y',	'p_anxiety_5y',	'p_anxiety_6y',	'p_anxiety_9y',	'm_interpersonal_sensitivity',	'p_interpersonal_sensitivity', # PR
                                  'divorce_8wk',	'divorce_8m',	'divorce_21m',	'divorce_3y',	'divorce_4y',	'divorce_5y',	'divorce_6y',	'divorce_9y',	'p_rejected_child_8wk',	'p_rejected_child_8m',	'p_rejected_child_21m',	'p_rejected_child_3y',	'p_rejected_child_4y',	'p_rejected_child_5y',	'p_rejected_child_6y',	'p_rejected_child_9y',	'p_went_away_8wk',	'p_went_away_8m',	
                                  'p_went_away_21m',	'p_went_away_3y',	'p_went_away_4y',	'p_went_away_5y',	'p_went_away_6y',	'p_went_away_9y',	'conflict_in_family_8wk',	'conflict_in_family_8m',	'conflict_in_family_21m',	'conflict_in_family_3y',	'conflict_in_family_4y',	'conflict_in_family_5y',	'conflict_in_family_6y',	'conflict_in_family_9y',	'conflict_family_violence_8wk',	
@@ -232,18 +232,17 @@ ELS_PCM_essentials = ELS_PCM[, c('cidB2957', 'qlet'
                                  # cumulative prenatal and postnatal stress exposure
                                  'prenatal_stress', 'postnatal_stress', 
                                  # outcome variables and covariates
-                                 'intern_score_z.10y', # 'intern_score_z.13y', 'intern_score_z.15y', 'intern_score_z.17y', 'intern_score_z.22y', 
-                                 'fat_mass_z.10y', # 'fat_mass_z.13y', 'fat_mass_z.15y', 'fat_mass_z.17y', 'fat_mass_z.24y', 
+                                 'intern_score_z.10y', 'intern_score_z.13y', 'intern_score_z.15y', 'intern_score_z.17y', 'intern_score_z.22y', 
+                                 'fat_mass_z.10y', 'fat_mass_z.13y', 'fat_mass_z.15y', 'fat_mass_z.17y', 'fat_mass_z.24y', 
                                  'risk_groups',
-                                 'sex', 'age_child.10y', #'age_child.13y', 'age_child.15y', 'age_child.17y', 'age_child.23y',
+                                 'sex', 'age_child.10y', 'age_child.13y', 'age_child.15y', 'age_child.17y', 'age_child.23y',
                                  'm_bmi_before_pregnancy', 'm_smoking', 'm_drinking',
                                  # additional auxiliary variables for imputation
                                  'ethnicity', 'parity', 'gest_age_birth', 'gest_weight', # 'm_bmi_pregnancy', 'm_bmi_5yrs'
-                                 'm_depression_pre', 'm_depression_8m', 'm_depression_21m', 'm_depression_3y', 'm_depression_4y',
+                                 'm_depression_pre', 'm_depression_8wk', 'm_depression_8m', 'm_depression_21m', 'm_depression_3y', 'm_depression_4y',
                                  'm_depression_5y', 'm_depression_6y', 'm_depression_9y', 
-                                 'p_depression_8m', 'p_depression_21m', 'p_depression_3y', 
-                                 'm_depression_4y','m_depression_5y', 'p_depression_6y', 
-                                 'p_depression_8y', 'p_depression_9y',
+                                 'p_depression_8wk', 'p_depression_8m', 'p_depression_21m', 'p_depression_3y', 
+                                 'm_depression_4y','m_depression_5y', 'p_depression_6y', 'p_depression_9y',
                                  'm_age_cont')]
 
                               
