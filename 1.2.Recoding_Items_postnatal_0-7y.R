@@ -2542,6 +2542,79 @@ for(i in vars){
 # check new "a_rec" variables are there with meaningful values
 summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
 
+# ### EW: l6153 not available
+# yes = c("Yes, i did this","Yes, he did this","Yes, we both did this")
+# no = c("No, not at all")
+# 
+# vars = c("l6153") #DV_Shouted_6Y
+# 
+# for (i in vars){
+#   
+#   # check if required levels are present / unexpected levels are not present
+#   print(i)  
+#   print(levels(alspac.table[,i])[levels(alspac.table[,i]) %in% c(yes,no)])
+#   print(levels(alspac.table[,i])[!levels(alspac.table[,i]) %in% c(yes,no)])
+#   
+#   readline(prompt = "levels ok? Press [enter] to continue")
+# }
+# 
+# # recode
+# 
+# for(i in vars){
+#   var.out=paste0(i,"a_rec")
+#   alspac.table[,var.out]=NA
+#   alspac.table[which(alspac.table[,i] %in% yes),var.out]=1
+#   alspac.table[which(alspac.table[,i] %in% no),var.out]=0
+#   
+#   # check
+#   print(i)
+#   print(table(alspac.table[,i], useNA = "always"))
+#   print(table(alspac.table[,var.out], useNA = "always"))
+#   
+#   readline(prompt = "twice the same? Press [enter] to continue")
+# }
+# 
+# 
+# # check new "a_rec" variables are there with meaningful values
+# summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
+
+# ###### commented out coz Y9 (=too old)
+# #yes = c("Yes, mother did this","Yes, partner did this","Yes, both did this")
+# #no = c("No")
+# 
+# #vars = c("p3153", #DV_Shouted_9Y
+# #"p3154", #DV_Hit_9Y
+# #"p3155") #DV_Break_9Y
+# 
+# #for (i in vars){
+#   
+#   # check if required levels are present / unexpected levels are not present
+#  # print(i)  
+#   #print(levels(alspac.table[,i])[levels(alspac.table[,i]) %in% c(yes,no)])
+#   #print(levels(alspac.table[,i])[!levels(alspac.table[,i]) %in% c(yes,no)])
+#   
+# #  readline(prompt = "levels ok? Press [enter] to continue")
+# #}
+# 
+# # recode
+# 
+# #for(i in vars){
+#  # var.out=paste0(i,"a_rec")
+#   #alspac.table[,var.out]=NA
+#   #alspac.table[which(alspac.table[,i] %in% yes),var.out]=1
+#   #alspac.table[which(alspac.table[,i] %in% no),var.out]=0
+#   
+#   # check
+# #  print(i)
+#  # print(table(alspac.table[,i], useNA = "always"))
+#   #print(table(alspac.table[,var.out], useNA = "always"))
+#   
+# #  readline(prompt = "twice the same? Press [enter] to continue")
+# #}
+# 
+# 
+# # check new "a_rec" variables are there with meaningful values
+# #summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
 
 yes = c("Yes mum Did","Yes Partner Did","Yes both Did")
 no = c("No not at All")
@@ -2616,6 +2689,7 @@ for(i in vars){
 
 # check new "a_rec" variables are there with meaningful values
 summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
+
 
 # Creating a data frame with the original IR variables 
 attach(alspac.table)
@@ -2711,8 +2785,12 @@ IR_postnatal_continuous <- data.frame(e408,
                                       l4040, 
                                       h580, #DV_Shouted_33M 
                                       h581, #DV_Hit_33M
+                                      #l6153, #DV_Shouted_6Y 
+                                      #p3153, #DV_Shouted_9Y
                                       g712, #DV_Hit_21M
                                       g713,  #DV_Break_21M
+                                      #p3154, #DV_Hit_9Y
+                                      #p3155,  #DV_Break_9Y
                                       ke017) #Par_Smack_2Y
 
 IR_postnatal_binary <- data.frame(e408a_rec,
@@ -2806,10 +2884,16 @@ IR_postnatal_binary <- data.frame(e408a_rec,
                                   l4040a_rec, 
                                   h580a_rec, #DV_Shouted_33M 
                                   h581a_rec, #DV_Hit_33M
+                                  #l6153a_rec, #DV_Shouted_6Y 
+                                  #p3153a_rec, #DV_Shouted_9Y
                                   g712a_rec, #DV_Hit_21M
                                   g713a_rec,  #DV_Break_21M
+                                  #p3154a_rec, #DV_Hit_9Y
+                                  #p3155a_rec, #DV_Break_9Y
                                   ke017a_rec) #Par_Smack_2Y
 
+
+detach(alspac.table)
 
 # Checking correlations btw columns of IR_postnatal_continuous and columns of IR_postnatal_binary
 #corbetw2mat(IR_postnatal_continuous, IR_postnatal_binary, what = "paired")  

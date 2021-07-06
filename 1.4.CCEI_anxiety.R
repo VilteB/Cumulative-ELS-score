@@ -1,285 +1,420 @@
 ####################################################################################################################################################
 
-
-# Obtaining total scores for CCEI anxiety subscale (by adding below items into a total score)
-
-#CCEI: Mother feels upset for no obvious reason	b328, c550, e348, f150, g245, h155, k3000, l2000, r4000 (F1)
-#CCEI: Mother felt like fainting	b330, c552, e350, f152, g247, h157, k3002, l2001, r4001 (F3)
-#CCEI: Mother feels uneasy & restless	b333, c555, e353, f155, g250, h160, k3005, l2002, r4002 (F6)
-#CCEI: Mother sometimes feels panicky	b336, c558, e356, f158, g253, h163, k3008, l2003, r4003 (F9)
-#CCEI: Mother worries a lot	b339, c561, e359, f161, g256, h166, k3011, l2004, r4004 (F12)
-#CCEI: Mother feels strung up inside	b342, c564, e362, f164, g259, h169, k3014, l2005, r4005 (F15)
-#CCEI: Mother feels to be going to pieces	b344, c566, e364, f166, g261, h171, k3016, l2006, r4006 (F17)
-#CCEI: Mother has bad upsetting dreams	b347, c569, e367, f169, g264, h174, k3019, l2007, r4007 (F20)
+# PRENATAL
 
 ####################################################################################################################################################
 
-# total scores present for: 18w gest, 32w gest, 8m, 8w, 1y 9m, 2y 9m
-# total scores missing for: 5y 1m, 6y 1m  (calculating total score for these now, based on individual questionnaire items)
 
-# Step 1: changing items to numeric 
+library(foreign)
 
-# first doing a trial run with items in 18w gest, to check if method will give identical results to the existing total score for 18w gest
-
-# checking items class
-sapply(alspac.table[c("b328",	"b330", "b333",	"b336",	"b339",	"b342",	"b344",	"b347")], class) # these are factors with labels, need to change to numeric
-
-# checking the coding of the item 
-a <- table(alspac.table$b328) # V Often, Often, Not V often, Never
-
-# changing the class of items to numeric
-alspac.table[c("b328",	"b330", "b333",	"b336",	"b339",	"b342",	"b344",	"b347")] <- sapply(alspac.table[c("b328",	"b330", "b333",	"b336",	"b339",	"b342",	"b344",	"b347")],as.numeric)
-
-# checking the coding of the new item 
-b <- table(alspac.table$b328) # 2,3,4,5
-
-# checking if it worked well
-sapply(alspac.table[c("b328",	"b330", "b333",	"b336",	"b339",	"b342",	"b344",	"b347")], class) # all numeric now
-
-data.frame(a,b) # checking which numbers correpond to which label to ensure recoding matches that of ALSPAC
-
-# Step 2: recoding
-# RECODING CCEI items as described in ALSPAC documentation (preparation for CCEI anxiety subscale calculation)
-
-# f1, f15, f17, (2,3 = 2)(4,5 = 0)
-alspac.table$b328a_rec <- ifelse(alspac.table$b328 %in% c(2, 3), 2, ifelse(alspac.table$b328 %in% c(4, 5), 0, NA))
-alspac.table$b342a_rec <- ifelse(alspac.table$b342 %in% c(2, 3), 2, ifelse(alspac.table$b342 %in% c(4, 5), 0, NA))
-alspac.table$b344a_rec <- ifelse(alspac.table$b344 %in% c(2, 3), 2, ifelse(alspac.table$b344 %in% c(4, 5), 0, NA))
-
-# f3, f6, f12, f20, (2,3 = 2)(4 = 1)(5 = 0) 
-alspac.table$b330a_rec <- ifelse(alspac.table$b330 %in% c(2, 3), 2, ifelse(alspac.table$b330 == 4, 1, ifelse(alspac.table$b330 == 5, 0, NA)))
-alspac.table$b333a_rec <- ifelse(alspac.table$b333 %in% c(2, 3), 2, ifelse(alspac.table$b333 == 4, 1, ifelse(alspac.table$b333 == 5, 0, NA)))
-alspac.table$b339a_rec <- ifelse(alspac.table$b339 %in% c(2, 3), 2, ifelse(alspac.table$b339 == 4, 1, ifelse(alspac.table$b339 == 5, 0, NA)))
-alspac.table$b347a_rec <- ifelse(alspac.table$b347 %in% c(2, 3), 2, ifelse(alspac.table$b347 == 4, 1, ifelse(alspac.table$b347 == 5, 0, NA)))
-
-# f9 (2,3,4 = 2) (5 = 0)
-alspac.table$b336a_rec <- ifelse(alspac.table$b336 %in% c(2, 3, 4), 2, ifelse(alspac.table$b336 == 5, 0, NA))
-
-
-# Look if recoding worked well 
-data.frame(alspac.table$b328, alspac.table$b328a_rec) # looks good 
-data.frame(alspac.table$b330, alspac.table$b330a_rec) # looks good 
-data.frame(alspac.table$b336, alspac.table$b336a_rec) # looks good 
-
-# Step 3: calculate total score 
-
-# calculating the total CCEI anxiety subscale score using complete scores (if any time point missing, total score = NA), should we mode impute?
-alspac.table$CCEI_total_18w_gest <- rowSums(alspac.table[c("b328a_rec",	"b330a_rec", "b333a_rec",	"b336a_rec",	"b339a_rec",	"b342a_rec",	"b344a_rec",	"b347a_rec")], na.rm = F)
-
-# comparing it to the available total CCEI anxiety subscale score 
-data.frame(alspac.table$b351, alspac.table$CCEI_total_18w_gest)
-table(alspac.table$CCEI_total_18w_gest, exclude = NULL)
-table(alspac.table$b351, exclude = NULL) # the scores are identical, means we can calculate the CCEI scores for the missing timepoints
-# 0 = "not anxious", 1 - 15, 16 = "very anxious"
-
-####################################################################################################################################################
-
-# CALCULATING CCEI SCORES FOR 5 YEAR MISSING TIMEPOINT
-
-# Step 1: changing items to numeric 
-
-# checking items class
-sapply(alspac.table[c("k3000",	"k3002",	"k3005",	"k3008",	"k3011",	"k3014",	"k3016",	"k3019")], class) # these are factors with labels, need to change to numeric
-
-# checking the coding of the item 
-a <- alspac.table$k3000 # V Often, Often, Not V often, Never
-
-# changing the class of items to numeric
-alspac.table[c("k3000",	"k3002",	"k3005",	"k3008",	"k3011",	"k3014",	"k3016",	"k3019")] <- sapply(alspac.table[c("k3000",	"k3002",	"k3005",	"k3008",	"k3011",	"k3014",	"k3016",	"k3019")],as.numeric)
-
-# checking if it worked well
-sapply(alspac.table[c("k3000",	"k3002",	"k3005",	"k3008",	"k3011",	"k3014",	"k3016",	"k3019")] , class) # all numeric now
-
-# checking the coding of the new item 
-b <- alspac.table$k3000 # 2,3,4,5 
-
-data.frame(a,b) # checking which numbers correpond to which label to ensure recoding matches that of ALSPAC
-# 2,3,4,5 = V Often, Often, Not V often, Never
-
-# Step 2: recoding
-
-# RECODING CCEI items as described in ALSPAC documentation (preparation for CCEI anxiety subscale calculation)
-
-# f1, f15, f17, (2,3 = 2)(4,5 = 0)
-alspac.table$k3000a_rec <- ifelse(alspac.table$k3000 %in% c(2, 3), 2, ifelse(alspac.table$k3000 %in% c(4, 5), 0, NA))
-alspac.table$k3014a_rec <- ifelse(alspac.table$k3014 %in% c(2, 3), 2, ifelse(alspac.table$k3014 %in% c(4, 5), 0, NA))
-alspac.table$k3016a_rec <- ifelse(alspac.table$k3016 %in% c(2, 3), 2, ifelse(alspac.table$k3016 %in% c(4, 5), 0, NA))
-
-# f3, f6, f12, f20, (2,3 = 2)(4 = 1)(5 = 0) 
-alspac.table$k3002a_rec <- ifelse(alspac.table$k3002 %in% c(2, 3), 2, ifelse(alspac.table$k3002 == 4, 1, ifelse(alspac.table$k3002 == 5, 0, NA)))
-alspac.table$k3005a_rec <- ifelse(alspac.table$k3005 %in% c(2, 3), 2, ifelse(alspac.table$k3005 == 4, 1, ifelse(alspac.table$k3005 == 5, 0, NA)))
-alspac.table$k3011a_rec <- ifelse(alspac.table$k3011 %in% c(2, 3), 2, ifelse(alspac.table$k3011 == 4, 1, ifelse(alspac.table$k3011 == 5, 0, NA)))
-alspac.table$k3019a_rec <- ifelse(alspac.table$k3019 %in% c(2, 3), 2, ifelse(alspac.table$k3019 == 4, 1, ifelse(alspac.table$k3019 == 5, 0, NA)))
-
-# f9 (2,3,4 = 2) (5 = 0)
-alspac.table$k3008a_rec <- ifelse(alspac.table$k3008 %in% c(2, 3, 4), 2, ifelse(alspac.table$k3008 == 5, 0, NA))
-
-
-# Step 3: calculate total score 
-
-# calculating the total CCEI anxiety subscale score using complete scores (if any time point missing, total score = NA), should we mode impute?
-alspac.table$CCEI_total_5y <- rowSums(alspac.table[c("k3000a_rec",	"k3002a_rec",	"k3005a_rec",	"k3008a_rec",	"k3011a_rec",	"k3014a_rec",	"k3016a_rec",	"k3019a_rec")], na.rm = F)
-
-
-table(alspac.table$CCEI_total_5y, exclude = NULL) # looks okay
-# 0 = "not anxious", 1 - 15, 16 = "very anxious"
-
-
-####################################################################################################################################################
-
-# CALCULATING CCEI SCORES FOR 6 YEAR MISSING TIMEPOINT
-
-alspac.table$l_CCEI <- rowSums(l2000,	l2001,	l2002,	l2003,	l2004,	l2005,	l2006,	l2007)
-
-# Step 1: changing items to numeric 
-
-# checking items class
-sapply(alspac.table[c("l2000",	"l2001",	"l2002",	"l2003",	"l2004",	"l2005",	"l2006",	"l2007")], class) # these are factors with labels, need to change to numeric
-
-# checking the coding of the item 
-a <- alspac.table$l2000 # V Often, Often, Not V often, Never
-
-# changing the class of items to numeric
-alspac.table[c("l2000",	"l2001",	"l2002",	"l2003",	"l2004",	"l2005",	"l2006",	"l2007")] <- sapply(alspac.table[c("l2000",	"l2001",	"l2002",	"l2003",	"l2004",	"l2005",	"l2006",	"l2007")],as.numeric)
-
-# checking if it worked well
-sapply(alspac.table[c("l2000",	"l2001",	"l2002",	"l2003",	"l2004",	"l2005",	"l2006",	"l2007")] , class) # all numeric now
-
-# checking the coding of the new item 
-b <- alspac.table$l2000 # 2,3,4,5 
-
-data.frame(a,b) # checking which numbers correpond to which label to ensure recoding matches that of ALSPAC
-# 2,3,4,5 = V Often, Often, Not V often, Never
-
-# Step 2: recoding
-
-# RECODING CCEI items as described in ALSPAC documentation (preparation for CCEI anxiety subscale calculation)
-
-# f1, f15, f17, (2,3 = 2)(4,5 = 0)
-alspac.table$l2000a_rec <- ifelse(alspac.table$l2000 %in% c(2, 3), 2, ifelse(alspac.table$l2000 %in% c(4, 5), 0, NA))
-alspac.table$l2005a_rec <- ifelse(alspac.table$l2005 %in% c(2, 3), 2, ifelse(alspac.table$l2005 %in% c(4, 5), 0, NA))
-alspac.table$l2006a_rec <- ifelse(alspac.table$l2006 %in% c(2, 3), 2, ifelse(alspac.table$l2006 %in% c(4, 5), 0, NA))
-
-# f3, f6, f12, f20, (2,3 = 2)(4 = 1)(5 = 0) 
-alspac.table$l2001a_rec <- ifelse(alspac.table$l2001 %in% c(2, 3), 2, ifelse(alspac.table$l2001 == 4, 1, ifelse(alspac.table$l2001 == 5, 0, NA)))
-alspac.table$l2002a_rec <- ifelse(alspac.table$l2002 %in% c(2, 3), 2, ifelse(alspac.table$l2002 == 4, 1, ifelse(alspac.table$l2002 == 5, 0, NA)))
-alspac.table$l2004a_rec <- ifelse(alspac.table$l2004 %in% c(2, 3), 2, ifelse(alspac.table$l2004 == 4, 1, ifelse(alspac.table$l2004 == 5, 0, NA)))
-alspac.table$l2007a_rec <- ifelse(alspac.table$l2007 %in% c(2, 3), 2, ifelse(alspac.table$l2007 == 4, 1, ifelse(alspac.table$l2007 == 5, 0, NA)))
-
-# f9 (2,3,4 = 2) (5 = 0)
-alspac.table$l2003a_rec <- ifelse(alspac.table$l2003 %in% c(2, 3, 4), 2, ifelse(alspac.table$l2003 == 5, 0, NA))
-
-
-# Step 3: calculate total score 
-
-# calculating the total CCEI anxiety subscale score using complete scores (if any time point missing, total score = NA), should we mode impute?
-alspac.table$CCEI_total_6y <- rowSums(alspac.table[c("l2000a_rec",	"l2001a_rec",	"l2002a_rec",	"l2003a_rec",	"l2004a_rec",	"l2005a_rec",	"l2006a_rec",	"l2007a_rec")], na.rm = F)
-
-
-table(alspac.table$CCEI_total_6y, exclude = NULL) # looks okay, 7066 NA
-# 0 = "not anxious", 1 - 15, 16 = "very anxious"
-
-
-####################################################################################################################################################
-
-# DICHOTOMISING 
-
-# Scores on the CCEI anxiety subscale can range from 0 to 16. 
-# Women who scored 9 or higher, a cut point which has been used previously in ALSPAC (Heron et al., 2004), were classified as having anxiety.
-
-# Prenatal
-
-#b351 to b351a_rec
-levels(alspac.table$b351) 
-
-alspac.table$b351a_rec <- ifelse(alspac.table$b351 %in% c(0:8), 0, 
-                                 ifelse(alspac.table$b351 %in% c(9:16), 1, NA)) # CCEI anxiety subscale
-
-                                                                                                                                                        
-# checking if recoding worked
-data.frame(alspac.table$b351, alspac.table$b351a_rec) # looks good
-
-
-
-#c573 to c573a_rec
-levels(alspac.table$c573) 
-
-alspac.table$c573a_rec <- ifelse(alspac.table$c573 %in% c(1:8), 0, ifelse(alspac.table$c573 == "not anxious", 0,
-                                                                          ifelse(alspac.table$c573 %in% c(9:15), 1,
-                                                                                 ifelse(alspac.table$c573 == "very anxious", 1, NA)))) 
-# checking if recoding worked
-data.frame(alspac.table$c573, alspac.table$c573a_rec) # looks good
-
-
-# Postnatal 
-
-#e371 to e371a_rec
-levels(alspac.table$e371) 
-
-alspac.table$e371a_rec <- ifelse(alspac.table$e371 %in% c(1:8), 0, ifelse(alspac.table$e371 == "not anxious", 0,
-                                                                          ifelse(alspac.table$e371 %in% c(9:15), 1,
-                                                                                 ifelse(alspac.table$e371 == "very anxious", 1, NA)))) 
-# checking if recoding worked
-data.frame(alspac.table$e371, alspac.table$e371a_rec) # looks good
-
-
-# f173 to f173a_rec
-levels(alspac.table$f173) 
-
-alspac.table$f173a_rec <- ifelse(alspac.table$f173 %in% c(1:8), 0, ifelse(alspac.table$f173 == "not anxious", 0,
-                                                                          ifelse(alspac.table$f173 %in% c(9:15), 1,
-                                                                                 ifelse(alspac.table$f173 == "very anxious", 1, NA)))) 
-# checking if recoding  worked
-data.frame(alspac.table$f173, alspac.table$f173a_rec) # looks good
-
-
-# g268 to g268a_rec
-levels(alspac.table$g268) 
-
-alspac.table$g268a_rec <- ifelse(alspac.table$g268 %in% c(1:8), 0, ifelse(alspac.table$g268 == "not anxious", 0,
-                                                                          ifelse(alspac.table$g268 %in% c(9:15), 1,
-                                                                                 ifelse(alspac.table$g268 == "very anxious", 1, NA)))) 
-# checking if recoding  worked
-data.frame(alspac.table$g268, alspac.table$g268a_rec) # looks good
-
-
-
-# h178a to h178a_rec
-levels(alspac.table$h178a) 
-
-alspac.table$h178a_rec <- ifelse(alspac.table$h178a %in% c(0:8), 0, ifelse(alspac.table$h178a %in% c(9:16), 1, NA))
-                                                                                  
-# checking if recoding  worked
-data.frame(alspac.table$h178a, alspac.table$h178a_rec) # looks good
-
-
-# CCEI_total_5y to CCEI_total_5ya_rec
-
-table(alspac.table$CCEI_total_5y) 
-
-alspac.table$CCEI_total_5ya_rec <- ifelse(alspac.table$CCEI_total_5y %in% c(0:8), 0, ifelse(alspac.table$CCEI_total_5y %in% c(9:16), 1, NA))
-
-# checking if recoding  worked
-data.frame(alspac.table$CCEI_total_5y, alspac.table$CCEI_total_5ya_rec) # looks good
-
-
-# CCEI_total_6y to CCEI_total_6ya_rec
-
-table(alspac.table$CCEI_total_6y) 
-
-alspac.table$CCEI_total_6ya_rec <- ifelse(alspac.table$CCEI_total_6y %in% c(0:8), 0, ifelse(alspac.table$CCEI_total_6y %in% c(9:16), 1, NA))
-
-# checking if recoding  worked
-data.frame(alspac.table$CCEI_total_5y, alspac.table$CCEI_total_5ya_rec) # looks good
-
-
-####################################################################################################################################################
-
-# Saving
- 
-save(alspac.table, file ='alspac.table.Rdata')
+# Reading in the data
+alspac.table <- read.spss("/Volumes/files/Psychology/ResearchProjects/EWalton/EarlyCause/data/ALSPAC/EarlyCause_AHupdated_CIDB2957_25MAY21.sav", use.value.label=TRUE, to.data.frame=TRUE) 
 
 ####################################################################################################################################################
 
 
+# This script is used for dichotomising prenatal ELS variables into 1 = risk and 0 = no risk. 
+
+# 1. LIFE EVENTS
+
+# Originally, variables have been coded as:
+
+# 1 = affected a lot
+# 2 = fairly affected
+# 3 = mildly affected
+# 4 = not effected at all
+# 5 = didn't happen
+# for total number of options inlcuded need to check the dataset 
+
+# Below script recodes them into: 
+
+# 1 = risk (for values between 1-4)
+# 0 = no risk (for value of 5) 
+# any other number = NA (missing)
+
+
+#RECODE TO BINARY
+
+# our R data file uses factor levels (not numeric) 
+# define levels first
+yes = c("affected a lot","fairly affected","mildly affected","N effect at all")
+no = c("didnt happen")
+
+# now check if these levels are present and no other levels were missed out 
+vars = c("b570", # PTNR died since PREG
+         "b571", # CH died since PREG
+         "b572", # Friend or relative died since PREG
+         "b573", # CH was ill since PREG	
+         "b574", # PTNR was ill since PREG	
+         "b575", # Friend or relative was ill since PREG
+         "b576", # Admitted to hospital since PREG
+         "b580", # V ill since PREG
+         "b581", # PTNR lost job since PREG
+         "b582", # PTNR had PROBS at work since PREG	
+         "b583", # PROBS at work since PREG
+         "b584", # Lost job since PREG		
+         "b591", # Moved house since PREG	
+         "b599", # Bled & thought might miscarry	
+         "b600", # Started new job since PREG
+         "b601", # Test to see if baby abnormal
+         "b602", # Test result suggesting POSS abnormality	
+         "b603", # Told having twins
+         "b604", # POSS harm to baby
+         "b606", # Took an exam since PREG
+         "b609", # House or car burgled since PREG
+         "b610") # Had an accident since PREG
+
+for (i in vars){
+  
+  # check if required levels are present / unexpected levels are not present
+  print(i)  
+  print(levels(alspac.table[,i])[levels(alspac.table[,i]) %in% c(yes,no)])
+  print(levels(alspac.table[,i])[!levels(alspac.table[,i]) %in% c(yes,no)])
+  
+  #readline(prompt = "levels ok? Press [enter] to continue")
+}
+
+# recode
+
+for(i in vars){
+  var.out=paste0(i,"a_rec")
+  alspac.table[,var.out]=NA
+  alspac.table[which(alspac.table[,i] %in% yes),var.out]=1
+  alspac.table[which(alspac.table[,i] %in% no),var.out]=0
+  
+  # check
+  print(i)
+  print(table(alspac.table[,i], useNA = "always"))
+  print(table(alspac.table[,var.out], useNA = "always"))
+  
+  #readline(prompt = "twice the same? Press [enter] to continue")
+}
+
+
+# check new "a_rec" variables are there with meaningful values
+summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
+
+
+
+# Creating a data frame with the original LE variables 
+
+attach(alspac.table)
+
+LE_prenatal_continuous <- data.frame(b570, # PTNR died since PREG
+                                     b571, # CH died since PREG
+                                     b572, # Friend or relative died since PREG
+                                     b573, # CH was ill since PREG	
+                                     b574, # PTNR was ill since PREG	
+                                     b575, # Friend or relative was ill since PREG
+                                     b576, # Admitted to hospital since PREG
+                                     b580, # V ill since PREG
+                                     b581, # PTNR lost job since PREG
+                                     b582, # PTNR had PROBS at work since PREG	
+                                     b583, # PROBS at work since PREG
+                                     b584, # Lost job since PREG		
+                                     b591, # Moved house since PREG	
+                                     b599, # Bled & thought might miscarry	
+                                     b600, # Started new job since PREG
+                                     b601, # Test to see if baby abnormal
+                                     b602, # Test result suggesting POSS abnormality	
+                                     b603, # Told having twins
+                                     b604, # POSS harm to baby
+                                     b606, # Took an exam since PREG
+                                     b609, # House or car burgled since PREG
+                                     b610) # Had an accident since PREG
+
+# Creating a data frame containing the newly created binary LE variables
+
+LE_prenatal_binary <- data.frame(b570a_rec, # PTNR died since PREG
+                                 b571a_rec, # CH died since PREG
+                                 b572a_rec, # Friend or relative died since PREG
+                                 b573a_rec, # CH was ill since PREG	
+                                 b574a_rec, # PTNR was ill since PREG	
+                                 b575a_rec, # Friend or relative was ill since PREG
+                                 b576a_rec, # Admitted to hospital since PREG
+                                 b580a_rec, # V ill since PREG
+                                 b581a_rec, # PTNR lost job since PREG
+                                 b582a_rec, # PTNR had PROBS at work since PREG	
+                                 b583a_rec, # PROBS at work since PREG
+                                 b584a_rec, # Lost job since PREG		
+                                 b591a_rec, # Moved house since PREG	
+                                 b599a_rec, # Bled & thought might miscarry	
+                                 b600a_rec, # Started new job since PREG
+                                 b601a_rec, # Test to see if baby abnormal
+                                 b602a_rec, # Test result suggesting POSS abnormality	
+                                 b603a_rec, # Told having twins
+                                 b604a_rec, # POSS harm to baby
+                                 b606a_rec, # Took an exam since PREG
+                                 b609a_rec, # House or car burgled since PREG
+                                 b610a_rec) # Had an accident since PREG
+
+
+detach(alspac.table)
+
+#install package 'lineup' which contains the 'corbetw2mat' function
+library(lineup)
+
+#Checking correlations btw columns of LE_prenatal_continuous and columns of LE_prenatal_binary
+#corbetw2mat(LE_prenatal_continuous, LE_prenatal_binary, what = "paired")    
+
+# for factor-based dataframe
+corbetw2mat(data.matrix(LE_prenatal_continuous), LE_prenatal_binary, what = "paired")    
+
+#Above correlattions are equivalent to: cor(b570, b570a_rec, use="pairwise", method = "pearson")
+
+
+####################################################################################################################################################
+
+# 2. CONTEXTUAL RISKS
+
+
+
+# our R data file uses factor levels (not numeric) 
+# define levels first
+yes = c("affected a lot","fairly affected","mildly affected","N effect at all")
+no = c("didnt happen")
+
+# now check if these levels are present and no other levels were missed out 
+vars = c("b588", # Income reduced since PREG
+         #"b593", # Became homeless since PREG
+         "b594") # Major financial PROB since PREG
+
+
+for (i in vars){
+  
+  # check if required levels are present / unexpected levels are not present
+  print(i)  
+  print(levels(alspac.table[,i])[levels(alspac.table[,i]) %in% c(yes,no)])
+  print(levels(alspac.table[,i])[!levels(alspac.table[,i]) %in% c(yes,no)])
+  
+  #readline(prompt = "levels ok? Press [enter] to continue")
+}
+
+# EW: excluded "b593", as already binary
+
+# recode
+
+for(i in vars){
+  var.out=paste0(i,"a_rec")
+  alspac.table[,var.out]=NA
+  alspac.table[which(alspac.table[,i] %in% yes),var.out]=1
+  alspac.table[which(alspac.table[,i] %in% no),var.out]=0
+  
+  # check
+  print(i)
+  print(table(alspac.table[,i], useNA = "always"))
+  print(table(alspac.table[,var.out], useNA = "always"))
+  
+  #readline(prompt = "twice the same? Press [enter] to continue")
+}
+
+
+# check new "a_rec" variables are there with meaningful values
+summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
+
+
+
+# Creating a data frame with the original CR variables 
+attach(alspac.table)
+
+CR_prenatal_continuous <- data.frame(b588, # Income reduced since PREG
+                                     b593, # Became homeless since PREG
+                                     b594) # Major financial PROB since PREG
+
+# Creating a data frame containing the newly created binary CR variables
+
+CR_prenatal_binary <- data.frame(b588a_rec, # Income reduced since PREG
+                                 b593, # Became homeless since PREG; EW: not b593a_rec, as already binary
+                                 b594a_rec) # Major financial PROB since PREG
+
+
+detach(alspac.table)
+
+# Checking correlations btw columns of CR_prenatal_continuous and columns of CR_prenatal_binary
+#corbetw2mat(CR_prenatal_continuous, CR_prenatal_binary, what = "paired")  
+corbetw2mat(data.matrix(CR_prenatal_continuous), CR_prenatal_binary, what = "paired")  
+
+
+####################################################################################################################################################
+
+
+# 3. PARENTAL RISKS 
+
+
+#RECODE TO BINARY
+
+# our R data file uses factor levels (not numeric) 
+# define levels first
+yes = c("affected a lot","fairly affected","mildly affected","N effect at all")
+no = c("didnt happen")
+
+# now check if these levels are present and no other levels were missed out 
+vars = c("b577", # In trouble with the law since PREG
+         "b586", # PTNR in trouble with law since PREG
+         #"b597", # Attempted suicide since PREG; EW: already binary
+         #"b598", # Convicted of an offence since PREG; EW: already binary
+         "b605") # Tried to have abortion
+
+for (i in vars){
+  
+  # check if required levels are present / unexpected levels are not present
+  print(i)  
+  print(levels(alspac.table[,i])[levels(alspac.table[,i]) %in% c(yes,no)])
+  print(levels(alspac.table[,i])[!levels(alspac.table[,i]) %in% c(yes,no)])
+  
+  #readline(prompt = "levels ok? Press [enter] to continue")
+}
+
+# recode
+
+for(i in vars){
+  var.out=paste0(i,"a_rec")
+  alspac.table[,var.out]=NA
+  alspac.table[which(alspac.table[,i] %in% yes),var.out]=1
+  alspac.table[which(alspac.table[,i] %in% no),var.out]=0
+  
+  # check
+  print(i)
+  print(table(alspac.table[,i], useNA = "always"))
+  print(table(alspac.table[,var.out], useNA = "always"))
+  
+  #readline(prompt = "twice the same? Press [enter] to continue")
+}
+
+
+# check new "a_rec" variables are there with meaningful values
+summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
+
+
+# Creating a data frame with the original PR variables 
+attach(alspac.table)
+
+PR_prenatal_continuous <- data.frame(b577, # In trouble with the law since PREG
+                                     b586, # PTNR in trouble with law since PREG
+                                     b597, # Attempted suicide since PREG
+                                     b598, # Convicted of an offence since PREG
+                                     b605) # Tried to have abortion
+
+# Creating a data frame containing the newly created binary PR variables 
+
+PR_prenatal_binary <- data.frame(b577a_rec, # In trouble with the law since PREG
+                                 b586a_rec, # PTNR in trouble with law since PREG
+                                 b597, # Attempted suicide since PREG; EW: already binary
+                                 b598, # Convicted of an offence since PREG; EW: already binary
+                                 b605a_rec) # Tried to have abortion
+
+
+detach(alspac.table)
+
+# Checking correlations btw columns of PR_prenatal_continuous and columns of PR_prenatal_binary
+#corbetw2mat(PR_prenatal_continuous, PR_prenatal_binary, what = "paired")  
+corbetw2mat(data.matrix(PR_prenatal_continuous), PR_prenatal_binary, what = "paired")  
+
+
+####################################################################################################################################################
+
+
+# INTERPERSONAL RISKS
+
+
+#RECODE TO BINARY
+
+# our R data file uses factor levels (not numeric) 
+# define levels first
+yes = c("affected a lot","fairly affected","mildly affected","N effect at all")
+no = c("didnt happen")
+
+# now check if these levels are present and no other levels were missed out 
+vars = c(#"b578", # Divorced since PREG; EW: already binary
+  "b579", # PTNR rejected PREG
+  "b585", # PTNR went away since PREG	
+  #"b587", # Separated since PREG; EW: already binary	
+  "b589", # Argued with PTNR since PREG
+  "b590", # Argued with family or friends since PREG
+  "b592", # PTNR hurt mum since PREG	
+  "b595", # Got married since PREG		
+  "b596", # PTNR hurt CH since PREG	
+  "b607") #, # PTNR was EMOT cruel to mum since PREG
+#"b608") # PTNR was EMOT cruel to mum since PREG; EW: already binary
+
+
+for (i in vars){
+  
+  # check if required levels are present / unexpected levels are not present
+  print(i)  
+  print(levels(alspac.table[,i])[levels(alspac.table[,i]) %in% c(yes,no)])
+  print(levels(alspac.table[,i])[!levels(alspac.table[,i]) %in% c(yes,no)])
+  
+  #readline(prompt = "levels ok? Press [enter] to continue")
+}
+
+# recode
+
+for(i in vars){
+  var.out=paste0(i,"a_rec")
+  alspac.table[,var.out]=NA
+  alspac.table[which(alspac.table[,i] %in% yes),var.out]=1
+  alspac.table[which(alspac.table[,i] %in% no),var.out]=0
+  
+  # check
+  print(i)
+  print(table(alspac.table[,i], useNA = "always"))
+  print(table(alspac.table[,var.out], useNA = "always"))
+  
+  #readline(prompt = "twice the same? Press [enter] to continue")
+}
+
+
+# check new "a_rec" variables are there with meaningful values
+summary(alspac.table[,grep("a_rec",names(alspac.table), value=T)])
+
+
+
+# Creating a data frame with the original IR variables 
+attach(alspac.table)
+
+IR_prenatal_continuous <- data.frame(b578, # Divorced since PREG
+                                     b579, # PTNR rejected PREG
+                                     b585, # PTNR went away since PREG	
+                                     b587, # Separated since PREG	
+                                     b589, # Argued with PTNR since PREG
+                                     b590, # Argued with family or friends since PREG
+                                     b592, # PTNR hurt mum since PREG	
+                                     b595, # Got married since PREG		
+                                     b596, # PTNR hurt CH since PREG	
+                                     b607, # PTNR was EMOT cruel to mum since PREG
+                                     b608) # PTNR was EMOT cruel to mum since PREG
+
+# Creating a data frame containing the newly created binary IR variables 
+
+IR_prenatal_binary <- data.frame(b578, # Divorced since PREG; EW: already binary
+                                 b579a_rec, # PTNR rejected PREG
+                                 b585a_rec, # PTNR went away since PREG		
+                                 b587, # Separated since PREG; EW: already binary		
+                                 b589a_rec, # Argued with PTNR since PREG	
+                                 b590a_rec, # Argued with family or friends since PREG
+                                 b592a_rec, # PTNR hurt mum since PREG	
+                                 b595a_rec, # Got married since PREG		
+                                 b596a_rec, # PTNR hurt CH since PREG	
+                                 b607a_rec, # PTNR was EMOT cruel to mum since PREG
+                                 b608) # PTNR was EMOT cruel to CH since PREG; EW: already binary
+
+
+detach(alspac.table)
+
+# Checking correlations btw columns of IR_prenatal_continuous and columns of IR_prenatal_binary
+#corbetw2mat(IR_prenatal_continuous, IR_prenatal_binary, what = "paired")  
+corbetw2mat(data.matrix(IR_prenatal_continuous), IR_prenatal_binary, what = "paired")  
+
+
+####################################################################################################################################################
+
+# Recoding prenatal depression variable for mother 
+alspac.table$b371n <- as.character(alspac.table$b371)
+alspac.table$b371a_rec  <- ifelse(alspac.table$b371n %in% c(13:28), 1,
+                                  ifelse(alspac.table$b371n == 'very depressed', 1, 
+                                         ifelse(alspac.table$b371n %in% c(1:12), 0,
+                                                ifelse(alspac.table$b371n == 'not depressed', 0, NA)))) # 1711 no risk, 10617 risk
+
+####################################################################################################################################################
 

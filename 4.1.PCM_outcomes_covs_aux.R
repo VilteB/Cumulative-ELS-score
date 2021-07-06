@@ -4,7 +4,15 @@
 # This includes the outcomes of interest (internalizing problems and cardio-metabolic
 # risk), the covariates that are going to be used as well as the auxiliary variables 
 # used in the imputation of the final dataset. 
-# It does not include data used to build the ELS score exposure.
+# It does not include data used to build the ELS score exposure, for which you can 
+# check out https://github.com/SereDef/cumulative-ELS-score
+
+## For this script you are going to need the following datasets from datamanagement
+# CHILDCBCL9_10082016.sav, CHILDFATMASS9_13092016.sav, 
+# CHILD-ALLGENERALDATA_07072020.sav, GEDRAGSGROEP_MaternalDrinking_22112016.sav, 
+# MATERNALSMOKING_22112016.sav, GEDRAGSGROEP_MaternalDrinking_22112016.sav, 
+# MOTHERANTHROPOMETRY_18022013.sav, GR1003-BSI D1_22112016.sav, and 
+# BSI 3 years of age_GR1065 G1-GR1066 C1_22112016.sav, GR1004-BSI G1_22112016.sav
 
 #### ---------------------------- Dependencies ---------------------------- ####
 
@@ -22,14 +30,41 @@ library(stats)
 # Do not forget the final slash in your path, and, speaking of slashes, beware of 
 # OS sensitive changes when you want to modify the structure of your dirs!
 
+#### ------------------------------ FUNCTIONS ----------------------------- ####
+
+# Read in the data and fix all SPSS weird missing codes into NAs
+# readquick <- function(filename, rootdir = pathtodata, exclude_col = "") { # only works for SPSS files
+#   dat <- read.spss(paste(rootdir, filename, sep=""), 
+#                    use.value.labels = F, to.data.frame = T)
+#   # Get rid of all capital letters in column names (so you don't have to worry)
+#   names(dat) <- tolower(names(dat))
+#   # Replace values of 777, 888 or 999 with NAs unless they are IDCs or IDMs 
+#   # If you do not want this to happen for any other column use the exclude_col argument. 
+#   for (i in 1:length(dat)) {
+#     if (colnames(dat)[i] == "idm" | colnames(dat)[i] == "idc" | colnames(dat)[i] == exclude_col) {
+#       dat[,i] <- dat[,i]
+#     } else {
+#       dat[,i] <- ifelse(dat[,i] == 777 | dat[,i] == 888 | dat[,i] == 999, NA, dat[,i]) }
+#   } 
+#   return(dat)
+# }
+
+# -----------------------------------------------------------------------------#
+##                        Ok, we are good to go now!                          ##
+# -----------------------------------------------------------------------------#
+
 ################################################################################
 #### ------------------ INTERNALIZING PROBLEMS ( @ 9 ) -------------------- ####
 ################################################################################
 
-#load data from previous scripts
-#load('prenatal_stress.Rdata')
-#load('postnatal_stress.Rdata')
-#load('alspac.table.collapsed.Rdata')
+# Read in the dataset
+# cbcl <- readquick("CHILDCBCL9_10082016.sav") # 9901 obs. of 627 vars
+
+# The internalizing sub-scale of the Child Behavior Checklist (CBCL 6-18) (Achenbach, 1999)
+# is an empirically based score derived from the widely used parent-report questionnaire. 
+# It contains 32 items rated on a 3-point scale (0 = "Not true", 1 = "Somewhat or 
+# sometimes true", 2 = "Very or often true") and referred to the past 6 months. 
+# Hence the score ranges from 0 to 64. 
 
 names(alspac.table)=tolower(names(alspac.table))
 
@@ -106,13 +141,14 @@ internalizing = internalizing %>%
 # Select only the necessary measures
 fat_mass = alspac.table[,c('cidb2957','qlet',
                            'f9003c',   # age 10 (months)              #'agechild9_visit1', # this value (age) is the same for all other datasets
-                           'kg998a', # age13
-                           'fkar0010', # age24
+                           #'kg998a', # age13
+                           #'fkar0010', # age24
                            'f9dx126',  #trunkFM at age10y   #'fat_mass_androidchild9')]
-                           'fg3257',   # andrFM at age13y
-                           'fh2257',   # andrFM at age15y
+                           #'fg3257',   # andrFM at age13y
+                           #'fh2257',   # andrFM at age15y
                            'fjdx138',   # andrFM at age17y
-                           'fkdx1041')]   # andrFM at age24y
+                           #'fkdx1041'  #andrFM at age24y
+                           )] 
 
 
 for (i in c('f9003c',
@@ -253,11 +289,9 @@ alspac.table[which(!(alspac.table$c800=='White' & alspac.table$c801=='White') &
                      !(is.na(alspac.table$c800) | is.na(alspac.table$c801))),"ethnicity"] <- 0
 
 # pre-pregnancy BMI
-alspac.table$dw002=as.numeric(levels(alspac.table$dw002))[alspac.table$dw002] # Pre-pregnancy weight (Kg) at 12w gest
-
-alspac.table$m4221=as.numeric(levels(alspac.table$m4221))[alspac.table$m4221] #  Height (cm) 7y 1m
-
-alspac.table$bmi_0 = alspac.table$dw002/((alspac.table$m4221/100)^2) # calculating ore-pregnancy BMI 
+alspac.table$dw002=as.numeric(levels(alspac.table$dw002))[alspac.table$dw002]
+alspac.table$m4221=as.numeric(levels(alspac.table$m4221))[alspac.table$m4221]
+alspac.table$bmi_0 = alspac.table$dw002/((alspac.table$m4221/100)^2)
 
 general_cov_aux = alspac.table[,c('cidb2957', 'qlet', 
                                   'm_smoking',
@@ -274,14 +308,28 @@ general_cov_aux = alspac.table[,c('cidb2957', 'qlet',
                                   'mz028b')] # maternal age at intake (used for imputation) 
 
 # ALSPAC: bmi tbd
+ 
+#maternal height at 7 years (we treat height as a constant)
 
-# Below is what ALSPAC has - should we use all of these time points? Or too many? And 9y already too late?
-# dw043 = weight/(height in meters) 12w gest 
-# ew002 = mothers postnatal weight (kg) 8w
-# m4220 = Respondent's weight (kg) 7y 1m
-# n1140 = Respondent's weight (kg) 8y 1m
-# p1290 = Respondent's weight (kg) 9y 1m
+m_aux_weight <- data.frame("ew002", #kg 8w
+"m4220", # kg 7y
+"n1140", # kg 8y
+"p1290") # kg 9y 
 
+m_aux_bmi < - (m_aux_weight/m4221)^2
+
+m_weight_aux <- (ew002 + m4220 + n1140 + p1290 / 4)
+
+m_weight <-  alspac.table[,c("ew002", #BMI 8w
+"m4220", # BMI 7y
+"n1140", # BMI 8y
+"p1290")] # BMI 9y 
+
+m_weight_aux <- "m_weight"/4
+
+BMI_aux <- 
+
+ls(ew002)
 
 
 for (i in c('mult',
@@ -294,6 +342,9 @@ for (i in c('mult',
 
 
 # Again, let's try to keep it user friendly 
+# colnames(general_cov_aux)[c(3, 5,9:12)] = c("sex", "m_bmi_before_pregnancy", "gest_age_birth", 
+#                                             "gest_weight", "m_bmi_pregnancy", "m_age_cont")
+
 
 general_cov_aux = general_cov_aux %>% 
   rename(
