@@ -72,32 +72,35 @@ names(alspac.table)=tolower(names(alspac.table))
 internalizing = alspac.table[,c('cidb2957', # note: lowercase 'b' here
                                 'qlet',
                                 'kv9991a', #age 10 (months)
-                                'tb9991a', #age 13
-                                'fh0011a', # age 15
-                                'fj003a', # age 17?  VB: not in dataset? but was in original?
-                                'ypb9992', # age 22 VB: also not in?
-                                'kv8603',# age 10      #'agechild_cbcl9m',
-                                'tb8603', # age 13
-                                'fh6876', # age 15
-                                'fjci350', # age 17 (CIS-R) 
-                                'ypb5180')] # age 22 (SMFQ; might not be the best measure)
+                                #'tb9991a', #age 13
+                                #'fh0011a', # age 15
+                                #'fj003a', # age 17?  VB: not in dataset? but was in original?
+                                #'ypb9992', # age 22 VB: also not in?
+                                'kv8603'#, age 10      #'agechild_cbcl9m',
+                                #'tb8603', # age 13
+                                #'fh6876', # age 15
+                                #'fjci350', # age 17 (CIS-R) 
+                                #'ypb5180' # age 22 (SMFQ; might not be the best measure)
+                                )] 
+                                
 #'nmisint_9m', # number of missing values in internalizing scale items
 #'sum_int_9m')] # weighted sum score internalizing scale (allowing 25% missing)
 
 
 for (i in c('kv9991a',
-            'tb9991a',
-            'fh0011a',
-            'fj003a', 
-            'ypb9992',
-            'kv8603',
-            'tb8603',
-            'fjci350',
-            'ypb5180')){
+            #'tb9991a',
+            #'fh0011a',
+            #'fj003a', 
+            #'ypb9992',
+            'kv8603'#,
+            #'tb8603',
+            #'fjci350',
+            #'ypb5180'
+            )){
   internalizing[,i] = as.numeric(levels(internalizing[,i]))[internalizing[,i]]
 }
 
-internalizing$fh6876=as.numeric(internalizing$fh6876)
+#internalizing$fh6876=as.numeric(internalizing$fh6876)
 
 #corbetw2mat(internalizing.n[,-c(1:2)], internalizing[,-c(1:2)], what = "paired")  
 
@@ -111,15 +114,15 @@ internalizing$fh6876=as.numeric(internalizing$fh6876)
 internalizing = internalizing %>% 
   rename(
     int.age.10y = kv9991a,
-    int.age.13y = tb9991a,
-    int.age.15y = fh0011a,
-    int.age.17y = fj003a,
-    int.age.22y = ypb9992,
-    intern_score.10y = kv8603,
-    intern_score.13y = tb8603,
-    intern_score.15y = fh6876,
-    intern_score.17y = fjci350,
-    intern_score.22y = ypb5180
+    #int.age.13y = tb9991a,
+    #int.age.15y = fh0011a,
+    #int.age.17y = fj003a,
+    #int.age.22y = ypb9992,
+    intern_score.10y = kv8603#,
+    #intern_score.13y = tb8603,
+    #intern_score.15y = fh6876,
+    #intern_score.17y = fjci350,
+    #intern_score.22y = ypb5180
   )
 # One alternative could be to use the anxious/depressed empirical sub-scale (9y, mother report)
 # However I did give it a shot and it does not seem to perfom better than the internalizing one.
@@ -138,43 +141,57 @@ internalizing = internalizing %>%
 # Read in the datasets
 #fatmass <- readquick("CHILDFATMASS9_13092016.sav") # 5862 obs of 28 vars
 
+#coverting months @ 10y to years (coded F9 due to focus 9 clinic age in ALSPAC)
+alspac.table$age10fm <- (as.numeric(as.character(alspac.table$f9003c)))
+alspac.table$age10fm <- ((alspac.table$age10fm)/12) 
+
+
+
+
 # Select only the necessary measures
 fat_mass = alspac.table[,c('cidb2957','qlet',
-                           'f9003c',   # age 10 (months)              #'agechild9_visit1', # this value (age) is the same for all other datasets
+                           'age10fm',   # age 10           
                            #'kg998a', # age13
+                           #fh0011a, #age 15 years (IN MONTHS in Closer, but appears to be years in data, just something to be weary of)
+                           #'fj003b', #age 17
                            #'fkar0010', # age24
-                           'f9dx126',  #trunkFM at age10y   #'fat_mass_androidchild9')]
+                           'f9dx126' #,  #trunkFM at age10y   #'fat_mass_androidchild9'
                            #'fg3257',   # andrFM at age13y
                            #'fh2257',   # andrFM at age15y
-                           'fjdx138',   # andrFM at age17y
+                           #'fjdx138',   # andrFM at age17y
                            #'fkdx1041'  #andrFM at age24y
                            )] 
 
 
-for (i in c('f9003c',
-            'kg998a',
-            'fkar0010',
-            'f9dx126', 
-            'fg3257',  
-            'fh2257',  
-            'fjdx138', 
-            'fkdx1041')){
-  fat_mass[,i] = as.numeric(levels(fat_mass[,i]))[fat_mass[,i]]
-}
 
 
-#colnames(fat_mass)[3] <- "fat_mass"
+for (i in c('age10fm',
+           # 'kg998a',
+           #fh0011a, #age 15 years (IN MONTHS in Closer, but appears to be years in data, just something to be weary of)
+           #'fj003b',
+            #'fkar0010',
+            '#f9dx126' 
+            #'fg3257',  
+            #'fh2257',  
+            #'fjdx138', 
+            #'fkdx1041'
+            )){fat_mass[,i] = as.numeric(levels(fat_mass[,i]))[fat_mass[,i]]}
+
+
+
+
 
 fat_mass = fat_mass %>% 
   rename(
-    fm.age.10y = f9003c,
-    fm.age.13y = kg998a,
-    fm.age.24y = fkar0010,
+    fm.age.10y = age10fm,
+    #fm.age.13y = kg998a,
+    #fm.age.15y = fh0011a,  (IN MONTHS in Closer, but appears to be years in data, just something to be weary of)
+    #fm.age.24y = fkar0010,
     fat_mass.10y = f9dx126,
-    fat_mass.13y = fg3257,
-    fat_mass.15y = fh2257,
-    fat_mass.17y = fjdx138,
-    fat_mass.24y = fkdx1041
+    #fat_mass.13y = fg3257,
+    #fat_mass.15y = fh2257,
+    #fat_mass.17y = fjdx138,
+    #fat_mass.24y = fkdx1041
   )
 
 ################################################################################
@@ -239,7 +256,8 @@ PCM_outcome$age_child.23y = (PCM_outcome$int.age.22y + PCM_outcome$fm.age.24y) /
 # # (3) continued smoking during pregnancy.
 # colnames(smoking)[2] = "m_smoking"
 
-# ALSPAC: 2 categories (sustained vs (stopped or never))
+# ALSPAC: smoked cigarettes reguarly during last 2 months of pregnancy (Yes or No)
+#TW #currently not changing this variable, as no earlier timepoints give a better measure
 
 alspac.table$m_smoking=NA
 alspac.table[which(alspac.table$e170=='N'),"m_smoking"] <- 0
@@ -257,12 +275,17 @@ alspac.table[which(alspac.table$e170=='Y'),"m_smoking"] <- 1
 # # (3) continued during pregnancy frequently.
 # colnames(drinking)[2] = "m_drinking"
 
-# ALSPAC
+# ALSPAC # we chose the earliest timepoint available for maternal drinking during pregnancy, as effects of alcohol are most potent in first trimester, and more data avilable
+
 
 alspac.table$m_drinking=NA
-alspac.table[which(alspac.table$b721=='never' & alspac.table$e220=='Not at all'),"m_drinking"] <- 0
-alspac.table[which(!(alspac.table$b721=='never' & alspac.table$e220=='Not at all') &
-                     !(is.na(alspac.table$b721) | is.na(alspac.table$e220))),"m_drinking"] <- 1
+alspac.table[which(alspac.table$b721=='never' & alspac.table$e220=='Not at all'),"m_drinking"] <- 1
+alspac.table[which(alspac.table$b721 == '<1 glass PWK' & alspac.table$b721 == '1+ glasses PWK' & 
+                     alspac.table$e220 == '<1PWK' & alspac.table$e220 == 'At least 1PWK'),"m_drinking"] <- 2
+alspac.table[which(!(alspac.table$b721=='never' & alspac.table$e220=='Not at all' & alspac.table$b721 == '<1 glass PWK' & alspac.table$b721 == '1+ glasses PWK' & 
+                       alspac.table$e220 == '<1PWK' & alspac.table$e220 == 'At least 1PWK'),"m_drinking") & 
+               !(is.na(alspac.table$b721) | is.na(alspac.table$e220) | as.na(alspac.table$b721) == '<1 glass PWK' | is.na(aslpac.table$b721) | 
+                                                          is.na(alspac.table$e220) | is.na(alspac.table$e220)),"m_drinking"] <- 3
 
 
 #-------------------------------------------------------------------------------
