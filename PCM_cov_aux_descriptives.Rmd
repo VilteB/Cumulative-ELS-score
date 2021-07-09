@@ -1,0 +1,113 @@
+---
+title: "PCM_out_cov_aux_descriptives"
+output: pdf_document
+---
+
+```{r}
+install.packages("pastecs")
+library(pastecs)
+
+```
+
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This file contains descriptives of the variables that are included in the PCM_outcomes_covs_aux files, that are not included in the summary statistics
+
+
+interanlising age at ~10y (in months)
+```{r}
+summary(as.numeric(as.character(alspac.table$kv9991a)))
+
+```
+
+internalising score at 10y 
+```{r}
+summary(as.numeric(as.character(alspac.table$kv8603)))
+```
+
+fatmass age ay ~10y (in months)
+
+```{r}
+summary(as.numeric(as.character(alspac.table$f9003c)))
+```
+
+trunk fatmass (in grams) from DXA scan at ~10y 
+```{r}
+summary(as.numeric(as.character(alspac.table$f9dx126)))
+```
+
+ Smoked cigarettes reguarly during last 2 months of pregnancy (n = 11710)
+```{r}
+summary(alspac.table$e170)
+```
+
+Maternal alcohol consumption during prenancy, between 1-3 months and 7-9 months
+```{r}
+summary(alspac.table$b721)
+summary(alspac.table$e220)
+
+```
+Ethnicity of the mother and father 
+```{r}
+summary(alspac.table$c800)
+summary(alspac.table$c801)
+
+```
+Variables to construct pre-pregnancy BMI score incl. pre-pregnancy weight (kg), and respondant height (cm)
+```{r}
+summary(as.numeric(as.character(alspac.table$dw002)))
+summary(as.numeric(as.character(alspac.table$m4221)))
+
+summary(alspac.table$bmi_0)
+```
+
+in comparison with the maternal BMI variable**1.5
+```{r}
+summary(as.numeric(as.character(alspac.table$dw043)))
+
+```
+bmi_1, which uses birthweight of mother, birthweight of child, and height of mother to calculate BMI of mother during pregancy. 
+
+```{r}
+summary(alspac.table$bmi_1)
+```
+
+age of mother at birth 
+```{r}
+summary(as.numeric(alspac.table$bestgest))
+```
+
+gestational weight at birth 
+
+```{r}
+summary(as.numeric(as.character(alspac.table$kz030)))
+```
+
+maternal age at input 
+```{r}
+summary(as.numeric(alspac.table$mz028b))
+```
+
+maternal depression cont. 18w gest - 21m
+
+```{r}
+summary(alspac.table$b370)
+summary(alspac.table$c600)
+summary(as.numeric(alspac.table$e390))
+summary(as.numeric(alspac.table$f200))
+summary(as.numeric(alspac.table$g290))
+```
+
+paternal depression cont. 18w gest - 21m
+
+```{r}
+summary(alspac.table$pb260)
+summary(alspac.table$pc102) 
+summary(as.numeric(alspac.table$pd200))
+summary(as.numeric(alspac.table$pe290))
+```
