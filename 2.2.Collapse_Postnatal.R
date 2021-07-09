@@ -732,9 +732,9 @@ postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- d
 ################################################################################
 
 # Save the dataset in the directory where you have the raw data
-saveRDS(prenatal_stress, file.path(alspac_folder, "prenatal_stress.rsd"))
-saveRDS(prenatal_summary, file.path(alspac_folder, "prenatal_summary.rsd"))
+saveRDS(postnatal_stress, file.path(alspac_folder, "postnatal_stress.rsd"))
+saveRDS(postnatal_summary, file.path(alspac_folder, "postnatal_summary.rsd"))
 
 # Also save the dataset in a .csv format
-write.csv(prenatal_stress, file = "prenatal_stress.csv", row.names = FALSE, quote = FALSE)
-write.csv(prenatal_summary, file = "prenatal_summary.csv", row.names = T, quote = FALSE)
+write.csv(postnatal_stress, file = "postnatal_stress.csv", row.names = FALSE, quote = FALSE)
+write.csv(postnatal_summary, file = "postnatal_summary.csv", row.names = T, quote = FALSE)
