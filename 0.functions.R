@@ -55,7 +55,7 @@ dichotomize <- function(vars,
   # add variables that were already dichotomous
   if (length(already_dich) > 0) {
     for (v in already_dich) {
-      if (levels(alspac.table[, v]) > 2) { message("Are you sure variable ", v, " is already dichotomous?") }
+      if (length(levels(alspac.table[, v])) > 2) { message("Are you sure variable ", v, " is already dichotomous?") }
       }
   } else { dset <- cbind(dset, alspac.table[, already_dich]) }
   

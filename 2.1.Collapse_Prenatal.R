@@ -78,7 +78,8 @@ prenatal_stress$income_reduced_pre <-	repmeas(pre[,c('b588a_rec', 'b581a_rec')])
 #	Income reduced since PREG | PTNR lost job since PREG
 
 #homeless_pregnancy
-prenatal_stress$homeless_pregnancy	<- pre$b593	# Became homeless since PREG
+# prenatal_stress$homeless_pregnancy	<- pre$b593	# Became homeless since PREG
+prenatal_stress$homeless_pregnancy	<- alspac.table$b593	# for  now  adding this, until dichotomise function is sorted
 
 #major_financial_problems_pre
 prenatal_stress$major_financial_problems_pre <-	pre$b594a_rec # Major financial PROB since PREG
@@ -100,19 +101,23 @@ prenatal_stress$m_education_pre <- pre$c645a_rec # No degree
 ################################################################################
 
 # criminal_record_parent_pre
-prenatal_stress$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n', 'b586a_rec', 'pb188a_rec')]) 
+
+pre <- cbind(pre, b598 =  alspac.table$b598) # I am addding this for now,  until the dichotomize function is sorted to include  already dich vars in the data frame
+
+prenatal_stress$criminal_record_parent_pre <- repmeas(pre[,c('b577a_rec', 'b598', 'p14n', 'b586a_rec', 'pb188a_rec')]) 
 #	In trouble with the law since PREG | Convicted of an offence since PREG | Crime trouble with police |
 # PTNR in trouble with law since PREG | PTNR convicted of an offence since PREG 
 
 # m_attempted_suicide_pre
-prenatal_stress$m_attempted_suicide_pre <-	pre$b597 # Attempted suicide since PREG
+#prenatal_stress$m_attempted_suicide_pre <-	pre$b597 # Attempted suicide since PREG
+prenatal_stress$m_attempted_suicide_pre <-	alspac.table$b597 # Attempted suicide since PREG 
 
 # early_pregnancy = m_age in postnatal script
 prenatal_stress$early_pregnancy <- pre$mz028ba_rec # mother age < 19 at baseline 
 
 # m_depression_pre
 prenatal_stress$m_depression_pre <- repmeas(anxdep[,c('b371a_rec', 'c601a_rec')]) 
-# EPDS (>12 risk, <12 no risk) 18wk and  32wk # corr ???????
+# EPDS (>12 risk, <12 no risk) 18wk and  32wk # corr = 0.4267
 
 # p_depression_pre
 prenatal_stress$p_depression_pre <- anxdep$pb261a_rec 
@@ -120,7 +125,7 @@ prenatal_stress$p_depression_pre <- anxdep$pb261a_rec
 
 # m_anxiety_pre
 prenatal_stress$m_anxiety_pre	<- repmeas(anxdep[,c('b351a_rec', 'c573a_rec')]) 
-# CCEI anxiety subscale (complete) 18w gest, 32w gest # cor(anxdep$b351a_rec, anxdep$c573a_rec, use='complete.obs') # 0.4625
+# CCEI anxiety subscale (complete) 18w gest, 32w gest # corr = 0.4625
 
 # p_anxiety_pre
 prenatal_stress$p_anxiety_pre <- anxdep$pb234a_rec 
@@ -137,6 +142,8 @@ prenatal_stress$p_interpersonal_sensitivity_pre <- pre$pb551a_rec # 80th percent
 ################################################################################
 
 # divorce_pre
+pre <- cbind(pre, b578 =  alspac.table$b578, b587 = alspac.table$b587) # I am addding this for now,  until the dichotomize function is sorted to include  already dich vars in the data frame
+
 prenatal_stress$divorce_pre <-	repmeas(pre[,c('b578', 'b587')]) # Divorced since PREG | Separated since PREG
 
 # p_rejected_child_pre
@@ -146,6 +153,8 @@ prenatal_stress$p_rejected_child_pre <- pre$b579a_rec	# PTNR rejected PREG
 prenatal_stress$p_went_away_pre	<-  pre$b585a_rec #	PTNR went away since PREG
 
 # conflict_in_family_pre
+pre <- cbind(pre, b608 =  alspac.table$b608) # I am addding this for now,  until the dichotomize function is sorted to include  already dich vars in the data frame
+             
 prenatal_stress$conflict_in_family_pre	<- repmeas(pre[,c('b607a_rec', 'b608')]) 
 # PTNR was EMOT cruel to mum since PREG | PTNR was EMOT cruel to child since PREG
 
@@ -153,7 +162,7 @@ prenatal_stress$conflict_in_family_pre	<- repmeas(pre[,c('b607a_rec', 'b608')])
 prenatal_stress$argued_fam_friends_pre	<- pre$b590a_rec	# Argued with family or friends since PREG
 
 # conflict_family_violence_pre
-prenatal_stress$conflict_family_violence_pre	<- repmeas(alspac.table[,c('b592a_rec', 'b596a_rec')])
+prenatal_stress$conflict_family_violence_pre	<- repmeas(pre[,c('b592a_rec', 'b596a_rec')]) # corr = 0.124
 # PTNR hurt mum since PREG | PTNR hurt CH since PREG
 
 # marital_status_pregnancy

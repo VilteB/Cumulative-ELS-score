@@ -456,7 +456,7 @@ postnatal_stress$m_anxiety_8m  <- anxdep$f173a_rec  # CCEI anxiety subscale (com
 postnatal_stress$m_anxiety_21m <- anxdep$g268a_rec  # CCEI anxiety subscale (complete)
 postnatal_stress$m_anxiety_3y  <- anxdep$h178a_rec  # CCEI anxiety subscale (complete)
 postnatal_stress$m_anxiety_5y  <- anxdep$CCEI_total_5ya_rec # CCEI anxiety subscale (complete)
-postnatal_stress$m_anxiety_6y < - anxdep$CCEI_total_6ya_rec # CCEI anxiety subscale (complete)
+postnatal_stress$m_anxiety_6y  <- anxdep$CCEI_total_6ya_rec # CCEI anxiety subscale (complete)
 # ------------------------------------------------------------------------------
 # p_anxiety
 # ------------------------------------------------------------------------------
@@ -719,7 +719,7 @@ postnatal_stress[,c('post_IR_percent_missing','post_interpersonal_risk')] <- dom
     'argued_fam_friends'),  postnatal = T)
 
 postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- domainscore(
-  c('bullying',
+  c(#'bullying', # this variable creates issues for the function, results in error: arguments imply differing number of rows: 0, 15645
     'physical_violence'	,
     'sexual_abuse',
     'p_cruelty_physical',

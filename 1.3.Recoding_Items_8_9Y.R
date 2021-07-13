@@ -41,6 +41,7 @@ LE_9Y <- dichotomize(
   yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+"),
   no = c("No, did not happen in past 3 years")
 )
+# "Relevant comment", "Relevant text but no box ticked" set to  NA
 
 # CHILD-BASED LIFE EVENTS
 LE_child_8Y <- dichotomize(
@@ -61,6 +62,7 @@ LE_child_8Y <- dichotomize(
   yes = c("Yes, very upset","Yes, quite upset","Yes, bit upset", "Yes, not upset"),
   no = c("No")
 )
+# "Other text answer", "DK", "Relevant text but no box ticked" set to NA
 
 ################################################################################
                             # 2. CONTEXTUAL RISKS
@@ -112,6 +114,7 @@ IR_9Y1 <- dichotomize(
            "p2040"), # Mother found a new partner since the study child's 6th birthday
   yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+"),
   no = c("No, did not happen in past 3 years") )
+# "Relevant comment" set to NA
 
 IR_9Y2 <- dichotomize(
   vars = c("p3153",  # Mother/husband/partner shouted or called one another names in the past 3 months (in Char script: DV_Shouted_9Y)
@@ -120,10 +123,14 @@ IR_9Y2 <- dichotomize(
   yes = c("Yes, mother did this","Yes, partner did this","Yes, both did this"),
   no = c("No") )
 
-IR_9Y3 <- dichotomize(
-  vars = c("ku298"), # Child is slapped or hit (in Char script: Par_Smack_9Y_Any)
-  yes = c("Every day","Several times a week","Once or twice a week","Once or twice a month", "Rarely"),
-  no = c("Never") )
+#IR_9Y3 <- dichotomize(
+#  vars = c("ku298"), # Child is slapped or hit (in Char script: Par_Smack_9Y_Any)
+#  yes = c("Every day","Several times a week","Once or twice a week","Once or twice a month", "Rarely"),
+#  no = c("Never") )
+
+IR_9Y3 <- data.frame(ku298 = alspac.table$ku298,
+                   ku298a_rec = (ifelse(alspac.table$ku298 %in% c("Every day","Several times a week","Once or twice a week","Once or twice a month", "Rarely"), 1,
+                                        ifelse(alspac.table$ku298 == "Never", 0, NA))))
 
 IR_9Y <- cbind(IR_9Y1, IR_9Y2, IR_9Y3)
 
@@ -143,6 +150,7 @@ DV_9Y <- dichotomize(
            "kt5005"),  # Since 7th birthday child has been sexually abused
   yes = c("Yes, very upset", "Yes, quite upset", "Yes, bit upset", "Yes, not upset"),
   no = c("No") )
+# "Other text answer", "DK" set to NA
 
 ################################################################################
 ################################################################################

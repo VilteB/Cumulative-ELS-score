@@ -83,7 +83,7 @@ LE_8M <- dichotomize(
   yes = c("Y much affected","Y MOD affected","Y mildly affected","Y but N effect"), 
   no = c("N did not happen")
 )
-# EW: another level: NK
+# NK set to NA
 
 LE_21M <- dichotomize(
   vars = c( "g300", # Partner died >CH8MTHs
@@ -110,7 +110,7 @@ LE_21M <- dichotomize(
   yes = c("Yes Big Effect","Yes Some Effect","Yes Mild Effect","Yes No Effect"),
   no = c("Did Not Happen")
 )
-# EW: other levels: Other, DK
+# Other, DK set to NA
 
 LE_3Y <- dichotomize(
   vars = c("h210", # Whether partner died since study child was 18 months old, Y/N
@@ -137,7 +137,7 @@ LE_3Y <- dichotomize(
   yes = c("yes had big effect","yes medium effect","yes mild effect","yes but no effect"),
   no = c("didnt happen")
 )
-# EW: other levels: other, dk (lower case!)
+# other, dk set to NA
 
 LE_4Y <- dichotomize(
   vars = c("j300", # Partner Died > CH 30 MTHs y/n
@@ -164,7 +164,7 @@ LE_4Y <- dichotomize(
   yes = c("Yes and affected a lot","Yes, moderately affected","Yes, mildly affected","Yes, not affect at all"),
   no = c("No")
 )
-# other level: "No/Missing" (set to missing)
+# "No/Missing" set to NA
 
 LE_5Y <- dichotomize(
   vars = c("k4000", # Mothers partner died in past year
@@ -191,7 +191,7 @@ LE_5Y <- dichotomize(
   yes = c("Yes, affected a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect at all"),
   no = c("No, did not happen")
 )
-# EW: other levels: "Other text answer" (set to missing)
+# "Other text answer" and "Relevant text but no box ticked" set to NA 
 
 LE_6Y <- dichotomize(
   vars = c("l4000", # Respondent's partner died since study child's 5th birthday
@@ -219,7 +219,7 @@ LE_6Y <- dichotomize(
   yes = c("Yes & affected respondent a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect respondent at all"),
   no = c("No, did not happen")
 )
-# EW: other levels: Other, DK (set to missing) 
+#  'Other', 'DK', and 'Relevant text but no box ticked' set to NA
 
 LE_child_18M <- dichotomize(
   vars = c("kd500a", # Ch taken into care
@@ -237,7 +237,7 @@ LE_child_18M <- dichotomize(
   yes = c("Yes & CH Very Upset", "Yes & CH Quite Upset", "Yes & CH Bit Upset", "Yes & CH Not Upset"),
   no = c("Did Not Happen")
 )   
-# EW: other levels: Other, DK (set to missing)
+# Other, DK set to NA
 
 LE_child_30M <- dichotomize(
   vars = c("kf450", # Child taken into care > 18 months, Y/N
@@ -255,7 +255,7 @@ LE_child_30M <- dichotomize(
   yes = c("yes child very upset", "yes quite upset", "yes bit upset", "yes not upset"),
   no = c("no didnt happen")
 )
-# EW other and dn set to missing ('other' up to n=7; unlike the other variables; still coded as missing)
+# other, dk set to NA
 
 LE_child_3Y <- dichotomize(
   vars = c("kj460", # Child Taken Into Care
@@ -273,7 +273,7 @@ LE_child_3Y <- dichotomize(
   yes = c("Yes CH Very Upset", "Yes Quite Upset", "Yes Bit Upset", "Yes Not Upset"),
   no = c("No didnt Happen")
 )
-# Ew: plus 'Other' and 'DK'
+# Other, DK set to NA
 
 LE_child_4Y <- dichotomize(
   vars = c("kl470", # Child taken into care since age 3
@@ -293,8 +293,7 @@ LE_child_4Y <- dichotomize(
   no = c("No, did not happen")
 )
 
-
-# EW: plus, 'Relevant text but no box ticked' set to missing
+# "Relevant text but no box ticked" set to NA
 
 LE_child_5Y <- dichotomize(
   vars = c("kn4000", # Child taken into care in past 15 months
@@ -313,7 +312,7 @@ LE_child_5Y <- dichotomize(
   yes = c("Yes And Was Very Upset","Yes And Was Quite Upset","Yes And Was A Bit Upset","Yes But Was Not Upset"),
   no = c("No Did Not Happen")
 )
-# EW: "Other Text Answer" "DK" set to missing
+# "Other Text Answer", "DK" set to NA
 
 LE_child_6Y <-  dichotomize(
   vars = c("kq360", # Child was taken into care since his/her 5th birthday (Y/N)
@@ -347,7 +346,7 @@ CR_8W <- dichotomize(
   yes = c("Affected a lot","MOD affected","Mildly affected","No effect"),
   no = c("Did not happen")
 )
-# EW: "Other" "DK" set to missing
+# "Other" "DK" set to NA
 
 CR_8M <- dichotomize(
   vars = c("f238", # Reduced income
@@ -356,7 +355,7 @@ CR_8M <- dichotomize(
   yes = c("Y much affected","Y MOD affected","Y mildly affected","Y but N effect"),
   no =c("N did not happen")
 )
-# EW: "NK" set to missing
+# "NK" set to NA
 
 CR_21M <- dichotomize(
   vars = c("g318",	
@@ -365,6 +364,7 @@ CR_21M <- dichotomize(
   yes = c("Yes Big Effect","Yes Some Effect","Yes Mild Effect","Yes No Effect"),
   no = c("Did Not Happen")        
 )
+# Other, DK set to NA
 
 
 CR_3Y <- dichotomize(
@@ -374,7 +374,7 @@ CR_3Y <- dichotomize(
   yes = c("yes had big effect","yes medium effect","yes mild effect","yes but no effect"),
   no = c("didnt happen")         
 )
-#EW: "other" "dk" set to missing
+# "other" "dk" set to NA
 
 CR_4Y <- dichotomize(
   vars = c("j318",	
@@ -383,7 +383,7 @@ CR_4Y <- dichotomize(
   yes = c("Yes, not affect at all","Yes, mildly affected","Yes, moderately affected","Yes and affected a lot"),
   no = c("No")         
 )
-# EW: "No/Missing"set to missing
+# "No/Missing" set to NA
 
 CR_5Y <- dichotomize(
   vars = c("k4018",	
@@ -393,7 +393,7 @@ CR_5Y <- dichotomize(
   yes = c("Yes, affected a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect at all"),
   no = c("No, did not happen")         
 )
-# EW: "Other text answer" set to missing
+# "Other text answer" set to NA
 
 CR_6Y <- dichotomize(
   vars = c("l4018",
@@ -402,7 +402,7 @@ CR_6Y <- dichotomize(
   yes = c("Yes & affected respondent a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect respondent at all"),
   no = c("No, did not happen")       
 )
-# EW: "Other" "DK" set to missing
+# "Other", "DK" set to NA
 
 # Add maternal and paternal education
 CR_education <- dichotomize( 
@@ -410,6 +410,7 @@ CR_education <- dichotomize(
            "c666"), # paternal education
   yes = c("None", "CSE", "Vocational", "O level", "A level"), 
   no = c("Degree") )
+# "Consent withdrawn by mother" set to NA
 
 # Neighborhood stress score: higher scores = worse neighborhood problems
 # Transform from factor to numeric
@@ -450,7 +451,7 @@ PR_8W <- dichotomize(
   yes = c("Affected a lot","MOD affected","Mildly affected","No effect"),
   no = c("Did not happen")
 )
-# EW: "Other" "DK" set to missing
+# "Other", "DK" set to NA
 
 PR_8M <- dichotomize(
   vars = c("f227",	# Mum in trouble with law Y/N
@@ -462,7 +463,7 @@ PR_8M <- dichotomize(
   yes = c("Y much affected","Y MOD affected","Y mildly affected","Y but N effect"),
   no = c("N did not happen")
 )
-# EW: NK set to missing
+# NK set to NA
 
 PR_21M <- dichotomize(
   vars = c("g307",
@@ -474,7 +475,7 @@ PR_21M <- dichotomize(
   yes = c("Yes Big Effect","Yes Some Effect","Yes Mild Effect","Yes No Effect"),
   no = c("Did Not Happen")    
 )
-# EW: "Other" "DK" set to missing
+# "Other", "DK" set to NA
 
 PR_3Y <- dichotomize(
   vars = c("h217",
@@ -486,7 +487,7 @@ PR_3Y <- dichotomize(
   yes = c("yes had big effect","yes medium effect","yes mild effect","yes but no effect"),
   no = c("didnt happen")
 )
-# EW: "other" "dk" set to missing
+# "other", "dk" set to NA
 
 PR_4Y <- dichotomize(
   vars = c("j307",
@@ -498,7 +499,7 @@ PR_4Y <- dichotomize(
   yes = c("Yes, not affect at all","Yes, mildly affected","Yes, moderately affected","Yes and affected a lot"),
   no = c("No") 
 )
-# EW: "No/Missing" set to missing
+# "No/Missing" set to NA
 
 PR_5Y <- dichotomize(
   vars = c("k4007",
@@ -509,7 +510,7 @@ PR_5Y <- dichotomize(
   yes = c("Yes, affected a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect at all"),
   no = c("No, did not happen")   
 )
-# EW: 'Other text answer' set to missing
+# 'Other text answer' set to NA
 
 PR_6Y <- dichotomize(
   vars = c("l4007",
@@ -521,13 +522,13 @@ PR_6Y <- dichotomize(
   yes = c("Yes & affected respondent a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect respondent at all"),
   no = c("No, did not happen")  
 )
-# EW: + Other and DK
+# "Other", "DK" set to NA
 
 # Merge all timepoints together 
 PR_postnatal <- cbind(PR_8W, PR_8M, PR_21M, PR_3Y, PR_4Y, PR_5Y, PR_6Y)
 
 # Add maternal and paternal early parenthood
-PR_postnatal$mz028bn <- as.numeric(as.character(alspac.table$mz028b))
+PR_postnatal$mz028bn <- as.numeric(as.character(alspac.table$mz028b)) # NAs introduced by coercion because "Consent withdrawn by mother" converted to  NA
 # Because mz028b is a factor, we use as.character before as.numeric.
 # Factors are stored internally as integers with a table to give the factor level labels.
 PR_postnatal$mz028ba_rec <- ifelse(PR_postnatal$mz028bn < 19, yes = 1, no = 0) # early parenthood 
@@ -558,7 +559,7 @@ IR_8W <- dichotomize(
   yes = c("Affected a lot","MOD affected","Mildly affected","No effect"),
   no = c("Did not happen")
 )
-# EW: + "Other" "DK"
+# "Other", "DK" set to NA
 
 IR_8M <- dichotomize(
   vars = c("f228",  # Divorce 
@@ -576,6 +577,7 @@ IR_8M <- dichotomize(
   yes = c("Y much affected","Y MOD affected","Y mildly affected","Y but N effect"),
   no = c("N did not happen")
 )
+# "NK" set to NA
 
 IR_21M <- dichotomize(
   vars = c("g308", # Mum divorced >CH8MTHs
@@ -594,6 +596,7 @@ IR_21M <- dichotomize(
   yes = c("Yes Big Effect","Yes Some Effect","Yes Mild Effect","Yes No Effect"),
   no = c("Did Not Happen")      
 )
+# "Other", "DK" set to NA
 
 IR_3Y <- dichotomize(
   vars = c("h218", # Whether got divorced since study child was 18 months old, Y/N
@@ -612,6 +615,7 @@ IR_3Y <- dichotomize(
   yes = c("yes had big effect","yes medium effect","yes mild effect","yes but no effect"),
   no = c("didnt happen")   
 )
+# "other", "dk" set to NA
 
 IR_4Y <- dichotomize(
   vars = c("j308", # MUM Divorced> CH 30 MTHs y/n
@@ -630,6 +634,7 @@ IR_4Y <- dichotomize(
   yes = c("Yes, not affect at all","Yes, mildly affected","Yes, moderately affected","Yes and affected a lot"),
   no = c("No")
 )
+# "No/Missing" set to NA
 
 IR_5Y <- dichotomize(
   vars = c("k4008",  # Mother was divorced in past year
@@ -648,6 +653,7 @@ IR_5Y <- dichotomize(
   yes = c("Yes, affected a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect at all"),
   no = c("No, did not happen") 
 )
+# "Other text answer" set to NA
 
 IR_6Y <- dichotomize(
   vars = c("l4008",  # Respondent was divorced since study child's 5th birthday
@@ -667,6 +673,7 @@ IR_6Y <- dichotomize(
   yes = c("Yes & affected respondent a lot", "Yes, moderately affected", "Yes, mildly affected", "Yes, did not affect respondent at all"),
   no = c("No, did not happen")  
 )
+# "Other", "DK" set to NA
 
 # ------------------------------------------------------------------------------
 # The following are variables included in Cecil et al. (2014) script for which we 
@@ -678,6 +685,7 @@ Cha1 <- dichotomize(
            "h581"), # Mum/PTNR hit or slapped one another (DV_Hit_33M)
   yes = c("Yes mum did","Yes partner did","Yes both did"),
   no = c("No not at all") )
+# "other", "dk" set to NA
 
 Cha2 <- dichotomize(
   vars = c("g712",  # Mum/PTNR hit or slapped one another (DV_Hit_21M)
@@ -685,11 +693,17 @@ Cha2 <- dichotomize(
   yes = c("Yes mum Did","Yes Partner Did","Yes both Did"),
   no = c("No not at All") )
 
-Cha3 <- dichotomize(
-  vars = c("ke017"), # Par_Smack_2Y
-  # EW: unclear how coded (below is my interpretation)
-  yes = c("Every day","SEV times WK","C once WK","Rarely"),
-  no = c("Never") )
+#Cha3 <- dichotomize(
+#  vars = c("ke017"), # Par_Smack_2Y
+#  yes = c("Every day","SEV times WK","C once WK","Rarely"),
+#  no = c("Never") )
+
+# Above won't work because ke017 is a single variable, so levels(dset[,i]) part of the dichotomization function does not work (it tries to obtain levels for each element instead of variable as a whole)
+# Either change the function to account for single vars or dichotomise normally in script, for now I am including normal dichotomisation:
+
+Cha3 <- data.frame(ke017 = alspac.table$ke017,
+                   ke017a_rec = (ifelse(alspac.table$ke017 %in% c("Every day","SEV times WK","C once WK","Rarely"), 1,
+                     ifelse(alspac.table$ke017 == "Never", 0, NA))))
 
 # ------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------
@@ -708,7 +722,7 @@ DV_18M <- dichotomize(
   yes = c("Yes & CH Very Upset", "Yes & CH Quite Upset", "Yes & CH Bit Upset", "Yes & CH Not Upset"),
   no = c("Did Not Happen")
 )
-# However, it turns back to non-binary ???????
+# "Other", "DK" set to NA
 
 DV_30M <- dichotomize(
   vars = c("kf454",	  # Child physically hurt > 18 months, Y/N
@@ -716,6 +730,7 @@ DV_30M <- dichotomize(
   yes = c("yes child very upset", "yes quite upset", "yes bit upset","yes not upset"),
   no = c("no didnt happen")
 )
+# "other", "dk" set to NA
 
 DV_3Y <- dichotomize(
   vars = c("kj464",	  # Child Was Physically Hurt By Person Y/N
@@ -723,6 +738,7 @@ DV_3Y <- dichotomize(
   yes = c("Yes CH Very Upset", "Yes Quite Upset", "Yes Bit Upset", "Yes Not Upset"),
   no = c("No didnt Happen")
 )
+# "Other", "DK" set to NA
 
 DV_4Y <- dichotomize(
   vars = c("kl474",	  # Child was physically hurt by someone since age 3 (not Y/N)
@@ -737,6 +753,7 @@ DV_5Y <- dichotomize(
   yes = c("Yes And Was Very Upset", "Yes And Was Quite Upset", "Yes And Was A Bit Upset", "Yes But Was Not Upset"),
   no = c("No Did Not Happen")       
 )
+# "Relevant text, but no box ticked", "DK", "Other Text Answer" set to NA
 
 DV_6Y <- dichotomize(
   vars = c("kq364",  # Child was physically hurt by someone since his/her 5th birthday (Y/N)
@@ -751,7 +768,6 @@ DV_postnatal <- cbind(DV_18M, DV_30M, DV_3Y, DV_4Y, DV_5Y, DV_6Y)
 ################################################################################
 ################################################################################
 
-postnatal_stress_0to7_raw <-cbind(LE_postnatal, CR_postnatal, PR_postnatal, IR_postnatal, DV_postantal, 
-                                  DEP_M, DEP_P, ANX_P) # TODO: anxiety mother???
+postnatal_stress_0to7_raw <-cbind(LE_postnatal, CR_postnatal, PR_postnatal, IR_postnatal, DV_postnatal) #  DEP_M, DEP_P, ANX_P, ANX_M will be added in CCEI_EPDS script
 
 saveRDS(postnatal_stress_0to7_raw, file.path(alspac_folder, "raw_postnatal_stress_0to7.rsd"))

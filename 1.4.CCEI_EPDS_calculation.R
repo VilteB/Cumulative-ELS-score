@@ -71,8 +71,8 @@ M_ANX_3y <- dich_psychopath("h178a", yes = c(9:16), no = c(0:8),
 # Merge them together
 M_ANX <- cbind(M_ANX_18Wg, M_ANX_32Wg, M_ANX_8wk, M_ANX_8m, M_ANX_21m, M_ANX_3y)
 
-M_ANX$CCEI_total_5ya_rec <- as.factor(ifelse(M_ANX_5Y$sumscore >= 9, 1, 0))
-M_ANX$CCEI_total_6ya_rec <- as.factor(ifelse(M_ANX_6Y$sumscore >= 9, 1, 0))
+M_ANX$CCEI_total_5ya_rec <- ifelse(M_ANX_5Y$sumscore >= 9, 1, 0)
+M_ANX$CCEI_total_6ya_rec <- ifelse(M_ANX_6Y$sumscore >= 9, 1, 0)
 
 ## Recoding anxiety variable for PARTNER #######################################
 
@@ -101,6 +101,7 @@ P_ANX_post <- dichotomize(
           "Yes, consulted doctor", "Yes, did not consult doctor"),
   no = c("No")
 )
+#  Note: gives a warning that some labels are not present in certain variables. This is expected, as not all labels apply to each variable.
 
 P_ANX <- cbind(P_ANX_pren, P_ANX_post)
 
@@ -166,8 +167,8 @@ M_DEP_3Y <- dich_psychopath("h200b", yes = c(13:30), no = c(0:12), # actually 2y
 # Merge them together
 M_DEP <- cbind(M_DEP_18Wg, M_DEP_32Wg, M_DEP_8W, M_DEP_8M, M_DEP_21M, M_DEP_3Y)
 
-M_DEP$m_EPDS_total_5ya_rec <- as.factor(ifelse(M_DEP_5Y$sumscore > 12, 1, 0))
-M_DEP$m_EPDS_total_8ya_rec <- as.factor(ifelse(M_DEP_8Y$sumscore > 12, 1, 0))
+M_DEP$m_EPDS_total_5ya_rec <- ifelse(M_DEP_5Y$sumscore > 12, 1, 0)
+M_DEP$m_EPDS_total_8ya_rec <- ifelse(M_DEP_8Y$sumscore > 12, 1, 0)
 
 ## MOTHER DEPRESSION - SELF-REPORTS ############################################
 
@@ -236,11 +237,11 @@ P_DEP_8M <- dich_psychopath("pd201", yes = c(13:29), no = c(1:12),
 P_DEP_21M <- dich_psychopath("pe291", yes = c(13:30), no = c(0:12))
 
 # Merge them together
-P_DEP <- cbind(PDEP_pregn, PDEP_8W, PDEP_8M, PDEP_21M)
+P_DEP <- cbind(P_DEP_pregn, P_DEP_8W, P_DEP_8M, P_DEP_21M)
 
-P_DEP$p_EPDS_total_3ya_rec <- as.factor(ifelse(P_DEP_3Y$sumscore > 12, 1, 0))
-P_DEP$p_EPDS_total_5ya_rec <- as.factor(ifelse(P_DEP_5Y$sumscore > 12, 1, 0))
-P_DEP$p_EPDS_total_6ya_rec <- as.factor(ifelse(P_DEP_6Y$sumscore > 12, 1, 0))
+P_DEP$p_EPDS_total_3ya_rec <- ifelse(P_DEP_3Y$sumscore > 12, 1, 0)
+P_DEP$p_EPDS_total_5ya_rec <- ifelse(P_DEP_5Y$sumscore > 12, 1, 0)
+P_DEP$p_EPDS_total_6ya_rec <- ifelse(P_DEP_6Y$sumscore > 12, 1, 0)
 
 ## PARTNER DEPRESSION - SELF-REPORTS ############################################
 
@@ -264,6 +265,8 @@ P_DEP_selfr <- dichotomize(
           "Yes, consulted doctor", "Yes, did not consult doctor"),
   no = c("No", "No, never") 
 )
+#  Note: gives a warning that some labels are not present in certain variables. This is expected, as not all labels apply to each variable.
+
 
 ################################################################################ 
 ################################################################################ 
