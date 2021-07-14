@@ -70,8 +70,8 @@ ccei_score <- function(set1, set2, set3, check_transf = T) {
   for (v in set1) {
     if (substr(v, nchar(v), nchar(v)) == 'a') { appendix = "_rec" } else { appendix = "a_rec" }
     var.out = paste0(v, appendix)
-    dset[,var.out] <- ifelse(dset[, v] %in% c('V Often', 'Often'), 2, 
-                             ifelse(dset[, v] %in% c('Not V often', 'Never'), 0, NA)) 
+    dset[,var.out] <- ifelse(dset[, v] %in% c("Very often" , "Often"), 2, 
+                             ifelse(dset[, v] %in% c("Not very often", "Never"), 0, NA)) 
     if (check_transf == T) { 
       mat <- table(dset[,v], dset[,var.out])
       message("\n", v); print(mat) }
@@ -79,9 +79,9 @@ ccei_score <- function(set1, set2, set3, check_transf = T) {
   for (v in set2) {
     if (substr(v, nchar(v), nchar(v)) == 'a') { appendix = "_rec" } else { appendix = "a_rec" }
     var.out = paste0(v, appendix)
-    dset[,var.out] <- ifelse(dset[, v] %in% c('V Often', 'Often'), 2,
-                             ifelse(dset[, v] == 'Not V often', 1,
-                                    ifelse(dset[, v] == 'Never', 0, NA)))
+    dset[,var.out] <- ifelse(dset[, v] %in% c("Very often" , "Often"), 2,
+                             ifelse(dset[, v] == "Not very often", 1,
+                                    ifelse(dset[, v] == "Never", 0, NA)))
     if (check_transf == T) {
       mat <- table(dset[,v], dset[,var.out])
       message("\n", v); print(mat) }
@@ -89,8 +89,8 @@ ccei_score <- function(set1, set2, set3, check_transf = T) {
   for (v in set3) {
     if (substr(v, nchar(v), nchar(v)) == 'a') { appendix = "_rec" } else { appendix = "a_rec" }
     var.out = paste0(v, appendix)
-    dset[,var.out] <- ifelse(dset[, v] %in% c('V Often', 'Often', 'Not V often'), 2,
-                             ifelse(dset[, v] == 'Never', 0, NA))
+    dset[,var.out] <- ifelse(dset[, v] %in% c("Very often" , "Often", "Not very often"), 2,
+                             ifelse(dset[, v] == "Never", 0, NA))
     if (check_transf == T) {
       mat <- table(dset[,v], dset[,var.out])
       message("\n", v); print(mat) }
@@ -195,18 +195,21 @@ percent_missing <- function(var) { sum(is.na(var)) / length(var) * 100 }
 
 # calculate the domain scores
 domainscore <- function(df, score_type = 'mean_simple', postnatal = F){
-  if (postnatal == T) {
-    item_scores <- c()
+  if (postnatal == T) { 
+    item_scores <- as.data.frame(rep(NA, nrow(postnatal_stress))) # initiate a dataframe
     for (item in df) {
-      items <- as.data.frame(postnatal_stress[, grepl(item , names(postnatal_stress))])
+      items <- as.data.frame(postnatal_stress[, grepl(item , names(postnatal_stress))]) # get all timepoints
+      colnames(items) <- names(postnatal_stress)[grepl(item , names(postnatal_stress))] # rename for the lols
       if (ncol(items) > 1) {
         # calculate number of missing across timepoints per participant
         items_miss <- apply(items, 1, percent_missing)
-        item_score <- ifelse(items_miss >= 25, NA, rowSums(items, na.rm = T) )
-      } else { item_score <- items }
-      
-      item_scores <- cbind(item_scores, item_score)
-    }
+        item_score <- as.data.frame(ifelse(items_miss >= 25, NA, rowSums(items, na.rm = T) ))
+        colnames(item_score) <- item
+      } else { item_score <- items } # when only one timepoint is available just stack it
+      item_scores[ , ncol(item_scores) + 1] <- item_score
+    } 
+    item_scores <- item_scores[, -1] # get rid of NA column we used for structure
+    
     # calculate number of missing items per participant
     domain_miss = apply(item_scores, 1, percent_missing)
     score <- ifelse(domain_miss >= 25, NA, rowMeans(item_scores, na.rm = T) )
