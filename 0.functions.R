@@ -22,7 +22,8 @@ dichotomize <- function(vars,
                         already_dich = c(), 
                         check_transf = F) {
   
-  dset <- alspac.table[, vars]
+  dset <- as.data.frame(alspac.table[, vars])
+  names(dset) <- vars
   answ = c(yes, no)
   
   # check if required levels are present / unexpected levels are not present
@@ -52,12 +53,17 @@ dichotomize <- function(vars,
       message("\n", i); print(mat) }
   }
   
-  # add variables that were already dichotomous
+  # Add variables that were already dichotomous if there are any
   if (length(already_dich) > 0) {
+    # First loop through them and check if they are actually dichotomous
     for (v in already_dich) {
-      if (levels(alspac.table[, v]) > 2) { message("Are you sure variable ", v, " is already dichotomous?") }
-      }
-  } else { dset <- cbind(dset, alspac.table[, already_dich]) }
+      if (length(levels(alspac.table[, v])) > 2) { 
+        message(" But are you sure variable ", v, " is already dichotomous?") }
+    }
+    dset <- cbind(dset, alspac.table[, already_dich]) # Add them to the dataset
+    # When only one variable is in already_dich, we need to rename the column manually
+    if (length(already_dich) == 1) { names(dset)[ncol(dset)] <- already_dich }
+  }
   
   return(dset)
 }
@@ -194,12 +200,18 @@ percent_missing <- function(var) { sum(is.na(var)) / length(var) * 100 }
 # that both also allow for 25% missing. 
 
 # calculate the domain scores
-domainscore <- function(df, score_type = 'mean_simple', postnatal = F){
+domainscore <- function(df, score_type = 'mean_simple', postnatal = F, check_corrs = F) {
   if (postnatal == T) { 
     item_scores <- as.data.frame(rep(NA, nrow(postnatal_stress))) # initiate a dataframe
     for (item in df) {
       items <- as.data.frame(postnatal_stress[, grepl(item , names(postnatal_stress))]) # get all timepoints
       colnames(items) <- names(postnatal_stress)[grepl(item , names(postnatal_stress))] # rename for the lols
+      
+      if (ncol(items) > 1 & check_corrs == T) {
+        mat <- cor(items, method = "spearman", use = "complete.obs") 
+        print(mat)
+      }
+      
       if (ncol(items) > 1) {
         # calculate number of missing across timepoints per participant
         items_miss <- apply(items, 1, percent_missing)

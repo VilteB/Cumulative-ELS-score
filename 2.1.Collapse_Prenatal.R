@@ -100,7 +100,7 @@ prenatal_stress$m_education_pre <- pre$c645a_rec # No degree
 ################################################################################
 
 # criminal_record_parent_pre
-prenatal_stress$criminal_record_parent_pre <- repmeas(alspac.table[,c('b577a_rec', 'b598', 'p14n', 'b586a_rec', 'pb188a_rec')]) 
+prenatal_stress$criminal_record_parent_pre <- repmeas(pre[,c('b577a_rec', 'b598', 'p14n', 'b586a_rec', 'pb188a_rec')]) 
 #	In trouble with the law since PREG | Convicted of an offence since PREG | Crime trouble with police |
 # PTNR in trouble with law since PREG | PTNR convicted of an offence since PREG 
 
@@ -112,7 +112,7 @@ prenatal_stress$early_pregnancy <- pre$mz028ba_rec # mother age < 19 at baseline
 
 # m_depression_pre
 prenatal_stress$m_depression_pre <- repmeas(anxdep[,c('b371a_rec', 'c601a_rec')]) 
-# EPDS (>12 risk, <12 no risk) 18wk and  32wk # corr ???????
+# EPDS (>12 risk, <12 no risk) 18wk and  32wk # corr = 0.4267
 
 # p_depression_pre
 prenatal_stress$p_depression_pre <- anxdep$pb261a_rec 
@@ -120,7 +120,7 @@ prenatal_stress$p_depression_pre <- anxdep$pb261a_rec
 
 # m_anxiety_pre
 prenatal_stress$m_anxiety_pre	<- repmeas(anxdep[,c('b351a_rec', 'c573a_rec')]) 
-# CCEI anxiety subscale (complete) 18w gest, 32w gest # cor(anxdep$b351a_rec, anxdep$c573a_rec, use='complete.obs') # 0.4625
+# CCEI anxiety subscale (complete) 18w gest, 32w gest # corr = 0.4625
 
 # p_anxiety_pre
 prenatal_stress$p_anxiety_pre <- anxdep$pb234a_rec 
@@ -153,7 +153,7 @@ prenatal_stress$conflict_in_family_pre	<- repmeas(pre[,c('b607a_rec', 'b608')])
 prenatal_stress$argued_fam_friends_pre	<- pre$b590a_rec	# Argued with family or friends since PREG
 
 # conflict_family_violence_pre
-prenatal_stress$conflict_family_violence_pre	<- repmeas(alspac.table[,c('b592a_rec', 'b596a_rec')])
+prenatal_stress$conflict_family_violence_pre	<- repmeas(pre[,c('b592a_rec', 'b596a_rec')]) # corr = 0.124
 # PTNR hurt mum since PREG | PTNR hurt CH since PREG
 
 # marital_status_pregnancy

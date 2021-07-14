@@ -59,8 +59,10 @@ LE_prenatal <- dichotomize(
            "b610") # Had an accident since PREG
    )
 
+# Note: Variables will have unexpected values: other, DK. These values will be recoded to NA.
+
 ################################################################################
-                            # 2. CONTEXTUAL RISKS
+                            # 2. CONTEXTUAL RISK
 ################################################################################
 
 # Creating a data frame with the original CR variables + newly created dichotomous vars
@@ -90,7 +92,7 @@ CR_prenatal$p4n	<- ifelse(alspac.table$p4 == 1, 1,
                          ifelse(alspac.table$p4 == 0, 0, NA)) # Housing Defects 
 
 ################################################################################
-                            # 3. PARENTAL RISKS 
+                            # 3. PARENTAL RISK
 ################################################################################
 
 # Creating a data frame with the original CR variables + newly created dichotomous vars
@@ -99,13 +101,18 @@ PR_prenatal <- dichotomize(
            "b586",   # PTNR in trouble with law since PREG
            "pb188"), # PTNR convicted of an offence since PREG
    already_dich = c("b597",  # Attempted suicide since PREG
-                    "b598")  # Convicted of an offence since PREG; EW: already binary
+                    "b598"), # Convicted of an offence since PREG; EW: already binary
+  yes = c("affected a lot","fairly affected","mildly affected","N effect at all", "N affect at all"), 
+  no = c("didnt happen")
 )
+
+# Note: some variables will have no registered 'N affect at all' answers. This warning is safe to ignore, 
+# as only pb188 has the typo (i.e., 'affect' instead of 'effect')
 
 PR_prenatal$p14n <- ifelse(alspac.table$p4 == 1, 1, # Crime trouble with police
                            ifelse(alspac.table$p4 == 0, 0, NA))
 
-PR_prenatal$mz028bn <- as.numeric(as.character(alspac.table$mz028b))
+PR_prenatal$mz028bn <- as.numeric(as.character(alspac.table$mz028b)) # NA introduced by coercion because "Consent withdrawn by mother" turned to NA
 # Because mz028b is a factor, we use as.character before as.numeric.
 # Factors are stored internally as integers with a table to give the factor level labels.
 PR_prenatal$mz028ba_rec <- ifelse(PR_prenatal$mz028bn < 19, yes = 1, no = 0) # early parenthood 
@@ -118,11 +125,11 @@ PR_prenatal$mz028ba_rec <- ifelse(PR_prenatal$mz028bn < 19, yes = 1, no = 0) # e
 
 # Higher scores = greater interpersonal sensitivity, based on items such as 
 #  - 'feel insecure when saying goodbye'; 'I avoid saying what I think for fear of being rejected'
-IS <- data.frame("pb551" = as.character(alspac.table[, "pb551"]), # partner IS
-                 "b916" = as.character(alspac.table[, "b916"]) )  # mother IS
+IS <- data.frame("pb551" = as.numeric(as.character(alspac.table[, "pb551"])),  # partner IS
+                 "b916"  = as.numeric(as.character(alspac.table[, "b916"])) )  # mother IS
 # Compute 80th percentile value
-cutoff_p <- quantile(IS[, "pb551"], .8, na.rm = T) # 95 ?????????
-cutoff_m <- quantile(IS[, "b916"], .8, na.rm = T)  # 22 ?????????
+cutoff_p <- quantile(IS[, "pb551"], .8, na.rm = T) # 95
+cutoff_m <- quantile(IS[, "b916"], .8, na.rm = T)  # 22 # different cut-off point for partner and mother due to differences in scale
 
 # Dichotomize based on 80th percentile value
 IS[, "pb551a_rec"] <- ifelse( IS[, "pb551"] >= cutoff_p, 1, 
@@ -133,7 +140,7 @@ IS[, "b916a_rec"] <- ifelse( IS[, "b916"] >= cutoff_m, 1,
 # table(IS$pb551, IS$pb551a_rec); table(IS$b916, IS$b916a_rec)
 
 ################################################################################
-                          # 4. INTERPERSONAL RISKS
+                          # 4. INTERPERSONAL RISK
 ################################################################################
 
 IR_prenatal <- dichotomize(

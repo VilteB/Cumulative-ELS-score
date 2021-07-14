@@ -41,6 +41,7 @@ LE_9Y <- dichotomize(
   yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+"),
   no = c("No, did not happen in past 3 years")
 )
+# "Relevant comment", "Relevant text but no box ticked" set to  NA
 
 # CHILD-BASED LIFE EVENTS
 LE_child_8Y <- dichotomize(
@@ -61,6 +62,7 @@ LE_child_8Y <- dichotomize(
   yes = c("Yes, very upset","Yes, quite upset","Yes, bit upset", "Yes, not upset"),
   no = c("No")
 )
+# "Other text answer", "DK", "Relevant text but no box ticked" set to NA
 
 ################################################################################
                             # 2. CONTEXTUAL RISKS
@@ -88,6 +90,7 @@ PR_9Y <- dichotomize(
   yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+"),
   no = c("No, did not happen in past 3 years")
 )
+# "Relevant comment" set to NA
 
 ################################################################################
                              # INTERPERSONAL RISKS
@@ -143,6 +146,7 @@ DV_9Y <- dichotomize(
            "kt5005"),  # Since 7th birthday child has been sexually abused
   yes = c("Yes, very upset", "Yes, quite upset", "Yes, bit upset", "Yes, not upset"),
   no = c("No") )
+# "Other text answer", "DK" set to NA
 
 ################################################################################
 ################################################################################
