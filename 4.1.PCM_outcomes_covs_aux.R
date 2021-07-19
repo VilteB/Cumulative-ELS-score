@@ -316,6 +316,15 @@ alspac.table$dw002=as.numeric(levels(alspac.table$dw002))[alspac.table$dw002]
 alspac.table$m4221=as.numeric(levels(alspac.table$m4221))[alspac.table$m4221]
 alspac.table$bmi_0 = alspac.table$dw002/((alspac.table$m4221/100)^2)
 
+#calculating pregnancy weight (i.e birthweight of mother + birthweight of child)
+alspac.table$ew002a= as.numeric(as.character(alspac.table$ew002)) + (as.numeric(as.character(alspac.table$kz030))/1000)
+
+#calculating pregnancy BMI
+alspac.table$ew002a=as.numeric(levels(alspac.table$ew002a))[alspac.table$ew002a]
+alspac.table$m4221=as.numeric(levels(alspac.table$m4221))[alspac.table$m4221]
+alspac.table$bmi_1 = alspac.table$ew002a/((alspac.table$m4221/100)^2)
+
+
 general_cov_aux = alspac.table[,c('cidb2957', 'qlet', 
                                   'm_smoking',
                                   'm_drinking',
@@ -330,29 +339,8 @@ general_cov_aux = alspac.table[,c('cidb2957', 'qlet',
                                   #'bmi_1',     # maternal BMI during pregnancy (used for imputation)
                                   'mz028b')] # maternal age at intake (used for imputation) 
 
-# ALSPAC: bmi tbd
- 
-#maternal height at 7 years (we treat height as a constant)
 
-m_aux_weight <- data.frame("ew002", #kg 8w
-"m4220", # kg 7y
-"n1140", # kg 8y
-"p1290") # kg 9y 
 
-m_aux_bmi < - (m_aux_weight/m4221)^2
-
-m_weight_aux <- (ew002 + m4220 + n1140 + p1290 / 4)
-
-m_weight <-  alspac.table[,c("ew002", #BMI 8w
-"m4220", # BMI 7y
-"n1140", # BMI 8y
-"p1290")] # BMI 9y 
-
-m_weight_aux <- "m_weight"/4
-
-BMI_aux <- 
-
-ls(ew002)
 
 
 for (i in c('mult',
@@ -414,6 +402,31 @@ general_cov_aux = general_cov_aux %>%
 # dep_3yrs = bsi_3yrs[, c('idc','m_dep_cont_3yrs', 'p_dep_cont_3yrs')]
 # # Merge it with the previous dataset
 # general_cov_aux = merge(general_cov_aux, dep_3yrs, by = 'idc',  all.x = TRUE)
+
+#here we will construct a continuous depression (EPDS) 
+#score for mothers and partners, 18w gest, 32w gest (mother only), 8w, 8m & 21m
+
+
+m_dep_preg_3yrs <- c(alspac.table$b370,
+alspac.table$c600,
+as.numeric(alspac.table$e390),
+as.numeric(alspac.table$f200),
+as.numeric(alspac.table$g290))
+
+p_dep_preg_3yrs <- c(alspac.table$pb260,
+alspac.table$pc102, 
+as.numeric(alspac.table$pd200),
+as.numeric(alspac.table$pe290))
+
+
+
+
+
+hist(as.numeric(alspac.table$pd200))
+
+
+hist(as.numeric(alspac.table$g290))
+
 
 #-------------------------------------------------------------------------------
 ################################################################################
