@@ -247,14 +247,14 @@ P_DEP$p_EPDS_total_6ya_rec <- ifelse(P_DEP_6Y$sumscore > 12, 1, 0)
 
 # Dichotomising postnatal items for "had depression"
 P_DEP_selfr <- dichotomize(
-  vars = c("pd021",  # 8m
-           "pe021",  # 21m
-           "pf1011", # 3y
-           "pg1011", # 4y
-           "ph1011", # 5y
-           "pj3011", # 6y
-           "pl1061", # 9y
-           "pm1011"), # ??????????????
+  vars = c("pd021",   # 8m
+           "pe021",   # 21m
+           "pf1011",  # 3y
+           "pg1011",  # 4y
+           "ph1011",  # 5y
+           "pj3011",  # 6y
+           "pl1061",  # 8y
+           "pm1011"), # 9y
   yes = c("Yes, Saw Doctor", "Yes, No Doctor", 
           "Yes Consulted Dr", "Yes Not Consult Dr", 
           "Yes, and consulted doctor", "Yes, but did not consult doctor", 
@@ -265,7 +265,8 @@ P_DEP_selfr <- dichotomize(
           "Yes, consulted doctor", "Yes, did not consult doctor"),
   no = c("No", "No, never") 
 )
-#  Note: gives a warning that some labels are not present in certain variables. This is expected, as not all labels apply to each variable.
+#  Note: gives a warning that some labels are not present in certain variables. 
+# This is expected, as not all labels apply to each variable.
 
 
 ################################################################################ 

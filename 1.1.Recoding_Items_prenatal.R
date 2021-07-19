@@ -44,17 +44,14 @@ LE_prenatal <- dichotomize(
            "b575", # Friend or relative was ill since PREG
            "b576", # Admitted to hospital since PREG
            "b580", # V ill since PREG
-           "b582", # PTNR had PROBS at work since PREG ????
            "b583", # PROBS at work since PREG
            "b584", # Lost job since PREG		
            "b591", # Moved house since PREG	
            "b595", # Got married since PREG	
            "b599", # Bled & thought might miscarry	
-           "b600", # Started new job since PREG ????
            "b602", # Test result suggesting POSS abnormality	
            "b604", # POSS harm to baby
            "b605", # Tried to have abortion 
-           "b606", # Took an exam since PREG ????
            "b609", # House or car burgled since PREG
            "b610") # Had an accident since PREG
    )
@@ -167,7 +164,7 @@ IR_prenatal$p11n	<- ifelse(alspac.table$p11 == 1, 1,
 IR_prenatal$p16n	<- ifelse(alspac.table$p16 == 1, 1,
                            ifelse(alspac.table$p16 == 0, 0, NA)) # Partner Support
 IR_prenatal$p17n	<- ifelse(alspac.table$p17 == 1, 1,
-                           ifelse(alspac.table$p17 == 0, 0, NA))	# Social Network - Emotional 
+                           ifelse(alspac.table$p17 == 0, 0, NA)) # Social Network - Emotional 
 IR_prenatal$p18n	<- ifelse(alspac.table$p18 == 1, 1,
                            ifelse(alspac.table$p18 == 0, 0, NA)) # Social Network - Practical 
 

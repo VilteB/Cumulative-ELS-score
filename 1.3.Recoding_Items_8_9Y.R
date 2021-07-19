@@ -39,8 +39,7 @@ LE_9Y <- dichotomize(
             "p2043",  # A pet died since the study child's 6th birthday
             "p2044"), #  Mother had an accident since the study child's 6th birthday
   yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+"),
-  no = c("No, did not happen in past 3 years")
-)
+  no = c("No, did not happen in past 3 years") )
 # "Relevant comment", "Relevant text but no box ticked" set to  NA
 
 # CHILD-BASED LIFE EVENTS
@@ -60,12 +59,11 @@ LE_child_8Y <- dichotomize(
             "kt5014",  # Since 7th birthday child has started a new school
             "kt5015"), # Since 7th birthday child has lost their best friend
   yes = c("Yes, very upset","Yes, quite upset","Yes, bit upset", "Yes, not upset"),
-  no = c("No")
-)
+  no = c("No") )
 # "Other text answer", "DK", "Relevant text but no box ticked" set to NA
 
 ################################################################################
-                            # 2. CONTEXTUAL RISKS
+                            # 2. CONTEXTUAL RISK
 ################################################################################
 
 CR_9Y <- dichotomize(
@@ -73,11 +71,10 @@ CR_9Y <- dichotomize(
            "p2023",  # Mother became homeless since the study child's 6th birthday
            "p2024"), # Mother had a major financial problem since the study child's 6th birthday
   yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+"),
-  no = c("No, did not happen in past 3 years")
-)
+  no = c("No, did not happen in past 3 years") )
 
 ################################################################################
-                               # 3. PARENTAL RISKS 
+                               # 3. PARENTAL RISK
 ################################################################################
 
 PR_9Y <- dichotomize(
@@ -88,12 +85,11 @@ PR_9Y <- dichotomize(
            "p2033",  # Mother had a miscarriage since the study child's 6th birthday
            "p2034"), # Mother had an abortion since the study child's 6th birthday
   yes = c("Yes, when the study child was 6 or 7","Yes, since the study child's 8th birthday","Yes, both when the study child was 6/7 and 8+"),
-  no = c("No, did not happen in past 3 years")
-)
+  no = c("No, did not happen in past 3 years") )
 # "Relevant comment" set to NA
 
 ################################################################################
-                             # INTERPERSONAL RISKS
+                             # INTERPERSONAL RISK
 ################################################################################
 
 # Split into 3 sections due to different labels

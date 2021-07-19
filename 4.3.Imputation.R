@@ -3,16 +3,18 @@
 # the following code runs the imputation of missing data, necessary for 
 # the analysis of the association between ELS and psycho-cardio-metabolic multi-morbidity 
 # in children. 
-
-# All you need it the file we created in the 'Dataset_contruction.R' script: the 
-# "ELSPCM_dataset.rds" 
 # Ok, let's get started!
 
 # Load libraries
 library(mice);
 library(miceadds)
-library(tidyverse)
 
+# Load the dataframes with prenatal, postnatal stress and the outcome dataset
+pre  <- readRDS(file.path(alspac_folder, "prenatal_stress.rsd.rsd"))
+post <- readRDS(file.path(alspac_folder, "postnatal_stress.rsd.rsd"))
+out  <- readRDS(file.path(alspac_folder, "PCMout_cov_aux.rsd"))
+
+ELS <- cbind(pre, post, out)
 ################################################################################
 
 # Organize variable names into domains to specify them later more easily
@@ -49,14 +51,7 @@ pre_IR <- c( 'divorce_pre',
              'family_support',
              'social_network_emotional',
              'social_network_practical')
-
-# lil help
-# f <- function(word, e = ',', add = c("_8wk", '_8m', '_18m', '_21m', '_30m', '_3y', '_4y', '_5y', '_6y', '_9y')) {
-#   cat(paste0(word, add, e))
-#   cat('\n')
-#   cat(paste0(word, add, '\n'))
-# }
-
+# all postnatal variables, when a timepoint in missing I make it up with a CAPITAL LETTERS NAME
 post_LE <- c('sick_or_accident_18m','sick_or_accident_30m','sick_or_accident_3y','sick_or_accident_4y','sick_or_accident_5y','sick_or_accident_6y','sick_or_accident_9y',
              'family_member_ill_8m', 'family_member_ill_21m', 'family_member_ill_3y', 'family_member_ill_4y', 'family_member_ill_5y','family_member_ill_6y','family_member_ill_9y',
              'smbd_important_died_8m','smbd_important_died_21m','smbd_important_died_3y','smbd_important_died_4y','smbd_important_died_5y','smbd_important_died_6y','smbd_important_died_9y',
@@ -114,18 +109,17 @@ post_DV <- c('bullying_8y',
              'M_CRUELTY_EMOTIONAL_8M', 'm_cruelty_emotional_21m', 'm_cruelty_emotional_3y', 'm_cruelty_emotional_4y', 'm_cruelty_emotional_5y', 'm_cruelty_emotional_6y', 'm_cruelty_emotional_9y')
 
 outcomes <- c('intern_score_z', 'fat_mass_z', 'risk_groups')
-covars   <- c('sex', 'age_child.10y', 'm_bmi_berore_pregnancy', 'm_smoking', 'm_drinking')
-auxil    <- c('m_bmi_pregnancy','m_dep_cont_pregnancy', 'p_dep_cont_pregnancy', # for postnatal only
-              'm_bmi_5yrs', 'm_dep_cont_3yrs', 'p_dep_cont_3yrs',               # for prenatal only
+covars   <- c('sex', 'age_child', 'm_bmi_berore_pregnancy', 'm_smoking', 'm_drinking')
+auxil    <- c('m_dep_cont_pregnancy', 'p_dep_cont_pregnancy', # for postnatal only
+              'm_bmi_7yrs', 'm_dep_cont_childhood', 'p_dep_cont_childhood', # for prenatal only
               'ethnicity', 'parity', 'gest_age_birth', 'gest_weight', 'm_age_cont')
-exclusion_criteria <- c('pre_percent_missing', 'post_percent_missing', 'twin', 'mother')
+exclusion_criteria <- c('pre_percent_missing', 'post_percent_missing', 'twin')
 
 # For the sake of time efficiency (and my mental health) let's select only those 
 # variables that are needed for imputation nd subsequent sample selection. Once I 
 # am at it, I also order them by domain. This is important because mice is sensitive
 # to the order of the variables in the set (even though this may be a version-specific issue)
-# ELSPCM_essentials = ELSPCM[, 
-vars = c('IDC', 
+vars <- c('IDC', 
          # all variables for prenatal risk
          pre_LE, pre_CR, pre_PR, pre_IR,
          # all variables for postnatal risk
@@ -137,16 +131,15 @@ vars = c('IDC',
          'prenatal_stress', "postnatal_stress",
          # outcome variables and covariates + additional auxiliary variables for imputation
          outcomes, covars, auxil, exclusion_criteria)
+
+ELS <- ELS[, vars]
 #------------------------------------------------------------------------------#
-##------------------------------- Flowchart --------------------------------- ##
-#------------------------------------------------------------------------------#
-#TODO: add flowchart 
 
 # make some fake data
-ELS <- data.frame(replicate(length(vars), sample(c(0:1, NA), 1000, rep=TRUE)))
-colnames(ELS) <- vars
-ELS[, which(grepl("[A-Z]", names(ELS)))] <- NA
-ELS$IDC <- 1:1000
+# ELS <- data.frame(replicate(length(vars), sample(c(0:1, NA), 1000, rep=TRUE)))
+# colnames(ELS) <- vars
+# ELS[, which(grepl("[A-Z]", names(ELS)))] <- NA
+# ELS$IDC <- 1:1000
 
 post_LE_t <- c('sick_or_accident',
                'family_member_ill',
@@ -230,10 +223,9 @@ ELSlong <- dl[order(dl$IDC, dl$Time), ]
 
 # We started with a dry run to specify the default arguments.
 imp0 <- mice(ELSlong, maxit = 0,
-             defaultMethod = 'pmm', remove.collinear = F) 
+             defaultMethod = 'pmm') #, remove.collinear = F) 
 # set the imputation method to Generalized Linear Mixed model (20-50 iterations 
 # are recommended and may be hard to run in small datasets)
-# remove.collinear = F # collinear vars
 
 
 # * PMM imputes a value randomly from a set of observed values whose predicted values 
@@ -274,8 +266,8 @@ predictormatrix <- imp0$predictorMatrix
 predictormatrix[, c('prenatal_stress', 'postnatal_stress') ]  <- 0
 # Do not impute nor use IDC, any of the outcomes, exclusion criteria or age_child 
 # as predictors (no reason to believe age at outcome is associated with missingness)
-predictormatrix[, c("IDC", outcomes, "age_child.10y", exclusion_criteria)] <- 0
-predictormatrix[c("IDC", outcomes, "age_child.10y", exclusion_criteria, 'Time'), ] <- 0
+predictormatrix[, c("IDC", outcomes, "age_child", exclusion_criteria)] <- 0
+predictormatrix[c("IDC", outcomes, "age_child", exclusion_criteria, 'Time'), ] <- 0
 
 
            ### Impute auxiliary variables and covariates ###

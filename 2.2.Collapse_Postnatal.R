@@ -141,44 +141,6 @@ postnatal_stress$pet_died_6y  <- repmeas(post07[,c('l4043a_rec', 'kq361a_rec')])
 postnatal_stress$pet_died_9y  <- repmeas(post89[,c('p2043a_rec', 'kt5001a_rec')]) 
 # Pet died since 6th birthday [9y] | Child's pet died since 7th birthday [8y]
 # ------------------------------------------------------------------------------
-# WORK_PROBLEMS
-# ------------------------------------------------------------------------------
-# postnatal_stress$work_problems_8wk <- repmeas(post07[,c('e412a_rec', 'e413a_rec')])
-# PTNR had PROBS at work | PROBS at work since MID PREG
-postnatal_stress$work_problems_8m  <- repmeas(post07[,c('f232a_rec', 'f233a_rec')])
-# Work problems for partner | Work problems for Mum
-postnatal_stress$work_problems_21m <- repmeas(post07[,c('g312a_rec', 'g313a_rec')]) 
-# PTNR had PROBS with work | Mum had PROBS with work } since 8 months
-postnatal_stress$work_problems_3y  <- repmeas(post07[,c('h222a_rec', 'h223a_rec')])
-# PTNR had PROBS at work | Mum had PROBS ay work } since 18 months
-postnatal_stress$work_problems_4y  <- repmeas(post07[,c('j312a_rec', 'j313a_rec')]) 
-# PTNR had PROBS at work | Mum had PROBS ay work } since 30 months
-postnatal_stress$work_problems_5y  <- repmeas(post07[,c('k4012a_rec', 'k4013a_rec')]) 
-# PTNR had PROBS at work | Mum had PROBS ay work } in the past year
-postnatal_stress$work_problems_6y  <- repmeas(post07[,c('l4012a_rec', 'l4013a_rec')]) 
-# Respondent's PTNR had PROBS at work | Respondent had PROBS ay work } since 5th birthday
-postnatal_stress$work_problems_9y  <- repmeas(post89[,c('p2012a_rec', 'p2013a_rec')]) 
-# PTNR had PROBS at work | Mum had PROBS ay work } since 6th birthday
-# ------------------------------------------------------------------------------
-# UNEMPLOYED
-# ------------------------------------------------------------------------------
-# postnatal_stress$unemployed_8wk <- repmeas(post07[,c('e411a_rec', 'e414a_rec')]) 
-#	PTNR lost job | Mum lost job since MID PREG
-postnatal_stress$unemployed_8m  <- repmeas(post07[,c('f231a_rec', 'f234a_rec')])
-# Partner lost job | Mum lost job
-postnatal_stress$unemployed_21m <- repmeas(post07[,c('g311a_rec', 'g314a_rec')])
-# PTNR lost job | Mum lost job } since 8 months
-postnatal_stress$unemployed_3y  <- repmeas(post07[,c('h221a_rec', 'h224a_rec')])
-# PTNR lost job | Mum lost job } since 18 months
-postnatal_stress$unemployed_4y  <- repmeas(post07[,c('j311a_rec', 'j314a_rec')]) 
-# PTNR lost job | Mum lost job } since 30 months
-postnatal_stress$unemployed_5y  <- repmeas(post07[,c('k4011a_rec', 'k4014a_rec')])
-# PTNR lost job | Mum lost job } in the past year
-postnatal_stress$unemployed_6y  <- repmeas(post07[,c('l4011a_rec', 'l4014a_rec')])
-# Respondent's PTNR lost job | Respondent lost job } since 5th birthday
-postnatal_stress$unemployed_9y  <- repmeas(post89[,c('p2011a_rec', 'p2014a_rec')]) 
-# PTNR lost job | Mum lost job } since 6th birthday
-# ------------------------------------------------------------------------------
 # STARTED_NURSERY
 # ------------------------------------------------------------------------------
 postnatal_stress$started_nursery_18m <- post07$kd513a_rec	 # CH started nursery
@@ -285,7 +247,7 @@ postnatal_stress$ch_had_fright_8y  <-	post89$kt5003a_rec # CH had shock or frigh
 
 
 ################################################################################
-                        # 2. CONTEXTUAL RISKS
+                        # 2. CONTEXTUAL RISK
 ################################################################################
 
 # ------------------------------------------------------------------------------
@@ -322,6 +284,25 @@ postnatal_stress$income_reduced_5y  <- post07$k4018a_rec
 postnatal_stress$income_reduced_6y  <- post07$l4018a_rec 
 postnatal_stress$income_reduced_9y  <- post89$p2018a_rec  # Mum's income reduced since 6th birthday
 # ------------------------------------------------------------------------------
+# unemployed
+# ------------------------------------------------------------------------------
+# postnatal_stress$unemployed_8wk <- repmeas(post07[,c('e411a_rec', 'e414a_rec')]) 
+#	PTNR lost job | Mum lost job since MID PREG
+postnatal_stress$unemployed_8m  <- repmeas(post07[,c('f231a_rec', 'f234a_rec')])
+# Partner lost job | Mum lost job
+postnatal_stress$unemployed_21m <- repmeas(post07[,c('g311a_rec', 'g314a_rec')])
+# PTNR lost job | Mum lost job } since 8 months
+postnatal_stress$unemployed_3y  <- repmeas(post07[,c('h221a_rec', 'h224a_rec')])
+# PTNR lost job | Mum lost job } since 18 months
+postnatal_stress$unemployed_4y  <- repmeas(post07[,c('j311a_rec', 'j314a_rec')]) 
+# PTNR lost job | Mum lost job } since 30 months
+postnatal_stress$unemployed_5y  <- repmeas(post07[,c('k4011a_rec', 'k4014a_rec')])
+# PTNR lost job | Mum lost job } in the past year
+postnatal_stress$unemployed_6y  <- repmeas(post07[,c('l4011a_rec', 'l4014a_rec')])
+# Respondent's PTNR lost job | Respondent lost job } since 5th birthday
+postnatal_stress$unemployed_9y  <- repmeas(post89[,c('p2011a_rec', 'p2014a_rec')]) 
+# PTNR lost job | Mum lost job } since 6th birthday
+# ------------------------------------------------------------------------------
 # Housing adequacy
 # ------------------------------------------------------------------------------
 postnatal_stress$housing_adequacy_2y     <- post07$b2n  # Housing adequacy 0-2y composite
@@ -354,9 +335,28 @@ postnatal_stress$neighbourhood_problems_3y  <- post07$h366a_rec
 
 
 ################################################################################
-                            # 3. PARENTAL RISKS 
+                            # 3. PARENTAL RISK 
 ################################################################################
 
+# ------------------------------------------------------------------------------
+# work_problems
+# ------------------------------------------------------------------------------
+# postnatal_stress$work_problems_8wk <- repmeas(post07[,c('e412a_rec', 'e413a_rec')])
+# PTNR had PROBS at work | PROBS at work since MID PREG
+postnatal_stress$work_problems_8m  <- repmeas(post07[,c('f232a_rec', 'f233a_rec')])
+# Work problems for partner | Work problems for Mum
+postnatal_stress$work_problems_21m <- repmeas(post07[,c('g312a_rec', 'g313a_rec')]) 
+# PTNR had PROBS with work | Mum had PROBS with work } since 8 months
+postnatal_stress$work_problems_3y  <- repmeas(post07[,c('h222a_rec', 'h223a_rec')])
+# PTNR had PROBS at work | Mum had PROBS ay work } since 18 months
+postnatal_stress$work_problems_4y  <- repmeas(post07[,c('j312a_rec', 'j313a_rec')]) 
+# PTNR had PROBS at work | Mum had PROBS ay work } since 30 months
+postnatal_stress$work_problems_5y  <- repmeas(post07[,c('k4012a_rec', 'k4013a_rec')]) 
+# PTNR had PROBS at work | Mum had PROBS ay work } in the past year
+postnatal_stress$work_problems_6y  <- repmeas(post07[,c('l4012a_rec', 'l4013a_rec')]) 
+# Respondent's PTNR had PROBS at work | Respondent had PROBS ay work } since 5th birthday
+postnatal_stress$work_problems_9y  <- repmeas(post89[,c('p2012a_rec', 'p2013a_rec')]) 
+# PTNR had PROBS at work | Mum had PROBS ay work } since 6th birthday
 # ------------------------------------------------------------------------------
 # criminal_record_parent
 # ------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ postnatal_stress$p_anxiety_9y  <- anxdep$pm1010a_rec # had anxiety/nerves
 
 
 ################################################################################
-                          # 4. INTERPERSONAL RISKS
+                          # 4. INTERPERSONAL RISK
 ################################################################################
 
 # ------------------------------------------------------------------------------
@@ -666,8 +666,6 @@ postnatal_stress[,c('post_LE_percent_missing','post_life_events')] <- domainscor
     'separated_from_parent',
     'moved',
     'pet_died',
-    'work_problems',
-    'unemployed',
     'started_nursery',
     'acquired_new_parent',
     'chage_carer',
@@ -684,6 +682,7 @@ postnatal_stress[,c('post_CR_percent_missing','post_contextual_risk')] <- domain
   c('homeless_childhood',
     'major_financial_problems' ,
     'income_reduced',
+    'unemployed',
     'housing_adequacy',
     'housing_basic_living',
     'housing_defects',
@@ -692,7 +691,8 @@ postnatal_stress[,c('post_CR_percent_missing','post_contextual_risk')] <- domain
     'neighbourhood_problems'), postnatal = T)
 
 postnatal_stress[,c('post_PR_percent_missing','post_parental_risk')] <- domainscore( 
-  c('criminal_record_parent',
+  c('work_problems',
+    'criminal_record_parent',
     'miscarriage_or_abortion',
     'm_attempted_suicide',
     'm_age',
