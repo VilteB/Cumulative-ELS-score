@@ -4,90 +4,57 @@
 # This includes the outcomes of interest (internalizing problems and cardio-metabolic
 # risk), the covariates that are going to be used as well as the auxiliary variables 
 # used in the imputation of the final dataset. 
-# It does not include data used to build the ELS score exposure.
 
 #### ---------------------------- Dependencies ---------------------------- ####
 
 # First, let's point to the necessary libraries
 library(foreign)
-library(stats)
 
-# Defining the path to the data
-# check if the path to the data is already in memory, otherwise ask for it. 
+# define a function that randomly shuffles internalizing and fat mass values and 
+# returns the new size of the "randomly multimorbid" group.
+permute <- function(df) { 
+  # create empty dataset for permutation
+  perm <- data.frame(1:nrow(df))
+  
+  perm$new_int <- sample(df$int)
+  perm$new_fat <- sample(df$fat)
+  perm$new_groups <- ifelse(perm$new_int == 0 & perm$new_fat == 0, 0, 
+                            ifelse(perm$new_int == 1 & perm$new_fat == 0, 1, 
+                                   ifelse(perm$new_int == 0 & perm$new_fat == 1, 2, 3)))
+  new_n <- unname(summary(as.factor(perm$new_groups))[4])
+  return(new_n)
+}
 
-#if (exists("pathtodata") == F) { pathtodata = readline(prompt="Enter path to data: ") }
+# Check if the path to the data is already in memory, otherwise ask for it. 
+if (exists("alspac_file") == F) { alspac_file <- file.choose() }
+alspac_folder <- dirname(alspac_file)
 
-# ATTENTION!!! If prompted with an "Enter path to data:" message -> Enter the location
-# of your datafiles. The code assumes that all (raw) data is stored in ONE folder.
-# Do not forget the final slash in your path, and, speaking of slashes, beware of 
-# OS sensitive changes when you want to modify the structure of your dirs!
+# Read in the data
+alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) 
+dep <- foreign::read.spss(file.path(alspac_folder, "raw_parent_depr_anxiety.rsd"))
+
+# Change all names to lowercase
+names(alspac.table)=tolower(names(alspac.table))
+
+# Initiate a cov_out dataframe with id of the child as first column
+cov_out <- data.frame("IDC" = paste(alspac.table$cidb2957, alspac.table$qlet, sep = "_"))
 
 ################################################################################
 #### ------------------ INTERNALIZING PROBLEMS ( @ 9 ) -------------------- ####
 ################################################################################
 
-#load data from previous scripts
-#load('prenatal_stress.Rdata')
-#load('postnatal_stress.Rdata')
-#load('alspac.table.collapsed.Rdata')
-
-names(alspac.table)=tolower(names(alspac.table))
-
 # Internalizing scale @ 9 yrs # informant: MOTHER.
-internalizing = alspac.table[,c('cidb2957', # note: lowercase 'b' here
-                                'qlet',
-                                'kv9991a', #age 10 (months)
-                                'tb9991a', #age 13
-                                'fh0011a', # age 15
-                                'fj003a', # age 17?  VB: not in dataset? but was in original?
-                                'ypb9992', # age 22 VB: also not in?
-                                'kv8603',# age 10      #'agechild_cbcl9m',
-                                'tb8603', # age 13
-                                'fh6876', # age 15
-                                'fjci350', # age 17 (CIS-R) 
-                                'ypb5180')] # age 22 (SMFQ; might not be the best measure)
-#'nmisint_9m', # number of missing values in internalizing scale items
-#'sum_int_9m')] # weighted sum score internalizing scale (allowing 25% missing)
+cov_out$int.age.10y  <-  as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12  # age 10 (years)
+cov_out$intern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] # 10yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)
 
-
-for (i in c('kv9991a',
-            'tb9991a',
-            'fh0011a',
-            'fj003a', 
-            'ypb9992',
-            'kv8603',
-            'tb8603',
-            'fjci350',
-            'ypb5180')){
-  internalizing[,i] = as.numeric(levels(internalizing[,i]))[internalizing[,i]]
-}
-
-internalizing$fh6876=as.numeric(internalizing$fh6876)
-
-#corbetw2mat(internalizing.n[,-c(1:2)], internalizing[,-c(1:2)], what = "paired")  
-
-# Calculation (based on SPSS script available on the V: drive): 
-# if 24 out of 32 items are available (i.e. 75%), sum of the item
-# scores * (32 / 32 - nmisnt_9m). 
-# Let's make it a bit more reader friendly 
-
-#colnames(internalizing)[3:4] <- c("n_missing_intern", "intern_score"); 
-
-internalizing = internalizing %>% 
-  rename(
-    int.age.10y = kv9991a,
-    int.age.13y = tb9991a,
-    int.age.15y = fh0011a,
-    int.age.17y = fj003a,
-    int.age.22y = ypb9992,
-    intern_score.10y = kv8603,
-    intern_score.13y = tb8603,
-    intern_score.15y = fh6876,
-    intern_score.17y = fjci350,
-    intern_score.22y = ypb5180
-  )
-# One alternative could be to use the anxious/depressed empirical sub-scale (9y, mother report)
-# However I did give it a shot and it does not seem to perfom better than the internalizing one.
+# cov_out$int.age.13y      <- as.numeric(levels(alspac.table$tb9991a))[alspac.table$tb9991a] # age 13 
+# cov_out$intern_score.13y <- as.numeric(levels(alspac.table$tb8603))[alspac.table$tb8603]   # 13yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)    
+# cov_out$int.age.15y      <- as.numeric(levels(alspac.table$fh0011a))[alspac.table$fh0011a] # age 15 
+# cov_out$intern_score.15y <- as.numeric(alspac.table$fh6876)                                # 15yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)   
+# cov_out$int.age.17y      <- as.numeric(levels(alspac.table$fj003a))[alspac.table$fj003a]   # age 17 VB: not in dataset? but was in original?
+# cov_out$intern_score.17y <- as.numeric(levels(alspac.table$fjci350))[alspac.table$fjci350] # age 17 (CIS-R) 
+# cov_out$int.age.22y      <- as.numeric(levels(alspac.table$ypb9992))[alspac.table$ypb9992] # age 22 VB: also not in?
+# cov_out$intern_score.22y <- as.numeric(levels(alspac.table$ypb5180))[alspac.table$ypb5180] # age 22 (SMFQ; might not be the best measure)
 
 ################################################################################
 #### -------------------------- FAT MASS ( @ 9 ) -------------------------- ####
@@ -100,65 +67,59 @@ internalizing = internalizing %>%
 # It was also selected on the base of data availability both cross-sectionally and 
 # for future longitudinal assessment. 
 
-# Read in the datasets
-#fatmass <- readquick("CHILDFATMASS9_13092016.sav") # 5862 obs of 28 vars
+# Converting months @ 10y to years (coded F9 due to focus 9 clinic age in ALSPAC)
+cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12             # age 10 (years)
+cov_out$fat_mass   <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx126] # trunk FM at age 10y
+## ANDR @10 NOT AVAILABLE
 
-# Select only the necessary measures
-fat_mass = alspac.table[,c('cidb2957','qlet',
-                           'f9003c',   # age 10 (months)              #'agechild9_visit1', # this value (age) is the same for all other datasets
-                           'kg998a', # age13
-                           'fkar0010', # age24
-                           'f9dx126',  #trunkFM at age10y   #'fat_mass_androidchild9')]
-                           'fg3257',   # andrFM at age13y
-                           'fh2257',   # andrFM at age15y
-                           'fjdx138',   # andrFM at age17y
-                           'fkdx1041')]   # andrFM at age24y
-
-
-for (i in c('f9003c',
-            'kg998a',
-            'fkar0010',
-            'f9dx126', 
-            'fg3257',  
-            'fh2257',  
-            'fjdx138', 
-            'fkdx1041')){
-  fat_mass[,i] = as.numeric(levels(fat_mass[,i]))[fat_mass[,i]]
-}
-
-
-#colnames(fat_mass)[3] <- "fat_mass"
-
-fat_mass = fat_mass %>% 
-  rename(
-    fm.age.10y = f9003c,
-    fm.age.13y = kg998a,
-    fm.age.24y = fkar0010,
-    fat_mass.10y = f9dx126,
-    fat_mass.13y = fg3257,
-    fat_mass.15y = fh2257,
-    fat_mass.17y = fjdx138,
-    fat_mass.24y = fkdx1041
-  )
-
-################################################################################
-# merge the two main (mental and physical) outcomes with child sex into one dataset
-PCM_outcome <- merge(internalizing, fat_mass, by = c('cidb2957','qlet'),  all.x = TRUE)
+# cov_out$fm.age.13y   <- as.numeric(levels(alspac.table$kg998a))[alspac.table$kg998a]     # age 13
+# cov_out$fat_mass.13y <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]     # andr FM at age 13y
+# cov_out$fat_mass.15y <- as.numeric(levels(alspac.table$fh2257))[alspac.table$fh2257]     # andr FM at age 15y
+# cov_out$fat_mass.17y <- as.numeric(levels(alspac.table$fjdx138))[alspac.table$fjdx138]   # andr FM at age 17y
+# cov_out$fm.age.24y   <- as.numeric(levels(alspac.table$fkar0010))[alspac.table$fkar0010] # age 24
+# cov_out$fat_mass.24y <- as.numeric(levels(alspac.table$fkdx1041))[alspac.table$fkdx1041] # andr FM at age 24y
 
 # ------------------------------------------------------------------------------
 # Before we can use them in the analysis, the outcome variables need to be standardized. 
 # so, here we take the standard deviation score.
-PCM_outcome$intern_score_z.10y <- as.numeric(scale(PCM_outcome$intern_score.10y))
-PCM_outcome$intern_score_z.13y <- as.numeric(scale(PCM_outcome$intern_score.13y))
-PCM_outcome$intern_score_z.15y <- as.numeric(scale(PCM_outcome$intern_score.15y))
-PCM_outcome$intern_score_z.17y <- as.numeric(scale(PCM_outcome$intern_score.17y))
-PCM_outcome$intern_score_z.22y <- as.numeric(scale(PCM_outcome$intern_score.22y))
+cov_out$intern_score_z <- as.numeric(scale(cov_out$intern_score))
+# cov_out$intern_score_z.13y <- as.numeric(scale(cov_out$intern_score.13y))
+# cov_out$intern_score_z.15y <- as.numeric(scale(cov_out$intern_score.15y))
+# cov_out$intern_score_z.17y <- as.numeric(scale(cov_out$intern_score.17y))
+# cov_out$intern_score_z.22y <- as.numeric(scale(cov_out$intern_score.22y))
 
-PCM_outcome$fat_mass_z.10y <- as.numeric(scale(PCM_outcome$fat_mass.10y))
-PCM_outcome$fat_mass_z.13y <- as.numeric(scale(PCM_outcome$fat_mass.13y))
-PCM_outcome$fat_mass_z.15y <- as.numeric(scale(PCM_outcome$fat_mass.15y))
-PCM_outcome$fat_mass_z.17y <- as.numeric(scale(PCM_outcome$fat_mass.17y))
-PCM_outcome$fat_mass_z.24y <- as.numeric(scale(PCM_outcome$fat_mass.24y))
+cov_out$fat_mass_z <- as.numeric(scale(cov_out$fat_mass))
+# cov_out$fat_mass_z.13y <- as.numeric(scale(cov_out$fat_mass.13y))
+# cov_out$fat_mass_z.15y <- as.numeric(scale(cov_out$fat_mass.15y))
+# cov_out$fat_mass_z.17y <- as.numeric(scale(cov_out$fat_mass.17y))
+# cov_out$fat_mass_z.24y <- as.numeric(scale(cov_out$fat_mass.24y))
+
+################################################################################
+#### ------------------- Construct RISK GROUPS variable ------------------- ####
+################################################################################
+
+cov_out$int = ifelse(cov_out$intern_score_z > quantile(cov_out$intern_score_z, probs = 0.8, na.rm = T), 1, 0) 
+cov_out$fat = ifelse(cov_out$fat_mass_z     > quantile(cov_out$fat_mass_z,     probs = 0.8, na.rm = T), 1, 0) 
+
+cov_out$risk_groups = rep(NA, nrow(cov_out))
+for (i in 1:nrow(cov_out)) {
+  if ( is.na(cov_out$int[i]) | is.na(cov_out$fat[i]) )  { cov_out$risk_groups[i] = NA
+  } else if (cov_out$int[i] == 0 & cov_out$fat[i] == 0) { cov_out$risk_groups[i] = 0   # Healthy
+  } else if (cov_out$int[i] == 1 & cov_out$fat[i] == 0) { cov_out$risk_groups[i] = 1   # High internalizing  only
+  } else if (cov_out$int[i] == 0 & cov_out$fat[i] == 1) { cov_out$risk_groups[i] = 2   # High fat mass only
+  } else {                                                cov_out$risk_groups[i] = 3 } # Multimorbid
+}
+
+# # Let's first factor that bad boy 
+cov_out$risk_groups = factor(cov_out$risk_groups, 
+                             levels = c(0:3), 
+                             labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
+
+summary(cov_out$risk_groups)
+
+# attach(cov_out); plot(intern_score_z, fat_mass_z, 
+# col=c("cornflowerblue","black", "red", "darkgrey", "darkgoldenrod2","chartreuse4")[risk_groups]); detach(cov_out)
+
 
 ################################################################################
 #### ---------------------------- COVARIATES ------------------------------ ####
@@ -170,204 +131,146 @@ PCM_outcome$fat_mass_z.24y <- as.numeric(scale(PCM_outcome$fat_mass.24y))
 
 # For the other demographic auxiliary variables (used for imputation): when they 
 # were assessed both prenatally and postnatally, both measures are included.
-# Auxiliary variables for this project include: 'ethnicity', 'm_age', parity', 
-# 'm_smoking', 'gest_age_birth', 'gest_weight', 'm_bmi_pregnancy', 'm_bmi_5yrs',
-# 'sex', 'm_dep_pregnancy', 'p_dep_pregnacy', "m_dep_3yrs", "p_dep_3yrs"
+# Auxiliary variables for this project include: 'ethnicity', 'm_age_cont', parity', 
+# 'gest_age_birth', 'gest_weight', 'm_bmi_pregnancy', 'm_bmi_7y',
+# 'm_dep_pregnancy', 'p_dep_pregnacy', "m_dep_3y", "p_dep_3y"
+
+# ------------------------------------------------------------------------------
+### SEX of the child
+cov_out$sex <- alspac.table$kz021 # 1 = Male; 2 = Female.
 
 # ------------------------------------------------------------------------------
 ### AGE of the child
 # Combine age of the child measured during first visit and at CBCL administration
 # This value will serve as a covariate in the first adjusted model.
 
-#PCM_outcome$age_child = (PCM_outcome$agechild9_visit1 + PCM_outcome$agechild_cbcl9m) / 2
+cov_out$age_child <- (cov_out$int.age.10y + cov_out$fm.age.10y) / 2
+# cov_out$age_child.13y <- (cov_out$int.age.13y + cov_out$fm.age.13y) / 2
+# cov_out$age_child.15y <-  cov_out$int.age.15y
+# cov_out$age_child.17y <-  cov_out$int.age.17y
+# cov_out$age_child.23y <- (cov_out$int.age.22y + cov_out$fm.age.24y) / 2
 
-# in ALSPAC: average across intS and fatmass age
-PCM_outcome$age_child.10y = (PCM_outcome$int.age.10y + PCM_outcome$fm.age.10y) / 2
-PCM_outcome$age_child.13y = (PCM_outcome$int.age.13y + PCM_outcome$fm.age.13y) / 2
-PCM_outcome$age_child.15y = PCM_outcome$int.age.15y
-PCM_outcome$age_child.17y = PCM_outcome$int.age.17y
-PCM_outcome$age_child.23y = (PCM_outcome$int.age.22y + PCM_outcome$fm.age.24y) / 2
-
-
-
-# OPTIONAL: check age differnce between measurements
-# plot(PCM_outcome$agechild9_visit1, PCM_outcome$agechild_cbcl9m)
-# summary(PCM_outcome$agechild9_visit1 - PCM_outcome$agechild_cbcl9m)
+# OPTIONAL: check age difference between measurements
+plot(cov_out$int.age.10y, cov_out$fm.age.10y)
+summary(cov_out$int.age.10y - cov_out$fm.age.10y)
 
 #-------------------------------------------------------------------------------
 ### MATERNAL SMOKING during pregnancy 
-# smokingv1 <- readquick("MATERNALSMOKING_22112016.sav") #  9778 obs of 11 variables
-# 
-# smoking = smokingv1[,c('idm', 'smoke_all')] # (1) never a smoker; 
-# # (2) smoked until pregnancy was known (i.e., first trimester only); 
-# # (3) continued smoking during pregnancy.
-# colnames(smoking)[2] = "m_smoking"
+# 3 categories (never, former and current smoker)
 
-# ALSPAC: 2 categories (sustained vs (stopped or never))
+# Ever smoked: no = 0, yes = 1
+cov_out$b650r <- ifelse(alspac.table$b650 == 'N', 0, ifelse(alspac.table$b650 == 'Y', 1, NA)) 
+# CIGS smoked per day during pregnancy: none = 0, occasionally or >1 = 1
+cov_out$c482r <- ifelse(alspac.table$c482 == 'None', 0, ifelse(alspac.table$c482 != 'DK', 1, NA)) 
 
-alspac.table$m_smoking=NA
-alspac.table[which(alspac.table$e170=='N'),"m_smoking"] <- 0
-alspac.table[which(alspac.table$e170=='Y'),"m_smoking"] <- 1
-
-
+cov_out$m_smoking <- ifelse(alspac.table$b650r == 0 & alspac.table$c482r == 0, 0,        # Never a smoker
+                            ifelse(alspac.table$b650r == 1 & alspac.table$c482r == 0, 1, # Former smoker
+                                   ifelse(alspac.table$c482r == 1, 2, NA)))              # Current smoker
 
 #-------------------------------------------------------------------------------
 ### MATERNAL ALCOHOL CONSUMPTION during pregnancy
-# drinkingv1 <- readquick("GEDRAGSGROEP_MaternalDrinking_22112016.sav") #drinkingv2 <- readquick("MATERNALALCOHOL_22112016.sav") # old variable
-# 
-# drinking = drinkingv1[,c('idm', 'mdrink_updated')] # (0) never; 
-# # (1) until pregnancy was known (i.e., first trimester only); 
-# # (2) continued during pregnancy occasionally;
-# # (3) continued during pregnancy frequently.
-# colnames(drinking)[2] = "m_drinking"
+# Combined maternal drinking during the first and the last trimester of pregnancy.
 
-# ALSPAC
+# Alcohol consumption in 1-3MTHS this PREG
+cov_out$b721r <- ifelse(alspac.table$b721 == 'never', 0,   
+                        ifelse(alspac.table$b721 == '<1 glass PWK', 1,
+                               ifelse(alspac.table$b721 == '1+ glasses PWK', 2, 
+                                      ifelse(alspac.table$b721 == '1-2 glasses PDAY', 3, 
+                                             ifelse(alspac.table$b721 == '3-9 glasses PDAY', 4, 
+                                                    ifelse(alspac.table$b721 == '10+ glasses PDAY', 5, NA))))))
+# FREQ of alcohol use in last 2MTHS of PREG
+cov_out$e220r <- ifelse(alspac.table$e220 == 'Not at all', 0, 
+                        ifelse(alspac.table$e220 == '<1PWK', 1,
+                               ifelse(alspac.table$e220 == 'At least 1PWK', 2, 
+                                      felse(alspac.table$e220 == '1-2 glasses daily', 3, 
+                                            ifelse(alspac.table$e220 == '3-9 glasses daily', 4, 
+                                                   ifelse(alspac.table$e220 == '>9 glasses daily', 5, NA))))))
 
-alspac.table$m_drinking=NA
-alspac.table[which(alspac.table$b721=='never' & alspac.table$e220=='Not at all'),"m_drinking"] <- 0
-alspac.table[which(!(alspac.table$b721=='never' & alspac.table$e220=='Not at all') &
-                     !(is.na(alspac.table$b721) | is.na(alspac.table$e220))),"m_drinking"] <- 1
+cov_out$m_drinking <- rowSums(cov_out[, c('b721r', 'e220r')], na.rm = T)
 
 
 #-------------------------------------------------------------------------------
 ## Other variables
-# child_general <- readquick("CHILD-ALLGENERALDATA_07072020.sav") # 9901 obs of 122 
-# 
-# # Ethnicity recode - dichotomized into: dutch, western and non-western;
-# for (i in 1:9901) {
-#   if (is.na(child_general$ethnfv2[i])) { child_general$ethnicity[i] <- NA
-#   } else if (child_general$ethnfv2[i] == 1) { # Dutch
-#     child_general$ethnicity[i] <- 0 
-#   } else if (child_general$ethnfv2[i] == 300 | child_general$ethnfv2[i] == 500 | child_general$ethnfv2[i] >= 700) { 
-#     # American, western (300) Asian, western (500) European (700), Oceanie (800)
-#     child_general$ethnicity[i] <- 1 
-#   } else { 
-#     child_general$ethnicity[i] <- 2 } 
-#   # Indonesian (2), Cape Verdian (3), Maroccan (4) Dutch Antilles (5) Surinamese 
-#   # (6) Turkish (7) African (200), American, non western (400), Asian, non western (600)
-# }
 
-alspac.table$ethnicity=NA
-alspac.table[which(alspac.table$c800=='White' & alspac.table$c801=='White'),"ethnicity"] <- 1
-alspac.table[which(!(alspac.table$c800=='White' & alspac.table$c801=='White') &
-                     !(is.na(alspac.table$c800) | is.na(alspac.table$c801))),"ethnicity"] <- 0
+# Ethnicity
+cov_out$ethnicity <- ifelse(is.na(alspac.table$c800) & is.na(alspac.table$c801), NA, 
+                            ifelse((alspac.table$c800 == 'White' & alspac.table$c801 == 'White') | 
+                                     ((is.na(alspac.table$c800) | is.na(alspac.table$c801)) & 
+                                     (alspac.table$c800 == 'White' | alspac.table$c801 == 'White')), 1, 0))
 
-# pre-pregnancy BMI
-alspac.table$dw002=as.numeric(levels(alspac.table$dw002))[alspac.table$dw002] # Pre-pregnancy weight (Kg) at 12w gest
+# Maternal weight (Kg)
+cov_out$weight_pre <- as.numeric(levels(alspac.table$dw002))[alspac.table$dw002] # Pre-pregnancy weight (Kg)
+cov_out$weight_8wk <- as.numeric(levels(alspac.table$ew002))[alspac.table$ew002] # kg 8w
+cov_out$weight_7y  <- as.numeric(levels(alspac.table$m4220))[alspac.table$m4220] # kg 7y
+cov_out$weight_8y  <- as.numeric(levels(alspac.table$n1140))[alspac.table$n1140] # kg 8y
+cov_out$weight_9y  <- as.numeric(levels(alspac.table$p1290))[alspac.table$p1290] # kg 9y
+cov_out$weight_avg <- rowMeans(cov_out[, c('weight_8wk','weight_7y','weight_8y','weight_9y')], na.rm = T)
 
-alspac.table$m4221=as.numeric(levels(alspac.table$m4221))[alspac.table$m4221] #  Height (cm) 7y 1m
+# Maternal height (cm) 7y 1m (we treat height as a constant)
+cov_out$height_7y <- as.numeric(levels(alspac.table$m4221))[alspac.table$m4221] / 100 # transform into meters
 
-alspac.table$bmi_0 = alspac.table$dw002/((alspac.table$m4221/100)^2) # calculating ore-pregnancy BMI 
+# BMI
+cov_out$m_bmi_before_pregnancy <- cov_out$weight_pre / ((cov_out$height_7y)^2) # calculating pregnancy BMI 
+cov_out$m_bmi_7yrs             <- cov_out$weight_7y  / ((cov_out$height_7y)^2) # calculating BMI at age 7
+cov_out$m_bmi_childhood        <- cov_out$weight_avg / ((cov_out$height_7y)^2) # calculating childhood BMI 
 
-general_cov_aux = alspac.table[,c('cidb2957', 'qlet', 
-                                  'm_smoking',
-                                  'm_drinking',
-                                  'kz021',    ### SEX -  1 = boy; 2 = girl.
-                                  'ethnicity', ### ETHNICITY - dutch, western, non-western
-                                  'bmi_0',     ###	MATERNAL BMI - self-reported, before pregnancy
-                                  'mult',      # used for exclusion criteria 
-                                  #'mother',    # mother id used to identify siblings (for exclusion)
-                                  'b032',    # parity (used for imputation)
-                                  'bestgest',   # gestational age at birth (used for imputation)
-                                  'kz030',    # gestational weight (used for imputation)
-                                  #'bmi_1',     # maternal BMI during pregnancy (used for imputation)
-                                  'mz028b')] # maternal age at intake (used for imputation) 
+# Siblings identifier
+cov_out$sibling <- ifelse(alspac.table$mult == 1, 1, ifelse(alspac.table$mult == 0, 0, NA))  # multiple pregnancies in ALSPAC (exclusion criteria)
 
-# ALSPAC: bmi tbd
+# Twin identifier
+cov_out$twin <- rep(0, nrow(cov_out))
+cov_out$twin[which(duplicated(alspac.table$cidb2957) | duplicated(alspac.table$cidb2957, fromLast = T))] <- 1
+                                  
+# Auxiliary variables (for imputation)
+cov_out$parity <- as.numeric(levels(alspac.table$b032))[alspac.table$b032]  # parity (used for imputation)
 
-# Below is what ALSPAC has - should we use all of these time points? Or too many? And 9y already too late?
-# dw043 = weight/(height in meters) 12w gest 
-# ew002 = mothers postnatal weight (kg) 8w
-# m4220 = Respondent's weight (kg) 7y 1m
-# n1140 = Respondent's weight (kg) 8y 1m
-# p1290 = Respondent's weight (kg) 9y 1m
+# try <- cov_out[cov_out$sibling == 1, ]
+# summary(try$parity)
+
+cov_out$gest_age_birth <- as.numeric(levels(alspac.table$bestgest))[alspac.table$bestgest] # gestational age at birth (used for imputation)
+cov_out$gest_weight    <- as.numeric(levels(alspac.table$kz030))[alspac.table$kz030]       # gestational weight (used for imputation)
+cov_out$m_age_cont     <- as.numeric(levels(alspac.table$mz028b))[alspac.table$mz028b]     # maternal age at intake (used for imputation) 
+
+#-------------------------------------------------------------------------------
+## Maternal and paternal depression during pregnancy and childhood are calculated in
+## the CCEI EPDS script. 
+# Prenatal 
+cov_out$m_dep_cont_pregnancy <- dep$b371 + dep$c601
+# Postnatal
+cov_out$m_dep_cont_childhood <- dep$f201 + dep$g291 + dep$h200b
+
+# Prenatal 
+cov_out$p_dep_cont_pregnancy <- dep$pb261
+# Postnatal
+cov_out$p_dep_cont_childhood <- dep$pe291
 
 
 
-for (i in c('mult',
-            'b032',
-            'bestgest', 
-            'kz030',  
-            'mz028b')){
-  general_cov_aux[,i] = as.numeric(levels(general_cov_aux[,i]))[general_cov_aux[,i]]
+#------------------------------------------------------------------------------#
+# ------------------------- PERMUTATION TESTING -------------------------------#
+#------------------------------------------------------------------------------#
+
+count <- 0 
+itarations <- 1000
+set.seed(310896)
+
+for (i in 1:itarations) {
+  origN <- unname(summary(cov_out$risk_groups)[4])
+  randN <- permute(cov_out)
+  if (randN > origN) {
+    count <- count + 1
+  }
 }
 
-
-# Again, let's try to keep it user friendly 
-
-general_cov_aux = general_cov_aux %>% 
-  rename(
-    sex = kz021,
-    gest_age_birth = bestgest,
-    gest_weight = kz030,
-    m_age_cont = mz028b,
-    twin = mult,
-    parity = b032,
-    m_bmi_before_pregnancy = bmi_0)
-
-# ALSPAC: the following section still needs to be done
-
-# #-------------------------------------------------------------------------------
-# # Maternal BMI at age 5 (used for imputation)
-# m_anthropometry_5yrs = readquick('MOTHERANTHROPOMETRY_18022013.sav')
-# m_bmi_5yrs = m_anthropometry_5yrs[,c('mother','bmimotherf5')]; colnames(m_bmi_5yrs)[2] = "m_bmi_5yrs"
-# 
-# # Merge with the other general variables
-# general_cov_aux = merge(general_cov_aux, m_bmi_5yrs, by = 'mother',  all.x = TRUE)
-# 
-# 
-# #-------------------------------------------------------------------------------
-# # Maternal and paternal depression during pregnancy and at age 3 
-# bsi_pregnancy_m = readquick('GR1003-BSI D1_22112016.sav') # 9778 obs of 261 vars
-# bsi_pregnancy_p = readquick('GR1004-BSI G1_22112016.sav') # 9778 obs of 261 vars
-# bsi_3yrs = readquick('BSI 3 years of age_GR1065 G1-GR1066 C1_22112016.sav') # 9897 obs of 49 vars
-# 
-# # Depression during pregnancy
-# dep_pregnancy_m = bsi_pregnancy_m[, c('idm','dep')]; colnames(dep_pregnancy_m)[2] = c("m_dep_cont_pregnancy")
-# dep_pregnancy_p = bsi_pregnancy_p[, c('idm','dep_p')]; colnames(dep_pregnancy_p)[2] = c("p_dep_cont_pregnancy")
-# 
-# # Merge it with the previous dataset
-# general_cov_aux <- Reduce(function(x,y) merge(x = x, y = y, by = 'idm',  all.x = TRUE),
-#                           list(general_cov_aux, dep_pregnancy_m, dep_pregnancy_p))
-# 
-# # Depression @ 3y: Items 9, 16, 17, 18, 35, and 50
-# d <- data.frame(bsi_3yrs$g0100365, bsi_3yrs$g0100665, bsi_3yrs$g0100765, bsi_3yrs$g0100865, bsi_3yrs$g0101365, bsi_3yrs$g0102165, # mother report
-#                 bsi_3yrs$c0100366, bsi_3yrs$c0100666, bsi_3yrs$c0100766, bsi_3yrs$c0100866, bsi_3yrs$c0101366, bsi_3yrs$c0102166) # father report
-# n_items_m <- rowSums(!is.na(d[,1:6])); n_items_p <- rowSums(!is.na(d[,7:12]))
-# bsi_3yrs$m_dep_cont_3yrs <- ifelse(n_items_m >= 5, yes = (rowSums(d[,1:6])/n_items_m)-1, no = NA)
-# bsi_3yrs$p_dep_cont_3yrs <- ifelse(n_items_p >= 5, yes = (rowSums(d[,7:12])/n_items_p)-1, no = NA)
-# 
-# dep_3yrs = bsi_3yrs[, c('idc','m_dep_cont_3yrs', 'p_dep_cont_3yrs')]
-# # Merge it with the previous dataset
-# general_cov_aux = merge(general_cov_aux, dep_3yrs, by = 'idc',  all.x = TRUE)
-
-#-------------------------------------------------------------------------------
-################################################################################
-# Merge all covariates / auxiliary variables together
-# covariates_and_auxiliary <- Reduce(function(x,y) merge(x = x, y = y, by = 'idm',  all.x = TRUE),
-#                                    list(general_cov_aux, smoking, drinking)) 
-
-# ALSPAC for now:
-covariates_and_auxiliary = general_cov_aux
-################################################################################
-
-################################################################################
-# merging outcome variables, covariates and auxiliary variables in one dataset
-PCM_project = merge(PCM_outcome, covariates_and_auxiliary, by = c('cidb2957','qlet'), all.x = T)
-
-# A bit of a quick and dirty fix to make merging with ELS easier
-# colnames(PCM_project)[which(colnames(PCM_project) == 'idc')] <- toupper('idc')
-# colnames(PCM_project)[which(colnames(PCM_project) == 'idm')] <- toupper('idm')
-
-################################################################################
-#-------------------------------------------------------------------------------
+pval = round(count / itarations, 10)
 
 ################################################################################
 #### --------------------------- save and run ----------------------------- ####
 ################################################################################
 
-# Save the dataset in an .RData file, in the directory where the raw data are stored
-save(PCM_project, file = "PCM_project.RData")
+# Save the dataset in the directory where you have the raw data
+saveRDS(cov_out, file.path(alspac_folder, "PCMout_cov_aux.rsd"))
 
-# Save covariates and auxiliary variables separately as well
-save(covariates_and_auxiliary, file = 'covariates_and_auxiliary.RData')
+# Also save the dataset in a .csv format
+write.csv(cov_out, file = "PCMout_cov_aux.csv", row.names = FALSE, quote = FALSE)
+
