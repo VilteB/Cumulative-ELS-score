@@ -73,7 +73,7 @@ CR_prenatal <- dichotomize(
 # Add maternal and paternal education
 CR_education <- dichotomize( 
   vars = c("c645a", # maternal education 
-           "c666"), # paternal education
+           "c666a"), # paternal education
   yes = c("None", "CSE", "Vocational", "O level", "A level"), 
   no = c("Degree") )
 
