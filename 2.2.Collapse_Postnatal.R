@@ -215,25 +215,22 @@ postnatal_stress$separated_from_smbd_8y  <- post89$kt5013a_rec # CH separated fr
 # ------------------------------------------------------------------------------
 postnatal_stress$lost_best_friend_8y <- post89$kt5015a_rec	# CH lost best friend since 7th birthday
 # ------------------------------------------------------------------------------
-# M_PREGNANT
-# ------------------------------------------------------------------------------
-postnatal_stress$m_pregnant_8m  <- post07$f250a_rec  # Mum became pregnant
-postnatal_stress$m_pregnant_21m <- post07$g330a_rec  # Mum pregnant since 8 months
-postnatal_stress$m_pregnant_3y  <- post07$h240a_rec  # Mum became pregnant since 18 months
-postnatal_stress$m_pregnant_4y  <- post07$j330a_rec  # Mum became pregnant since 30 months
-postnatal_stress$m_pregnant_5y  <- post07$k4030a_rec # Mum became pregnant in the past year
-postnatal_stress$m_pregnant_6y  <- post07$l4030a_rec # Mum became pregnant since 5th birthday
-postnatal_stress$m_pregnant_9y  <- post89$p2030a_rec	 # Mum became pregnant since 6th birthday
-# ------------------------------------------------------------------------------
 # NEW_SIBLING
 # ------------------------------------------------------------------------------
-postnatal_stress$new_sibling_18m <- post07$kd509a_rec  # CH had a new sibling
-postnatal_stress$new_sibling_30m <- post07$kf459a_rec  # CH got new sibling since 18 months
-postnatal_stress$new_sibling_3y  <- post07$kj469a_rec  # CH got new sibling 
-postnatal_stress$new_sibling_4y  <- post07$kl479a_rec  # CH had new brother or sister since age 3
-postnatal_stress$new_sibling_5y  <- post07$kn4009a_rec # CH had new brother or sister in past 15 months
-postnatal_stress$new_sibling_6y  <- post07$kq370a_rec  # CH had new brother or sister since 5th birthday
-postnatal_stress$new_sibling_8y  <- post89$kt5010a_rec # CH had new brother or sister since 7th birthday
+postnatal_stress$new_sibling_18m <- repmeas(post07[,c('f250a_rec', 'kd509a_rec')]) 
+# Mum became pregnant [8m] | CH had a new sibling [18m]
+postnatal_stress$new_sibling_30m <- repmeas(post07[,c('g330a_rec', 'kf459a_rec')]) 
+# Mum pregnant since 8 months [21m] | CH got new sibling since 8 months [30m]
+postnatal_stress$new_sibling_3y  <- repmeas(post07[,c('h240a_rec', 'kj469a_rec')]) 
+# Mum became pregnant since 18 months | CH got new sibling in past 12 months
+postnatal_stress$new_sibling_4y  <- repmeas(post07[,c('j330a_rec', 'kl479a_rec')]) 
+# Mum became pregnant since 30 months | CH had new brother or sister since age 3
+postnatal_stress$new_sibling_5y  <- repmeas(post07[,c('k4030a_rec', 'kn4009a_rec')]) 
+# Mum became pregnant in the past year | CH had new brother or sister in past 15 months
+postnatal_stress$new_sibling_6y  <- repmeas(post07[,c('l4030a_rec', 'kq370a_rec')]) 
+# Mum became pregnant | CH had new brother or sister } since 5th birthday
+postnatal_stress$new_sibling_9y  <- repmeas(post07[,c('p2030a_rec', 'kt5010a_rec')]) 
+# Mum became pregnant since 6th birthday | CH had new brother or sister since 7th birthday
 # ------------------------------------------------------------------------------
 # CH_HAD_FRIGHT 
 # ------------------------------------------------------------------------------
@@ -674,7 +671,6 @@ postnatal_stress[,c('post_LE_percent_missing','post_life_events')] <- domainscor
     'burglary_or_car_theft',
     'separated_from_smbd',
     'lost_best_friend',
-    'm_pregnant',
     'new_sibling',
     'ch_had_fright'), postnatal = T)
 

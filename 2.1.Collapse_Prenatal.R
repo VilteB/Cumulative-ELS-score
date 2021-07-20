@@ -24,157 +24,115 @@ prenatal_stress <- data.frame("IDC" = paste(alspac.table$cidB2957, alspac.table$
                             # 1. LIFE EVENTS
 ################################################################################
 
-#partner_died_pre
-prenatal_stress$partner_died_pre	<- pre$b570a_rec	# PTNR died since PREG
-
-# smbd_important_died_pre
-prenatal_stress$smbd_important_died_pre <- repmeas(pre[,c('b571a_rec','b572a_rec')]) 
-# CH died since PREG | Friend or relative died since PREG 
-
-# family_member_ill_pre
-prenatal_stress$family_member_ill_pre <-	repmeas(pre[,c('b573a_rec', 'b574a_rec')])	
-# CH was ill since PREG | PTNR was ill since PREG
-
-# smbd_important_ill_pre
-prenatal_stress$smbd_important_ill_pre	<- pre$b575a_rec	# Friend or relative was ill since PREG
-
-# sick_or_accident_pre
 prenatal_stress$sick_or_accident_pre	<- repmeas(pre[,c('b576a_rec', 'b580a_rec', 'b610a_rec')]) 
 # Admitted to hospital since PREG | V ill since PREG | Had an accident since PREG
 
-# moved_pre
+prenatal_stress$family_member_died_pre	<-  repmeas(pre[,c('b570a_rec','b571a_rec')]) 
+# PTNR died since PREG | CH died since PREG
+
+prenatal_stress$family_member_ill_pre <-	repmeas(pre[,c('b573a_rec', 'b574a_rec')])	
+# CH was ill since PREG | PTNR was ill since PREG
+
+prenatal_stress$friend_relative_died_pre <- pre$b572a_rec # Friend or relative died since PREG 
+
+prenatal_stress$friend_relative_ill_pre	<- pre$b575a_rec	# Friend or relative was ill since PREG
+
 prenatal_stress$moved_pre <-	pre$b591a_rec	# Moved house since PREG
 
-# blood_loss
 prenatal_stress$blood_loss <- pre$b599a_rec	# Bled & thought might miscarry
 
-# pregnancy_worried
 prenatal_stress$pregnancy_worried <-	pre$b602a_rec # Test result suggesting POSS abnormality
 
-# baby_worried
 prenatal_stress$baby_worried	<- pre$b604a_rec	# POSS harm to baby
 
-# burglary_or_car_theft_pre
 prenatal_stress$burglary_or_car_theft_pre <-	pre$b609a_rec	# House or car burgled since PREG
 
-# work_problems_pre
 prenatal_stress$work_problems_pre <- pre$b583a_rec	# PROBS at work since PREG
 
-# abortion_pre
 prenatal_stress$abortion_pre	<- pre$b605a_rec # Tried to have abortion
 
-# married_pre
 prenatal_stress$married_pre <-	pre$b595a_rec	# Got married since PREG
 
-# unemployed_pre
 prenatal_stress$unemployed_pre	<- pre$b584a_rec	# Lost job since PREG
 
 ################################################################################
                           # 2. CONTEXTUAL RISKS
 ################################################################################
 
-#income_reduced_pre
 prenatal_stress$income_reduced_pre <-	repmeas(pre[,c('b588a_rec', 'b581a_rec')]) 
 #	Income reduced since PREG | PTNR lost job since PREG
 
-#homeless_pregnancy
 prenatal_stress$homeless_pregnancy	<- pre$b593	# Became homeless since PREG
 
-#major_financial_problems_pre
 prenatal_stress$major_financial_problems_pre <-	pre$b594a_rec # Major financial PROB since PREG
 
-# housing_adequacy_pre
 prenatal_stress$housing_adequacy_pre	<- pre$p2n # Housing adequacy 
 
-# housing_basic_living_pre
 prenatal_stress$housing_basic_living_pre	<- pre$p3n # Housing Basic Living 
 
-# housing_defects_pre
 prenatal_stress$housing_defects_pre	<- pre$p4n # Housing Defects 
 
-# m_education_pre
-prenatal_stress$m_education_pre <- pre$c645a_rec # No degree
+prenatal_stress$m_education_pre <- pre$c645a_rec # Mums highest ed qualification: No degree
 
 ################################################################################
                           # 3. PARENTAL RISKS 
 ################################################################################
 
-# criminal_record_parent_pre
-prenatal_stress$criminal_record_parent_pre <- repmeas(pre[,c('b577a_rec', 'b598', 'p14n', 'b586a_rec', 'pb188a_rec')]) 
+prenatal_stress$m_criminal_record_pre <- repmeas(pre[,c('b577a_rec', 'b598', 'p14n')]) 
 #	In trouble with the law since PREG | Convicted of an offence since PREG | Crime trouble with police |
+
+prenatal_stress$p_criminal_record_pre <- repmeas(pre[,c('b586a_rec', 'pb188a_rec')]) 
 # PTNR in trouble with law since PREG | PTNR convicted of an offence since PREG 
 
-# m_attempted_suicide_pre
-prenatal_stress$m_attempted_suicide_pre <-	pre$b597 # Attempted suicide since PREG
-
-# early_pregnancy = m_age in postnatal script
-prenatal_stress$early_pregnancy <- pre$mz028ba_rec # mother age < 19 at baseline 
-
-# m_depression_pre
 prenatal_stress$m_depression_pre <- repmeas(anxdep[,c('b371a_rec', 'c601a_rec')]) 
-# EPDS (>12 risk, <12 no risk) 18wk and  32wk # corr = 0.4267
-
-# p_depression_pre
-prenatal_stress$p_depression_pre <- anxdep$pb261a_rec 
-# EPDS total score partner mode imputed (>12 risk, <=12 no risk)
-
-# m_anxiety_pre
+# EPDS (>12 risk, <12 no risk) 18w gest, 32w gest  # corr = 0.4267
 prenatal_stress$m_anxiety_pre	<- repmeas(anxdep[,c('b351a_rec', 'c573a_rec')]) 
 # CCEI anxiety subscale (complete) 18w gest, 32w gest # corr = 0.4625
+prenatal_stress$m_interpersonal_sensitivity_pre <- pre$b916a_rec 
+#  80th percentile (Interpersonal awareness score)
 
-# p_anxiety_pre
+prenatal_stress$p_depression_pre <- anxdep$pb261a_rec 
+# EPDS total score II partner mode imputed (>12 risk, <=12 no risk)
 prenatal_stress$p_anxiety_pre <- anxdep$pb234a_rec 
 # CCEI anxiety subscale II partner > 8 is risk, <= 8 no risk
+prenatal_stress$p_interpersonal_sensitivity_pre <- pre$pb551a_rec 
+# 80th percentile (Total interpersonal sensitivity)
 
-# m_interpersonal_sensitivity_pre
-prenatal_stress$m_interpersonal_sensitivity_pre <- pre$b916a_rec #  80th percentile (Interpersonal awareness score)
+prenatal_stress$m_attempted_suicide_pre <-	pre$b597 # Attempted suicide since PREG
 
-# p_interpersonal_sensitivity_pre
-prenatal_stress$p_interpersonal_sensitivity_pre <- pre$pb551a_rec # 80th percentile
+prenatal_stress$early_pregnancy <- pre$mz028ba_rec # mother age < 19 at delivery 
 
 ################################################################################
                           # 4. INTERPERSONAL RISKS
 ################################################################################
 
-# divorce_pre
-prenatal_stress$divorce_pre <-	repmeas(pre[,c('b578', 'b587')]) # Divorced since PREG | Separated since PREG
+prenatal_stress$divorce_pre <-	repmeas(pre[,c('b578', 'b587')]) 
+# Divorced since PREG | Separated since PREG
 
-# p_rejected_child_pre
-prenatal_stress$p_rejected_child_pre <- pre$b579a_rec	# PTNR rejected PREG
-
-# p_went_away_pre
-prenatal_stress$p_went_away_pre	<-  pre$b585a_rec #	PTNR went away since PREG
-
-# conflict_in_family_pre
 prenatal_stress$conflict_in_family_pre	<- repmeas(pre[,c('b607a_rec', 'b608')]) 
 # PTNR was EMOT cruel to mum since PREG | PTNR was EMOT cruel to child since PREG
 
-# argued_fam_friends_pre
+prenatal_stress$conflict_family_violence_pre	<- repmeas(pre[,c('b592a_rec', 'b596a_rec')]) 
+# PTNR hurt mum since PREG | PTNR hurt CH since PREG # corr = 0.124
+
+prenatal_stress$p_rejected_child_pre <- pre$b579a_rec	# PTNR rejected PREG
+
+prenatal_stress$p_went_away_pre	<- pre$b585a_rec #	PTNR went away since PREG
+
 prenatal_stress$argued_fam_friends_pre	<- pre$b590a_rec	# Argued with family or friends since PREG
 
-# conflict_family_violence_pre
-prenatal_stress$conflict_family_violence_pre	<- repmeas(pre[,c('b592a_rec', 'b596a_rec')]) # corr = 0.124
-# PTNR hurt mum since PREG | PTNR hurt CH since PREG
-
-# marital_status_pregnancy
 prenatal_stress$marital_status_pregnancy <-	pre$p7n  # Partner Status 
 
-# family_affection
 prenatal_stress$family_affection	<- pre$p8n	# Partner Affection 
 
-# family_size_pre
 prenatal_stress$family_size_pregnancy <- pre$p10n	# Family Size  
 
-# family_problems
 prenatal_stress$family_problems	<- pre$p11n # Family Major problems 
 
-#family_support
 prenatal_stress$family_support	<- pre$p16n # Partner Support
 
-#social_network_emotional
 prenatal_stress$social_network_emotional	<- pre$p17n	# Social Network - Emotional 
 
-#social_network_practical
 prenatal_stress$social_network_practical <- pre$p18n # Social Network - Practical 
 
 ################################################################################
@@ -213,10 +171,10 @@ prenatal_stress$pre_percent_missing <- apply(prenatal_stress[,2:ncol(prenatal_st
 # script for calculation details).
 
 prenatal_stress[,c('pre_LE_percent_missing','pre_life_events')] <- domainscore(prenatal_stress[,c(
-  'partner_died_pre',
-  'smbd_important_died_pre',
+  'family_member_died_pre',
+  'friend_relative_died_pre',
   'family_member_ill_pre', 
-  'smbd_important_ill_pre',
+  'friend_relative_ill_pre',
   'sick_or_accident_pre',
   'moved_pre',
   'blood_loss',
@@ -238,7 +196,8 @@ prenatal_stress[,c('pre_CR_percent_missing','pre_contextual_risk')] <- domainsco
   'm_education_pre')]) 
 
 prenatal_stress[,c('pre_PR_percent_missing','pre_parental_risk')] <- domainscore(prenatal_stress[,c(
-  'criminal_record_parent_pre',
+  'm_criminal_record_pre',
+  'p_criminal_record_pre',
   'm_attempted_suicide_pre',
   'early_pregnancy',
   'm_depression_pre',
@@ -272,6 +231,6 @@ saveRDS(prenatal_stress, file.path(alspac_folder, "prenatal_stress.rsd"))
 saveRDS(prenatal_summary, file.path(alspac_folder, "prenatal_summary.rsd"))
 
 # Also save the dataset in a .csv format
-write.csv(prenatal_stress, file = "prenatal_stress.csv", row.names = FALSE, quote = FALSE)
-write.csv(prenatal_summary, file = "prenatal_summary.csv", row.names = T, quote = FALSE)
+write.csv(prenatal_stress, file = "prenatal_stress.csv", row.names = F, quote = F)
+write.csv(prenatal_summary, file = "prenatal_summary.csv", row.names = T, quote = F)
 

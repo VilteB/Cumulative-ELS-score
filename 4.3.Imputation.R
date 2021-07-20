@@ -18,8 +18,8 @@ ELS <- cbind(pre, post, out)
 ################################################################################
 
 # Organize variable names into domains to specify them later more easily
-pre_LE <- c( 'partner_died_pre', 'smbd_important_died_pre', 'family_member_ill_pre', 
-             'smbd_important_ill_pre', 'sick_or_accident_pre', 'moved_pre', 'blood_loss',
+pre_LE <- c( 'family_member_died_pre', 'friend_relative_died_pre', 'family_member_ill_pre', 
+             'friend_relative_ill_pre', 'sick_or_accident_pre', 'moved_pre', 'blood_loss',
              'pregnancy_worried', 'baby_worried', 'burglary_or_car_theft_pre','work_problems_pre',
              'abortion_pre','married_pre', 'unemployed_pre')
 pre_CR <- c('income_reduced_pre',
@@ -29,7 +29,8 @@ pre_CR <- c('income_reduced_pre',
             'housing_basic_living_pre',
             'housing_defects_pre',
             'm_education_pre')
-pre_PR <- c('criminal_record_parent_pre',
+pre_PR <- c('m_criminal_record_pre',
+            'p_criminal_record_pre',
             'm_attempted_suicide_pre',
             # 'early_pregnancy', # without age, as the same variable is already in postnatal PR score
             'm_depression_pre',
@@ -66,8 +67,7 @@ post_LE <- c('sick_or_accident_18m','sick_or_accident_30m','sick_or_accident_3y'
              'BURGLARY_OR_CAR_THEFT_8M', 'burglary_or_car_theft_21m', 'burglary_or_car_theft_3y', 'burglary_or_car_theft_4y', 'burglary_or_car_theft_5y', 'burglary_or_car_theft_6y', 'burglary_or_car_theft_9y',
              'separated_from_smbd_18m', 'separated_from_smbd_30m', 'separated_from_smbd_3y', 'separated_from_smbd_4y', 'separated_from_smbd_5y', 'separated_from_smbd_6y', 'separated_from_smbd_8y', 
              'lost_best_friend_8y',
-             'm_pregnant_8m', 'm_pregnant_21m', 'm_pregnant_3y', 'm_pregnant_4y', 'm_pregnant_5y', 'm_pregnant_6y', 'm_pregnant_9y',
-             'new_sibling_18m', 'new_sibling_30m', 'new_sibling_3y', 'new_sibling_4y', 'new_sibling_5y', 'new_sibling_6y', 'new_sibling_8y',
+             'new_sibling_18m', 'new_sibling_30m', 'new_sibling_3y', 'new_sibling_4y', 'new_sibling_5y', 'new_sibling_6y', 'new_sibling_9y',
              'ch_had_fright_18m', 'ch_had_fright_30m', 'ch_had_fright_3y', 'ch_had_fright_4y', 'ch_had_fright_5y', 'ch_had_fright_6y', 'ch_had_fright_8y')
 
 post_CR <- c('homeless_childhood_8m', 'homeless_childhood_21m', 'homeless_childhood_3y', 'homeless_childhood_4y', 'homeless_childhood_5y', 'homeless_childhood_6y', 'homeless_childhood_9y',
@@ -155,7 +155,6 @@ post_LE_t <- c('sick_or_accident',
          'burglary_or_car_theft',
          'separated_from_smbd',
          'lost_best_friend_8y',
-         'm_pregnant',
          'new_sibling',
          'ch_had_fright')
 post_CR_t <-c( 'homeless_childhood',
@@ -246,7 +245,7 @@ meth['pre_parental_risk']       <- "~I( rowMeans(ELSlong[,pre_PR]) )"
 meth['pre_interpersonal_risk']  <- "~I( rowMeans(ELSlong[,pre_IR]) )"
 
 # below hasn't been changed to ALSPAC yet ####### NO to fix
-meth['post_life_events']          <- "~I( (rowSums(ELSlong[, post_LE_t])) / 17)"
+meth['post_life_events']          <- "~I( (rowSums(ELSlong[, post_LE_t])) / 16)"
 meth['post_contextual_risk']      <- "~I( (rowSums(ELSlong[, post_CR_t])) / 10)"
 meth['post_parental_risk']        <- "~I( (rowSums(ELSlong[, post_PR_t])) / 10)"
 meth['post_interpersonal_risk']   <- "~I( (rowSums(ELSlong[, post_IR_t])) / 7)"
