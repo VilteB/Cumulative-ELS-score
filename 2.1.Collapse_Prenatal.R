@@ -84,16 +84,16 @@ prenatal_stress$m_criminal_record_pre <- repmeas(pre[,c('b577a_rec', 'b598', 'p1
 prenatal_stress$p_criminal_record_pre <- repmeas(pre[,c('b586a_rec', 'pb188a_rec')]) 
 # PTNR in trouble with law since PREG | PTNR convicted of an offence since PREG 
 
-prenatal_stress$m_depression_pre <- repmeas(anxdep[,c('b371a_rec', 'c601a_rec')]) 
-# EPDS (>12 risk, <12 no risk) 18w gest, 32w gest  # corr = 0.4267
+prenatal_stress$m_depression_pre <- repmeas(anxdep[,c('M_DEP_18Wg', 'M_DEP_32Wg')]) 
+# EPDS (>12 risk, <12 no risk) 18w gest, 32w gest  # corr = 0.4286
 prenatal_stress$m_anxiety_pre	<- repmeas(anxdep[,c('b351a_rec', 'c573a_rec')]) 
 # CCEI anxiety subscale (complete) 18w gest, 32w gest # corr = 0.4625
 prenatal_stress$m_interpersonal_sensitivity_pre <- pre$b916a_rec 
 #  80th percentile (Interpersonal awareness score)
 
-prenatal_stress$p_depression_pre <- anxdep$pb261a_rec 
+prenatal_stress$p_depression_pre <- anxdep$P_DEP_pregn
 # EPDS total score II partner mode imputed (>12 risk, <=12 no risk)
-prenatal_stress$p_anxiety_pre <- anxdep$pb234a_rec 
+prenatal_stress$p_anxiety_pre <- anxdep$pb233a_rec 
 # CCEI anxiety subscale II partner > 8 is risk, <= 8 no risk
 prenatal_stress$p_interpersonal_sensitivity_pre <- pre$pb551a_rec 
 # 80th percentile (Total interpersonal sensitivity)

@@ -416,9 +416,9 @@ postnatal_stress$p_age <- post07$pb910a_rec # partner younger than 19 at baselin
 # When both EPDS and self reported depression were available we combined both else 
 # we used the available information source
 # postnatal_stress$m_depression_8wk <- anxdep$e391a_rec  # EPDS total score
-postnatal_stress$m_depression_8m  <- repmeas(anxdep[,c('f021a_rec', 'f201a_rec')])  # had depression | EPDS total score
-postnatal_stress$m_depression_21m <- repmeas(anxdep[,c('g021a_rec', 'g291a_rec')])  # had depression | EPDS total score
-postnatal_stress$m_depression_3y  <- repmeas(anxdep[,c('h013a_rec', 'h200ba_rec')]) # had depression | EPDS total score
+postnatal_stress$m_depression_8m  <- repmeas(anxdep[,c('f021a_rec', 'f200a_rec')])  # had depression | EPDS total score
+postnatal_stress$m_depression_21m <- repmeas(anxdep[,c('g021a_rec', 'g290a_rec')])  # had depression | EPDS total score
+postnatal_stress$m_depression_3y  <- repmeas(anxdep[,c('h013a_rec', 'h200a_rec')]) # had depression | EPDS total score
 postnatal_stress$m_depression_4y  <- anxdep$j012a_rec # had depression
 postnatal_stress$m_depression_5y  <- repmeas(anxdep[,c('k1011a_rec', 'm_EPDS_total_5ya_rec')]) # had depression | EPDS total score
 postnatal_stress$m_depression_6y  <- anxdep$l3011a_rec # had depression
@@ -429,8 +429,8 @@ postnatal_stress$m_depression_9y  <- repmeas(anxdep[,c('p1011a_rec', 'm_EPDS_tot
 # When both EPDS and self reported depression were available we combined both else 
 # we used the available information source
 # postnatal_stress$p_depression_8wk <- anxdep$pc103a_rec  #  EPDS total score 
-postnatal_stress$p_depression_8m  <- repmeas(anxdep[,c('pd021a_rec', 'pd201a_rec')])  # had depression | EPDS total score 
-postnatal_stress$p_depression_21m <- repmeas(anxdep[,c('pe021a_rec', 'pe291a_rec')])  # had depression | EPDS total score
+postnatal_stress$p_depression_8m  <- repmeas(anxdep[,c('pd021a_rec', 'pd200a_rec')])  # had depression | EPDS total score 
+postnatal_stress$p_depression_21m <- repmeas(anxdep[,c('pe021a_rec', 'pe290a_rec')])  # had depression | EPDS total score
 postnatal_stress$p_depression_3y  <- repmeas(anxdep[,c('pf1011a_rec', 'p_EPDS_total_3ya_rec')]) # had depression | EPDS total score
 postnatal_stress$p_depression_4y  <- anxdep$pg1011a_rec  # had depression
 postnatal_stress$p_depression_5y  <- repmeas(anxdep[,c('ph1011a_rec', 'p_EPDS_total_5ya_rec')]) # had depression | EPDS total score
