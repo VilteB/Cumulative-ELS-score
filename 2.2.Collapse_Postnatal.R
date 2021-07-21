@@ -319,11 +319,11 @@ postnatal_stress$housing_defects_4y	     <- post07$t4n  # Housing Defects 2-4y c
 # ------------------------------------------------------------------------------
 #postnatal_stress$m_education_2y <- post07$b5n (using the c645a variable below instead)
 #postnatal_stress$m_education_4y <- post07$t5n 
-postnatal_stress$m_education <- post07$c645a_rec # Mum's highest education < degree
+postnatal_stress$m_education <- post07$m_ed # Mum's highest education < degree
 # ------------------------------------------------------------------------------
 # p_education 
 # ------------------------------------------------------------------------------
-postnatal_stress$p_education <- post07$c666a_rec # PTNR's highest education < degree
+postnatal_stress$p_education <- post07$p_ed # PTNR's highest education < degree
 # ------------------------------------------------------------------------------
 # neighbourhood_problems
 # ------------------------------------------------------------------------------
