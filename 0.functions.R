@@ -8,7 +8,7 @@ if (exists("alspac_file") == F) { alspac_file <- file.choose() }
 alspac_folder <- dirname(alspac_file)
 
 # Read in the data
-alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) 
+if (exists("alspac.table") == F) { alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) }
 
 ################################################################################
 ################################################################################
@@ -156,7 +156,7 @@ ccei_score <- function(set1,
 # By default, check_transf = T so you can check whether the recoding worked as expected. 
 
 epds_score <- function(set, 
-                       revset, 
+                       revset,
                        check_transf = T) {
   
   vars <- c(set, revset)
@@ -168,7 +168,9 @@ epds_score <- function(set,
     if (substr(v, nchar(v), nchar(v)) == 'a') { appendix = "_rec" } else { appendix = "a_rec" }
     var.out = paste0(v, appendix) # create new (recoded) variable name
     # perform the recoding
-    if (v %in% set) { tr = 1 } else if (v %in% revset) { tr = 4 }
+    if (v %in% set) { tr = min(dset[, v], na.rm = T) 
+    } else if (v %in% revset) { tr = max(dset[, v], na.rm = T) }
+    
     dset[,var.out] <- abs(dset[, v] - tr) 
     
     if (check_transf == T) { 

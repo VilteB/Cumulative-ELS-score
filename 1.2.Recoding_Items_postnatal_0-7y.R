@@ -366,15 +366,6 @@ CR_6Y <- dichotomize(
   no = c("No, did not happen") )
 # "Other", "DK" set to NA
 
-# TODO: CORRECT TO POSTNATAL ITEMS !!!
-# Add maternal and paternal education # CORRECT TO
-CR_education <- dichotomize( 
-  vars = c("c645a", # maternal education 
-           "c666"), # paternal education
-  yes = c("None", "CSE", "Vocational", "O level", "A level"), 
-  no = c("Degree") )
-# "Consent withdrawn by mother" set to NA
-
 # Neighborhood stress score:  based on the following items:
 # •	G485 Badly fitted doors and windows are problem •	G486 Poor ventilation
 # •	G487 Noise in rooms of home is problem • G488 Noise from other homes is problem 
@@ -400,7 +391,22 @@ NP[, "h366a_rec"] <- ifelse( NP[, "h366"] >= cutoff_3y, 1,
                              ifelse(NP[, "h366"] < cutoff_3y, 0, NA))
 
 # Merge all CR variables together 
-CR_postnatal <- cbind(CR_8M, CR_21M, CR_3Y, CR_4Y, CR_5Y, CR_6Y, CR_education, NP) # CR_8W
+CR_postnatal <- cbind(CR_8M, CR_21M, CR_3Y, CR_4Y, CR_5Y, CR_6Y, NP) # CR_8W
+
+# Add maternal and paternal education
+CR_postnatal$m_ed = ifelse( !is.na(alspac.table$k6292) & alspac.table$k6292 == 'Yes', 0,
+                    ifelse((!is.na(alspac.table$k6281) & alspac.table$k6281 == 'Yes')
+                          |(!is.na(alspac.table$k6282) & alspac.table$k6282 == 'Yes')
+                          |(!is.na(alspac.table$k6283) & alspac.table$k6283 == 'Yes')
+                          |(!is.na(alspac.table$k6284) & alspac.table$k6284 == 'Yes')
+                          |(!is.na(alspac.table$k6280) & alspac.table$k6280 == 'Yes'), 1, NA))
+
+CR_postnatal$p_ed = ifelse( !is.na(alspac.table$k6312) & alspac.table$k6312 == 'Yes', 0,
+                    ifelse((!is.na(alspac.table$k6300) & alspac.table$k6300 == 'Yes')
+                          |(!is.na(alspac.table$k6301) & alspac.table$k6301 == 'Yes')
+                          |(!is.na(alspac.table$k6302) & alspac.table$k6302 == 'Yes')
+                          |(!is.na(alspac.table$k6303) & alspac.table$k6303 == 'Yes')
+                          |(!is.na(alspac.table$k6304) & alspac.table$k6304 == 'Yes'), 1, NA))
 
 # Add Housing variables
 CR_postnatal$b2n <- ifelse(alspac.table$b2 == 1, 1, ifelse(alspac.table$b2 == 0, 0, NA)) # Housing adequacy 0-2y composite
@@ -728,6 +734,6 @@ DV_postnatal <- cbind(DV_18M, DV_30M, DV_3Y, DV_4Y, DV_5Y, DV_6Y)
 ################################################################################
 ################################################################################
 
-postnatal_stress_0to7_raw <-cbind(LE_postnatal, CR_postnatal, PR_postnatal, IR_postnatal, DV_postantal)
+postnatal_stress_0to7_raw <-cbind(LE_postnatal, CR_postnatal, PR_postnatal, IR_postnatal, DV_postnatal)
 
 saveRDS(postnatal_stress_0to7_raw, file.path(alspac_folder, "raw_postnatal_stress_0to7.rsd"))
