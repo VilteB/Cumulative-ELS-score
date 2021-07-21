@@ -80,10 +80,8 @@ M_ANX$CCEI_total_6ya_rec <- ifelse(M_ANX_6Y$sumscore >= 9, 1, 0)
 
 # Prenatal paternal anxiety is measured using the anxiety subscale of the CCEI.
 # Cut point has been used previously in ALSPAC (Heron et al., 2004): >8 is risk, <= 8 no risk
-
-P_ANX_pren <- dich_psychopath("pb233", yes = c(9:15), no = c(0:8), 
-                              yes_label = 'Very anxious', no_label = 'Not anxious')
-
+P_ANX_pren <- dich_psychopath("pb234", yes = c(9:15), no = c(1:8), 
+                           yes_label = 'Very anxious', no_label = 'Not anxious')
 
 
 # Postnatal paternal anxiety is only available as self-reported "anxiety/nerves". 
@@ -132,17 +130,6 @@ P_ANX <- cbind(P_ANX_pren, P_ANX_post)
 # So we first calculate total scores for EPDS for the missing timepoints using the
 # epds_score() function.
 
-# CALCULATE EPDS TOTAL SCORE 18w gestation
-M_DEP_18Wgest <- epds_score(set = c('b360', 'b361', 'b363'), # d24, d25, d27, (1 = 0) (2 = 1) (3 = 2) (4 = 3)
-                         revset = c('b362', 'b364', 'b365', # d26, d28, d29, d30, d31, d32, d33 (1 = 3) (2 = 2) (3 = 1) (4 = 0)
-                                  'b366', 'b367', 'b368', 'b369'))
-
-# CALCULATE EPDS TOTAL SCORE 32w gestation
-M_DEP_32Wgest <- epds_score(set = c('c590', 'c591', 'c593'), # d24, d25, d27, (1 = 0) (2 = 1) (3 = 2) (4 = 3)
-                         revset = c('c592', 'c594', 'c595', # d26, d28, d29, d30, d31, d32, d33 (1 = 3) (2 = 2) (3 = 1) (4 = 0)
-                                    'c596', 'c597', 'c598', 'c599'))
-
-
 # CALCULATE EPDS TOTAL SCORE 5y
 M_DEP_5Y <- epds_score(set = c('k3030', 'k3031', 'k3033'), # d24, d25, d27, (1 = 0) (2 = 1) (3 = 2) (4 = 3)
                     revset = c('k3032', 'k3034', 'k3035', # d26, d28, d29, d30, d31, d32, d33 (1 = 3) (2 = 2) (3 = 1) (4 = 0)
@@ -160,22 +147,23 @@ M_DEP_8Y <- epds_score(set = c('n6060', 'n6061', 'n6063'), # d24, d25, d27, (1 =
 # possible depressive symptoms.
 
 # Prenatal 
-M_DEP_18Wg <- dich_psychopath("b370", yes = c(13:29), no = c(1:12), 
+M_DEP_18Wg <- dich_psychopath("b371", yes = c(13:29), no = c(1:12), 
                        yes_label = 'very depressed', no_label = 'not depressed')
-M_DEP_32Wg <- dich_psychopath("c600", yes = c(13:29), no = c(1:12), 
+M_DEP_32Wg <- dich_psychopath("c601", yes = c(13:29), no = c(1:12), 
                        yes_label = 'very depressed', no_label = 'not depressed')
+
 # Postnatal
-M_DEP_8W <- dich_psychopath("e390", yes = c(13:29), no = c(1:12), 
-                          yes_label = 'very depressed', no_label = 'not depressed')
+M_DEP_8W  <- dich_psychopath("e391",  yes = c(13:29), no = c(1:12), 
+                       yes_label = 'very depressed', no_label = 'not depressed')
 
-M_DEP_8M <- dich_psychopath("f200", yes = c(13:29), no = c(1:12), 
-                          yes_label = 'very depressed', no_label = 'not depressed')
+M_DEP_8M  <- dich_psychopath("f201",  yes = c(13:29), no = c(1:12), 
+                       yes_label = 'very depressed', no_label = 'not depressed')
 
-M_DEP_21M <- dich_psychopath("g290", yes = c(13:29), no = c(1:12), 
-                          yes_label = 'very depressed', no_label = 'not depressed')
+M_DEP_21M <- dich_psychopath("g291",  yes = c(13:29), no = c(1:12), 
+                       yes_label = 'very depressed', no_label = 'not depressed')
 
-M_DEP_3Y <- dich_psychopath("h200a", yes = c(13:30), no = c(0:12), # actually 2y 9m
-                          yes_label = 'very depressed', no_label = 'not depressed')
+M_DEP_3Y  <- dich_psychopath("h200b", yes = c(13:30), no = c(0:12), # actually 2y 9m
+                       yes_label = 'very depressed', no_label = 'not depressed')
 
 # Merge them together
 M_DEP <- cbind(M_DEP_18Wg, M_DEP_32Wg, M_DEP_8W, M_DEP_8M, M_DEP_21M, M_DEP_3Y)
@@ -222,12 +210,6 @@ M_DEP_selfr <- dichotomize(
 # So we first calculate total scores for EPDS for the missing timepoints using the
 # epds_score() function.
 
-# CALCULATE EPDS TOTAL SCORE 18W GEST
-
-P_DEP_18Wg <- epds_score(set = c('pb250', 'pb251', 'pb253'), # c24, c25, c27, (1=0)(2=1)(3=2)(4=3)
-                      revset = c('pb252', 'pb254', 'pb255', # c26, c28, c29, c30, c31, c32, c33 (1=3)(2=2)(3=1)(4=0) 
-                                 'pb256', 'pb257', 'pb258', 'pb259'))
-
 # CALCULATE EPDS TOTAL SCORE 3y
 P_DEP_3Y <- epds_score(set = c('pf4030', 'pf4031', 'pf4033'), # c24, c25, c27, (1=0)(2=1)(3=2)(4=3)
                     revset = c('pf4032', 'pf4034', 'pf4035', # c26, c28, c29, c30, c31, c32, c33 (1=3)(2=2)(3=1)(4=0) 
@@ -247,15 +229,15 @@ P_DEP_6Y <- epds_score(set = c('pj2010', 'pj2011', 'pj2013'), # c24, c25, c27, (
 # DICHOTOMISING EPDS TOTAL SCORE - PARTNER (>12 risk, <=12 no risk)
 # EPDS total score partner mode imputed (>12 risk, <=12 no risk) based on ALSPAC FAI documentation
 
-P_DEP_pregn <- ifelse(P_DEP_18Wg$sumscore > 12, 1, 0)
+P_DEP_pregn <- dich_psychopath("pb261", yes = c(13:29), no = c(0:12))
 
-P_DEP_8W <- dich_psychopath("pc102", yes = c(13:29), no = c(1:12), 
-                           yes_label = 'very depressed', no_label = 'not depressed')
+P_DEP_8W    <- dich_psychopath("pc103", yes = c(13:29), no = c(1:12), 
+                       yes_label = 'very depressed', no_label = 'not depressed')
 
-P_DEP_8M <- dich_psychopath("pd200", yes = c(13:29), no = c(1:12), 
-                           yes_label = 'very depressed', no_label = 'not depressed')
+P_DEP_8M   <- dich_psychopath("pd201", yes = c(13:29), no = c(1:12), 
+                       yes_label = 'very depressed', no_label = 'not depressed')
 
-P_DEP_21M <- dich_psychopath("pe290", yes = c(13:30), no = c(0:12))
+P_DEP_21M  <- dich_psychopath("pe291", yes = c(13:30), no = c(0:12))
 
 # Merge them together
 P_DEP <- cbind(P_DEP_pregn, P_DEP_8W, P_DEP_8M, P_DEP_21M)
