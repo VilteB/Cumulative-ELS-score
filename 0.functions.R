@@ -4,11 +4,11 @@ library(foreign)
 library(tidyverse)
 
 # Chose the folder where the input file is stored and all results will be saved
-if (exists("alspac_file") == F) { alspac_file <- file.choose() }
-alspac_folder <- dirname(alspac_file)
-
-# Read in the data
-alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) 
+if (exists("alspac_file") == F) { 
+  alspac_file <- file.choose() 
+  alspac_folder <- dirname(alspac_file)
+  # Read in the data
+  alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) }
 
 ################################################################################
 ################################################################################
@@ -168,7 +168,9 @@ epds_score <- function(set,
     if (substr(v, nchar(v), nchar(v)) == 'a') { appendix = "_rec" } else { appendix = "a_rec" }
     var.out = paste0(v, appendix) # create new (recoded) variable name
     # perform the recoding
-    if (v %in% set && names(table(dset[,v]))[1] == 1) { tr = 1 } else if (v %in% set && names(table(dset[,v]))[1] == 2) { tr = 2 } else if (v %in% revset && names(table(dset[,v]))[1] == 1) { tr = 4 } else if (v %in% revset && names(table(dset[,v]))[1] == 2) { tr = 5 } 
+    if (v %in% set) { tr = min(as.integer(dset[, v]), na.rm = T) 
+    } else if (v %in% revset) { tr = max(as.integer(dset[, v]), na.rm = T) }
+    
     dset[,var.out] <- abs(dset[, v] - tr) 
     
     if (check_transf == T) { 

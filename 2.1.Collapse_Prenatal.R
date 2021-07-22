@@ -56,7 +56,7 @@ prenatal_stress$married_pre <-	pre$b595a_rec	# Got married since PREG
 prenatal_stress$unemployed_pre	<- pre$b584a_rec	# Lost job since PREG
 
 ################################################################################
-                          # 2. CONTEXTUAL RISKS
+                          # 2. CONTEXTUAL RISK
 ################################################################################
 
 prenatal_stress$income_reduced_pre <-	repmeas(pre[,c('b588a_rec', 'b581a_rec')]) 
@@ -74,8 +74,10 @@ prenatal_stress$housing_defects_pre	<- pre$p4n # Housing Defects
 
 prenatal_stress$m_education_pre <- pre$c645a_rec # Mums highest ed qualification: No degree
 
+prenatal_stress$p_education_pre <- pre$c666a_rec # PTRN highest ed qualification: No degree
+
 ################################################################################
-                          # 3. PARENTAL RISKS 
+                          # 3. PARENTAL RISK 
 ################################################################################
 
 prenatal_stress$m_criminal_record_pre <- repmeas(pre[,c('b577a_rec', 'b598', 'p14n')]) 
@@ -84,15 +86,15 @@ prenatal_stress$m_criminal_record_pre <- repmeas(pre[,c('b577a_rec', 'b598', 'p1
 prenatal_stress$p_criminal_record_pre <- repmeas(pre[,c('b586a_rec', 'pb188a_rec')]) 
 # PTNR in trouble with law since PREG | PTNR convicted of an offence since PREG 
 
-prenatal_stress$m_depression_pre <- repmeas(anxdep[,c('M_DEP_18Wg', 'M_DEP_32Wg')]) 
+prenatal_stress$m_depression_pre <- repmeas(anxdep[,c('m_EPDS_total_18wga_rec', 'm_EPDS_total_32wga_rec')]) 
 # EPDS (>12 risk, <12 no risk) 18w gest, 32w gest  # corr = 0.4286
 prenatal_stress$m_anxiety_pre	<- repmeas(anxdep[,c('b351a_rec', 'c573a_rec')]) 
 # CCEI anxiety subscale (complete) 18w gest, 32w gest # corr = 0.4625
 prenatal_stress$m_interpersonal_sensitivity_pre <- pre$b916a_rec 
 #  80th percentile (Interpersonal awareness score)
 
-prenatal_stress$p_depression_pre <- anxdep$P_DEP_pregn
-# EPDS total score II partner mode imputed (>12 risk, <=12 no risk)
+prenatal_stress$p_depression_pre <- anxdep$p_EPDS_total_18wga_rec 
+# EPDS total score I partner complete cases (>12 risk, <=12 no risk)
 prenatal_stress$p_anxiety_pre <- anxdep$pb233a_rec 
 # CCEI anxiety subscale II partner > 8 is risk, <= 8 no risk
 prenatal_stress$p_interpersonal_sensitivity_pre <- pre$pb551a_rec 
@@ -103,7 +105,7 @@ prenatal_stress$m_attempted_suicide_pre <-	pre$b597 # Attempted suicide since PR
 prenatal_stress$early_pregnancy <- pre$mz028ba_rec # mother age < 19 at delivery 
 
 ################################################################################
-                          # 4. INTERPERSONAL RISKS
+                          # 4. INTERPERSONAL RISK
 ################################################################################
 
 prenatal_stress$divorce_pre <-	repmeas(pre[,c('b578', 'b587')]) 
@@ -193,7 +195,8 @@ prenatal_stress[,c('pre_CR_percent_missing','pre_contextual_risk')] <- domainsco
   'housing_adequacy_pre',
   'housing_basic_living_pre',
   'housing_defects_pre',
-  'm_education_pre')]) 
+  'm_education_pre', 
+  'p_education_pre')]) 
 
 prenatal_stress[,c('pre_PR_percent_missing','pre_parental_risk')] <- domainscore(prenatal_stress[,c(
   'm_criminal_record_pre',

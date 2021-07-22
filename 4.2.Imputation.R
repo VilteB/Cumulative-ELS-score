@@ -10,48 +10,58 @@ library(mice);
 library(miceadds)
 
 # Load the dataframes with prenatal, postnatal stress and the outcome dataset
-pre  <- readRDS(file.path(alspac_folder, "prenatal_stress.rsd.rsd"))
-post <- readRDS(file.path(alspac_folder, "postnatal_stress.rsd.rsd"))
+pre  <- readRDS(file.path(alspac_folder, "prenatal_stress.rsd"))
+post <- readRDS(file.path(alspac_folder, "postnatal_stress.rsd"))
 out  <- readRDS(file.path(alspac_folder, "PCMout_cov_aux.rsd"))
 
 ELS <- cbind(pre, post, out)
 ################################################################################
 
 # Organize variable names into domains to specify them later more easily
-pre_LE <- c( 'family_member_died_pre', 'friend_relative_died_pre', 'family_member_ill_pre', 
-             'friend_relative_ill_pre', 'sick_or_accident_pre', 'moved_pre', 'blood_loss',
-             'pregnancy_worried', 'baby_worried', 'burglary_or_car_theft_pre','work_problems_pre',
-             'abortion_pre','married_pre', 'unemployed_pre')
+pre_LE <- c('family_member_died_pre',
+            'friend_relative_died_pre',
+            'family_member_ill_pre', 
+            'friend_relative_ill_pre',
+            'sick_or_accident_pre',
+            'moved_pre',
+            'blood_loss',
+            'pregnancy_worried',
+            'baby_worried',
+            'burglary_or_car_theft_pre',
+            'work_problems_pre',
+            'abortion_pre',
+            'married_pre',
+            'unemployed_pre')
 pre_CR <- c('income_reduced_pre',
             'homeless_pregnancy',
             'major_financial_problems_pre',
             'housing_adequacy_pre',
             'housing_basic_living_pre',
             'housing_defects_pre',
-            'm_education_pre')
-pre_PR <- c('m_criminal_record_pre',
+            'm_education_pre',
+            'p_education_pre')
+pre_PR <- c('m_criminal_record_pre',   #  without 'early_pregnancy': same variable already in postnatal PR score
             'p_criminal_record_pre',
             'm_attempted_suicide_pre',
-            # 'early_pregnancy', # without age, as the same variable is already in postnatal PR score
             'm_depression_pre',
             'm_anxiety_pre',
             'm_interpersonal_sensitivity_pre',
             'p_depression_pre',
             'p_anxiety_pre',
             'p_interpersonal_sensitivity_pre') 
-pre_IR <- c( 'divorce_pre',
-             'p_rejected_child_pre',
-             'p_went_away_pre',
-             'conflict_in_family_pre',
-             'argued_fam_friends_pre',
-             'conflict_family_violence_pre',
-             'marital_status_pregnancy',
-             'family_affection',
-             'family_size_pregnancy',
-             'family_problems',
-             'family_support',
-             'social_network_emotional',
-             'social_network_practical')
+pre_IR <- c('divorce_pre',
+            'p_rejected_child_pre',
+            'p_went_away_pre',
+            'conflict_in_family_pre',
+            'argued_fam_friends_pre',
+            'conflict_family_violence_pre',
+            'marital_status_pregnancy',
+            'family_affection',
+            'family_size_pregnancy',
+            'family_problems',
+            'family_support',
+            'social_network_emotional',
+            'social_network_practical')
 # all postnatal variables, when a timepoint in missing I make it up with a CAPITAL LETTERS NAME
 post_LE <- c('sick_or_accident_18m','sick_or_accident_30m','sick_or_accident_3y','sick_or_accident_4y','sick_or_accident_5y','sick_or_accident_6y','sick_or_accident_9y',
              'family_member_ill_8m', 'family_member_ill_21m', 'family_member_ill_3y', 'family_member_ill_4y', 'family_member_ill_5y','family_member_ill_6y','family_member_ill_9y',
@@ -62,7 +72,7 @@ post_LE <- c('sick_or_accident_18m','sick_or_accident_30m','sick_or_accident_3y'
              'started_nursery_18m', 'started_nursery_30m', 'started_nursery_3y', 'started_nursery_4y', 'started_nursery_5y', 'STARTED_NURSERY_6Y','STARTED_NURSERY_9Y',
              'acquired_new_parent_18m', 'acquired_new_parent_30m', 'acquired_new_parent_3y', 'acquired_new_parent_4y', 'acquired_new_parent_5y', 'acquired_new_parent_6y', 'acquired_new_parent_8y',
              'change_carer_18m', 'change_carer_30m', 'change_carer_3y', 'change_carer_4y', 'change_carer_5y', 'change_carer_6y', 'change_carer_8y',
-             'smbd_important_ill_8m', 'smbd_important_ill_21m', 'smbd_important_ill_3y', 'smbd_important_ill_4y', 'smbd_important_ill_5y', 'smbd_important_ill_6y', 'smbd_important_ill_9y',
+             'friend_relative_ill_8m', 'friend_relative_ill_21m', 'friend_relative_ill_3y', 'friend_relative_ill_4y', 'friend_relative_ill_5y', 'friend_relative_ill_6y', 'friend_relative_ill_9y',
              'partner_died_8m', 'partner_died_21m', 'partner_died_3y', 'partner_died_4y', 'partner_died_5y', 'partner_died_6y', 'partner_died_9y',
              'BURGLARY_OR_CAR_THEFT_8M', 'burglary_or_car_theft_21m', 'burglary_or_car_theft_3y', 'burglary_or_car_theft_4y', 'burglary_or_car_theft_5y', 'burglary_or_car_theft_6y', 'burglary_or_car_theft_9y',
              'separated_from_smbd_18m', 'separated_from_smbd_30m', 'separated_from_smbd_3y', 'separated_from_smbd_4y', 'separated_from_smbd_5y', 'separated_from_smbd_6y', 'separated_from_smbd_8y', 
@@ -83,22 +93,22 @@ post_CR <- c('homeless_childhood_8m', 'homeless_childhood_21m', 'homeless_childh
 
 post_PR <- c('work_problems_8m','work_problems_21m','work_problems_3y','work_problems_4y','work_problems_5y','work_problems_6y','work_problems_9y',
              'criminal_record_parent_8m', 'criminal_record_parent_21m', 'criminal_record_parent_3y', 'criminal_record_parent_4y', 'criminal_record_parent_5y', 'criminal_record_parent_6y', 'criminal_record_parent_9y',
-  'miscarriage_or_abortion_8m', 'miscarriage_or_abortion_21m', 'miscarriage_or_abortion_3y', 'miscarriage_or_abortion_4y', 'miscarriage_or_abortion_5y', 'miscarriage_or_abortion_6y', 'miscarriage_or_abortion_9y',
-  'm_attempted_suicide_8m', 'm_attempted_suicide_21m', 'm_attempted_suicide_3y', 'm_attempted_suicide_4y', 'm_attempted_suicide_5y', 'm_attempted_suicide_6y', 'm_attempted_suicide_9y',
-  'm_age',
-  'p_age',
-  'm_depression_8m', 'm_depression_21m', 'm_depression_3y', 'm_depression_4y', 'm_depression_5y', 'm_depression_6y', 'm_depression_9y',
-  'p_depression_8m', 'p_depression_21m', 'p_depression_3y', 'p_depression_4y', 'p_depression_5y', 'p_depression_6y', 'p_depression_9y',
-  'm_anxiety_8m', 'm_anxiety_21m', 'm_anxiety_3y', 'M_ANXIETY_4Y', 'm_anxiety_5y', 'm_anxiety_6y','M_ANXIETY_9Y',
-  'p_anxiety_8m', 'p_anxiety_21m', 'p_anxiety_3y', 'p_anxiety_4y', 'p_anxiety_5y', 'p_anxiety_6y', 'p_anxiety_9y')
+             'miscarriage_or_abortion_8m', 'miscarriage_or_abortion_21m', 'miscarriage_or_abortion_3y', 'miscarriage_or_abortion_4y', 'miscarriage_or_abortion_5y', 'miscarriage_or_abortion_6y', 'miscarriage_or_abortion_9y',
+             'm_attempted_suicide_8m', 'm_attempted_suicide_21m', 'm_attempted_suicide_3y', 'm_attempted_suicide_4y', 'm_attempted_suicide_5y', 'm_attempted_suicide_6y', 'm_attempted_suicide_9y',
+             'm_age',
+             'p_age',
+             'm_depression_8m', 'm_depression_21m', 'm_depression_3y', 'm_depression_4y', 'm_depression_5y', 'm_depression_6y', 'm_depression_9y',
+             'p_depression_8m', 'p_depression_21m', 'p_depression_3y', 'p_depression_4y', 'p_depression_5y', 'p_depression_6y', 'p_depression_9y',
+             'm_anxiety_8m', 'm_anxiety_21m', 'm_anxiety_3y', 'M_ANXIETY_4Y', 'm_anxiety_5y', 'm_anxiety_6y','M_ANXIETY_9Y',
+             'p_anxiety_8m', 'p_anxiety_21m', 'p_anxiety_3y', 'p_anxiety_4y', 'p_anxiety_5y', 'p_anxiety_6y', 'p_anxiety_9y')
 
-post_IR <- c( 'divorce_8m', 'divorce_21m', 'divorce_3y', 'divorce_4y', 'divorce_5y', 'divorce_6y', 'divorce_9y',
-              'p_rejected_child_8m', 'p_rejected_child_21m', 'p_rejected_child_3y', 'p_rejected_child_4y', 'p_rejected_child_5y', 'p_rejected_child_6y', 'p_rejected_child_9y',
-              'p_went_away_8m', 'p_went_away_21m', 'p_went_away_3y', 'p_went_away_4y', 'p_went_away_5y', 'p_went_away_6y', 'p_went_away_9y',
-              'conflict_in_family_8m', 'conflict_in_family_21m', 'conflict_in_family_3y', 'conflict_in_family_4y', 'conflict_in_family_5y', 'conflict_in_family_6y', 'conflict_in_family_9y',
-              'conflict_family_violence_8m', 'conflict_family_violence_21m', 'conflict_family_violence_3y', 'conflict_family_violence_4y', 'conflict_family_violence_5y', 'conflict_family_violence_6y', 'conflict_family_violence_9y',
-              'm_new_partner_8m', 'm_new_partner_21m', 'm_new_partner_3y', 'm_new_partner_4y', 'm_new_partner_5y', 'm_new_partner_6y', 'm_new_partner_9y',
-              'argued_fam_friends_8m', 'argued_fam_friends_21m', 'argued_fam_friends_3y', 'argued_fam_friends_4y', 'argued_fam_friends_5y', 'argued_fam_friends_6y', 'argued_fam_friends_9y')
+post_IR <- c('divorce_8m', 'divorce_21m', 'divorce_3y', 'divorce_4y', 'divorce_5y', 'divorce_6y', 'divorce_9y',
+             'p_rejected_child_8m', 'p_rejected_child_21m', 'p_rejected_child_3y', 'p_rejected_child_4y', 'p_rejected_child_5y', 'p_rejected_child_6y', 'p_rejected_child_9y',
+             'p_went_away_8m', 'p_went_away_21m', 'p_went_away_3y', 'p_went_away_4y', 'p_went_away_5y', 'p_went_away_6y', 'p_went_away_9y',
+             'conflict_in_family_8m', 'conflict_in_family_21m', 'conflict_in_family_3y', 'conflict_in_family_4y', 'conflict_in_family_5y', 'conflict_in_family_6y', 'conflict_in_family_9y',
+             'conflict_family_violence_8m', 'conflict_family_violence_21m', 'conflict_family_violence_3y', 'conflict_family_violence_4y', 'conflict_family_violence_5y', 'conflict_family_violence_6y', 'conflict_family_violence_9y',
+             'm_new_partner_8m', 'm_new_partner_21m', 'm_new_partner_3y', 'm_new_partner_4y', 'm_new_partner_5y', 'm_new_partner_6y', 'm_new_partner_9y',
+             'argued_fam_friends_8m', 'argued_fam_friends_21m', 'argued_fam_friends_3y', 'argued_fam_friends_4y', 'argued_fam_friends_5y', 'argued_fam_friends_6y', 'argued_fam_friends_9y')
 
 post_DV <- c('bullying_8y',
              'physical_violence_18m', 'physical_violence_30m', 'physical_violence_3y', 'physical_violence_4y', 'physical_violence_5y', 'physical_violence_6y', 'physical_violence_9y',
@@ -142,7 +152,7 @@ ELS <- ELS[, vars]
 # ELS$IDC <- 1:1000
 
 post_LE_t <- c('sick_or_accident',
-               'family_member_ill',
+         'family_member_ill',
          'smbd_important_died',
          'separated_from_parent',
          'moved',
@@ -150,7 +160,7 @@ post_LE_t <- c('sick_or_accident',
          'started_nursery',
          'acquired_new_parent',
          'change_carer',
-         'smbd_important_ill',
+         'friend_relative_ill',
          'partner_died',
          'burglary_or_car_theft',
          'separated_from_smbd',
@@ -178,14 +188,14 @@ post_PR_t <-c('work_problems',
          'm_anxiety',
          'p_anxiety')
 post_IR_t <- c('divorce',
-               'p_rejected_child',
+         'p_rejected_child',
          'p_went_away',
          'conflict_in_family',
          'conflict_family_violence',
          'm_new_partner',
          'argued_fam_friends')
 post_DV_t <- c('bullying_8y',
-         'physical_violence'	,
+         'physical_violence',
          'sexual_abuse',
          'p_cruelty_physical',
          'm_cruelty_physical',
@@ -301,24 +311,24 @@ predictormatrix[c(covars, auxil),
 predictormatrix[c(pre_LE), # LE
                 c(pre_CR, pre_PR, pre_IR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables 
-                  'pre_life_events', 'm_bmi_berore_pregnancy', auxil[1:3], 'Time')] <- 0
+                  'pre_life_events', 'm_bmi_berore_pregnancy', auxil[1:2], 'Time')] <- 0
 # CR domain
 predictormatrix[c(pre_CR),
                 c(pre_LE, pre_PR, pre_IR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables
-                  'pre_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[1:3], 'Time')] <- 0
+                  'pre_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[1:2], 'Time')] <- 0
 
 # PR domain 
 predictormatrix[c(pre_PR),
                 c(pre_LE, pre_CR, pre_IR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables
-                  'pre_parental_risk', 'm_bmi_berore_pregnancy',  auxil[1:3], 'Time')] <- 0
+                  'pre_parental_risk', 'm_bmi_berore_pregnancy',  auxil[1:2], 'Time')] <- 0
 
 # IR domain
 predictormatrix[c(pre_IR),
                 c(pre_LE, pre_CR, pre_PR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables
-                  'pre_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[1:3], 'Time')] <- 0
+                  'pre_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[1:2], 'Time')] <- 0
 
                                 ### POSTNATAL ###
 # LE domain 
@@ -326,34 +336,34 @@ predictormatrix[c(post_LE_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  marital_status_pregnancy is auxiliary for postnatal variables
                   post_CR_t, post_PR_t, post_IR_t, post_DV_t,
-                  'post_life_events', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0       
+                  'post_life_events', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0       
 # CR domain
 predictormatrix[c(post_CR_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_PR_t, post_IR_t, post_DV_t,
-                  'post_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 # PR domain 
 predictormatrix[c(post_PR_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_CR_t, post_IR_t, post_DV_t,
-                  'post_parental_risk', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_parental_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 # IR domain
 predictormatrix[c(post_IR_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_CR_t, post_PR_t, post_DV_t,
-                  'post_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 # DV domain 
 predictormatrix[c(post_DV_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_CR_t, post_PR_t, post_IR_t,
-                  'post_direct_victimization', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_direct_victimization', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 # Define the cluster variable and set Time as a first level independent variable
 predictormatrix[c(post_LE_t[!post_LE_t == 'lost_best_friend_8y'], 
@@ -421,17 +431,28 @@ imp$loggedEvents
 ##---------------------------- Imputation model ----------------------------- ##
 #------------------------------------------------------------------------------#
 # Organize variable names into domains to specify them later more easily
-pre_LE <- c( 'partner_died_pre', 'smbd_important_died_pre', 'family_member_ill_pre', 
-             'smbd_important_ill_pre', 'sick_or_accident_pre', 'moved_pre', 'blood_loss',
-             'pregnancy_worried', 'baby_worried', 'burglary_or_car_theft_pre','work_problems_pre',
-             'abortion_pre','married_pre', 'unemployed_pre')
+pre_LE <- c( 'family_member_died_pre',
+             'friend_relative_died_pre',
+             'family_member_ill_pre', 
+             'friend_relative_ill_pre',
+             'sick_or_accident_pre',
+             'moved_pre',
+             'blood_loss',
+             'pregnancy_worried',
+             'baby_worried',
+             'burglary_or_car_theft_pre',
+             'work_problems_pre',
+             'abortion_pre',
+             'married_pre',
+             'unemployed_pre')
 pre_CR <- c('income_reduced_pre',
             'homeless_pregnancy',
             'major_financial_problems_pre',
             'housing_adequacy_pre',
             'housing_basic_living_pre',
             'housing_defects_pre',
-            'm_education_pre')
+            'm_education_pre',
+            'p_education_pre')
 pre_PR <- c('criminal_record_parent_pre',
             'm_attempted_suicide_pre',
             # 'early_pregnancy', # without age, as the same variable is already in postnatal PR score
@@ -471,7 +492,7 @@ post_LE <- c('sick_or_accident_18m','sick_or_accident_30m','sick_or_accident_3y'
              'started_nursery_18m', 'started_nursery_30m', 'started_nursery_3y', 'started_nursery_4y', 'started_nursery_5y', 
              'acquired_new_parent_18m', 'acquired_new_parent_30m', 'acquired_new_parent_3y', 'acquired_new_parent_4y', 'acquired_new_parent_5y', 'acquired_new_parent_6y', 'acquired_new_parent_8y',
              'change_carer_18m', 'change_carer_30m', 'change_carer_3y', 'change_carer_4y', 'change_carer_5y', 'change_carer_6y', 'change_carer_8y',
-             'smbd_important_ill_8m', 'smbd_important_ill_21m', 'smbd_important_ill_3y', 'smbd_important_ill_4y', 'smbd_important_ill_5y', 'smbd_important_ill_6y', 'smbd_important_ill_9y',
+             'friend_relative_ill_8m', 'friend_relative_ill_21m', 'friend_relative_ill_3y', 'friend_relative_ill_4y', 'friend_relative_ill_5y', 'friend_relative_ill_6y', 'friend_relative_ill_9y',
              'partner_died_8m', 'partner_died_21m', 'partner_died_3y', 'partner_died_4y', 'partner_died_5y', 'partner_died_6y', 'partner_died_9y',
              'burglary_or_car_theft_21m', 'burglary_or_car_theft_3y', 'burglary_or_car_theft_4y', 'burglary_or_car_theft_5y', 'burglary_or_car_theft_6y', 'burglary_or_car_theft_9y',
              'separated_from_smbd_18m', 'separated_from_smbd_30m', 'separated_from_smbd_3y', 'separated_from_smbd_4y', 'separated_from_smbd_5y', 'separated_from_smbd_6y', 'separated_from_smbd_8y', 
@@ -543,9 +564,9 @@ vars = c('IDC',
          # outcome variables and covariates + additional auxiliary variables for imputation
          outcomes, covars, auxil, exclusion_criteria)
 
-ELS <- data.frame(replicate(length(vars), sample(c(0:1, NA), 1000, rep=TRUE)))
-colnames(ELS) <- vars
-ELS$IDC <- 1:1000
+# ELS <- data.frame(replicate(length(vars), sample(c(0:1, NA), 1000, rep=TRUE)))
+# colnames(ELS) <- vars
+# ELS$IDC <- 1:1000
 
 
 # We started with a dry run to specify the default arguments.
@@ -629,24 +650,24 @@ predictormatrix[c(covars, auxil),
 predictormatrix[c(pre_LE), # LE
                 c(pre_CR, pre_PR, pre_IR, post_LE, post_CR[!post_CR == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR, post_IR[!post_IR == 'divorce'], post_DV,             # divorce is auxiliary for prenatal variables 
-                  'pre_life_events', 'm_bmi_berore_pregnancy', auxil[1:3])] <- 0
+                  'pre_life_events', 'm_bmi_berore_pregnancy', auxil[1:2])] <- 0
 # CR domain
 predictormatrix[c(pre_CR),
                 c(pre_LE, pre_PR, pre_IR, post_LE, post_CR[!post_CR == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR, post_IR[!post_IR == 'divorce'], post_DV,             # divorce is auxiliary for prenatal variables
-                  'pre_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[1:3])] <- 0
+                  'pre_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[1:2])] <- 0
 
 # PR domain 
 predictormatrix[c(pre_PR),
                 c(pre_LE, pre_CR, pre_IR, post_LE, post_CR[!post_CR == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR, post_IR[!post_IR == 'divorce'], post_DV,             # divorce is auxiliary for prenatal variables
-                  'pre_parental_risk', 'm_bmi_berore_pregnancy',  auxil[1:3])] <- 0
+                  'pre_parental_risk', 'm_bmi_berore_pregnancy',  auxil[1:2])] <- 0
 
 # IR domain
 predictormatrix[c(pre_IR),
                 c(pre_LE, pre_CR, pre_PR, post_LE, post_CR[!post_CR == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR, post_IR[!post_IR == 'divorce'], post_DV,             # divorce is auxiliary for prenatal variables
-                  'pre_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[1:3])] <- 0
+                  'pre_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[1:2])] <- 0
 
 ### POSTNATAL ###
 # LE domain 
@@ -654,34 +675,34 @@ predictormatrix[c(post_LE),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  marital_status_pregnancy is auxiliary for postnatal variables
                   post_CR, post_PR, post_IR, post_DV,
-                  'post_life_events', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0       
+                  'post_life_events', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0       
 # CR domain
 predictormatrix[c(post_CR),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'],        #  divorce_pre is auxiliary for postnatal variables
                   post_LE, post_PR, post_IR, post_DV,
-                  'post_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 # PR domain 
 predictormatrix[c(post_PR),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE, post_CR, post_IR, post_DV,
-                  'post_parental_risk', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_parental_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 # IR domain
 predictormatrix[c(post_IR),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE, post_CR, post_PR, post_DV,
-                  'post_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 # DV domain 
 predictormatrix[c(post_DV),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE, post_CR, post_PR, post_IR,
-                  'post_direct_victimization', 'm_bmi_berore_pregnancy',  auxil[4:6])] <- 0
+                  'post_direct_victimization', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
 
 write.csv(predictormatrix, "/Users/Serena/Desktop/pm2.csv")
 # pheatmap::pheatmap(predictormatrix, cluster_rows = F, cluster_cols = F)

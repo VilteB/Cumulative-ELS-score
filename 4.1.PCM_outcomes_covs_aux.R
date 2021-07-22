@@ -26,12 +26,13 @@ permute <- function(df) {
 }
 
 # Check if the path to the data is already in memory, otherwise ask for it. 
-if (exists("alspac_file") == F) { alspac_file <- file.choose() }
-alspac_folder <- dirname(alspac_file)
+if (exists("alspac_file") == F) { 
+  alspac_file <- file.choose() 
+  alspac_folder <- dirname(alspac_file) 
+  # Read in the data
+  alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) }
 
-# Read in the data
-alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) 
-dep <- foreign::read.spss(file.path(alspac_folder, "raw_parent_depr_anxiety.rsd"))
+dep <- readRDS(file.path(alspac_folder, "raw_parent_depr_anxiety.rsd"))
 
 # Change all names to lowercase
 names(alspac.table)=tolower(names(alspac.table))
@@ -163,9 +164,9 @@ cov_out$b650r <- ifelse(alspac.table$b650 == 'N', 0, ifelse(alspac.table$b650 ==
 # CIGS smoked per day during pregnancy: none = 0, occasionally or >1 = 1
 cov_out$c482r <- ifelse(alspac.table$c482 == 'None', 0, ifelse(alspac.table$c482 != 'DK', 1, NA)) 
 
-cov_out$m_smoking <- ifelse(alspac.table$b650r == 0 & alspac.table$c482r == 0, 0,        # Never a smoker
-                            ifelse(alspac.table$b650r == 1 & alspac.table$c482r == 0, 1, # Former smoker
-                                   ifelse(alspac.table$c482r == 1, 2, NA)))              # Current smoker
+cov_out$m_smoking <- ifelse(cov_out$b650r == 0 & cov_out$c482r == 0, 0,        # Never a smoker
+                            ifelse(cov_out$b650r == 1 & cov_out$c482r == 0, 1, # Former smoker
+                                   ifelse(cov_out$c482r == 1, 2, NA)))         # Current smoker
 
 #-------------------------------------------------------------------------------
 ### MATERNAL ALCOHOL CONSUMPTION during pregnancy
@@ -182,7 +183,7 @@ cov_out$b721r <- ifelse(alspac.table$b721 == 'never', 0,
 cov_out$e220r <- ifelse(alspac.table$e220 == 'Not at all', 0, 
                         ifelse(alspac.table$e220 == '<1PWK', 1,
                                ifelse(alspac.table$e220 == 'At least 1PWK', 2, 
-                                      felse(alspac.table$e220 == '1-2 glasses daily', 3, 
+                                      ifelse(alspac.table$e220 == '1-2 glasses daily', 3, 
                                             ifelse(alspac.table$e220 == '3-9 glasses daily', 4, 
                                                    ifelse(alspac.table$e220 == '>9 glasses daily', 5, NA))))))
 
@@ -232,19 +233,20 @@ cov_out$gest_weight    <- as.numeric(levels(alspac.table$kz030))[alspac.table$kz
 cov_out$m_age_cont     <- as.numeric(levels(alspac.table$mz028b))[alspac.table$mz028b]     # maternal age at intake (used for imputation) 
 
 #-------------------------------------------------------------------------------
-## Maternal and paternal depression during pregnancy and childhood are calculated in
-## the CCEI EPDS script. 
-# Prenatal 
-cov_out$m_dep_cont_pregnancy <- dep$b371 + dep$c601
-# Postnatal
-cov_out$m_dep_cont_childhood <- dep$f201 + dep$g291 + dep$h200b
+# Maternal and paternal depression during pregnancy and childhood are calculated 
+# in the CCEI EPDS script. 
 
-# Prenatal 
-cov_out$p_dep_cont_pregnancy <- dep$pb261
-# Postnatal
-cov_out$p_dep_cont_childhood <- dep$pe291
+# Prenatal maternal depression
+cov_out$m_dep_cont_pregnancy <- dep$m_EPDS_total_18wg + dep$m_EPDS_total_32wg
+# Postnatal maternal depression
+post_dep_m <- sapply(dep[, c('f200', 'g290', 'h200a')], as.integer) 
+cov_out$m_dep_cont_childhood <- rowSums(post_dep_m, na.rm = T)
 
-
+# Prenatal paternal depression
+cov_out$p_dep_cont_pregnancy <- dep$p_EPDS_total_18wg
+# Postnatal paternal depression
+post_dep_p <- sapply(dep[, c('pe290', 'pd200')], as.integer) 
+cov_out$p_dep_cont_childhood <- rowSums(post_dep_p, na.rm = T)
 
 #------------------------------------------------------------------------------#
 # ------------------------- PERMUTATION TESTING -------------------------------#
