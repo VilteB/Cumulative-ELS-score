@@ -165,13 +165,14 @@ M_DEP_8M  <- dich_psychopath("f200",  yes = c(13:29), no = c(1:12),
 M_DEP_21M <- dich_psychopath("g290",  yes = c(13:29), no = c(1:12), 
                        yes_label = 'very depressed', no_label = 'not depressed')
 
-M_DEP_3Y  <- dich_psychopath("h200a", yes = c(13:30), no = c(0:12), # actually 2y 9m
-                       yes_label = 'very depressed', no_label = 'not depressed')
+M_DEP_3Y  <- dich_psychopath("h200a", yes = c(13:30), no = c(0:12))
 
 # Merge them together
 M_DEP <- cbind(M_DEP_8W, M_DEP_8M, M_DEP_21M, M_DEP_3Y)
 
 # Add missing prenatal scores
+M_DEP$m_EPDS_total_18wg <- M_DEP_18Wg$sumscore # for auriliary variable prenatal dep
+M_DEP$m_EPDS_total_32wg <- M_DEP_32Wg$sumscore # for auriliary variable prenatal dep
 M_DEP$m_EPDS_total_18wga_rec <- ifelse(M_DEP_18Wg$sumscore > 12, 1, 0)
 M_DEP$m_EPDS_total_32wga_rec <- ifelse(M_DEP_32Wg$sumscore > 12, 1, 0)
 
@@ -243,7 +244,7 @@ P_DEP_6Y <- epds_score(set = c('pj2010', 'pj2011', 'pj2013'), # c24, c25, c27, (
 # EPDS total score partner mode imputed (>12 risk, <=12 no risk) based on ALSPAC FAI documentation
 
 P_DEP_8W    <- dich_psychopath("pc102", yes = c(13:29), no = c(1:12), 
-                       yes_label = 'very depressed', no_label = 'not depressed')
+                       yes_label = 'Very depressed', no_label = 'Not depressed')
 
 P_DEP_8M   <- dich_psychopath("pd200", yes = c(13:29), no = c(1:12), 
                        yes_label = 'very depressed', no_label = 'not depressed')
@@ -253,6 +254,7 @@ P_DEP_21M  <- dich_psychopath("pe290", yes = c(13:30), no = c(0:12))
 # Merge them together
 P_DEP <- cbind(P_DEP_8W, P_DEP_8M, P_DEP_21M)
 
+P_DEP$p_EPDS_total_18wg <- P_DEP_18Wg$sumscore # for auxiliary variable
 P_DEP$p_EPDS_total_18wga_rec <- ifelse(P_DEP_18Wg$sumscore > 12, 1, 0)
 P_DEP$p_EPDS_total_3ya_rec   <- ifelse(P_DEP_3Y$sumscore   > 12, 1, 0)
 P_DEP$p_EPDS_total_5ya_rec   <- ifelse(P_DEP_5Y$sumscore   > 12, 1, 0)

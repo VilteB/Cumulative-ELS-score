@@ -229,7 +229,7 @@ postnatal_stress$new_sibling_5y  <- repmeas(post07[,c('k4030a_rec', 'kn4009a_rec
 # Mum became pregnant in the past year | CH had new brother or sister in past 15 months
 postnatal_stress$new_sibling_6y  <- repmeas(post07[,c('l4030a_rec', 'kq370a_rec')]) 
 # Mum became pregnant | CH had new brother or sister } since 5th birthday
-postnatal_stress$new_sibling_9y  <- repmeas(post07[,c('p2030a_rec', 'kt5010a_rec')]) 
+postnatal_stress$new_sibling_9y  <- repmeas(post89[,c('p2030a_rec', 'kt5010a_rec')]) 
 # Mum became pregnant since 6th birthday | CH had new brother or sister since 7th birthday
 # ------------------------------------------------------------------------------
 # CH_HAD_FRIGHT 
@@ -719,9 +719,9 @@ postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- d
 ################################################################################
 
 # Save the dataset in the directory where you have the raw data
-saveRDS(prenatal_stress, file.path(alspac_folder, "prenatal_stress.rsd"))
-saveRDS(prenatal_summary, file.path(alspac_folder, "prenatal_summary.rsd"))
+saveRDS(postnatal_stress, file.path(alspac_folder, "postnatal_stress.rsd"))
+saveRDS(postnatal_summary, file.path(alspac_folder, "postnatal_summary.rsd"))
 
 # Also save the dataset in a .csv format
-write.csv(prenatal_stress, file = "prenatal_stress.csv", row.names = FALSE, quote = FALSE)
-write.csv(prenatal_summary, file = "prenatal_summary.csv", row.names = T, quote = FALSE)
+write.csv(postnatal_stress, file = "postnatal_stress.csv", row.names = FALSE, quote = FALSE)
+write.csv(postnatal_summary, file = "postnatal_summary.csv", row.names = T, quote = FALSE)
