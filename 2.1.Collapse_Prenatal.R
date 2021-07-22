@@ -74,6 +74,8 @@ prenatal_stress$housing_defects_pre	<- pre$p4n # Housing Defects
 
 prenatal_stress$m_education_pre <- pre$c645a_rec # Mums highest ed qualification: No degree
 
+prenatal_stress$p_education_pre <- pre$c666a_rec # PTRN highest ed qualification: No degree
+
 ################################################################################
                           # 3. PARENTAL RISK 
 ################################################################################
@@ -193,7 +195,8 @@ prenatal_stress[,c('pre_CR_percent_missing','pre_contextual_risk')] <- domainsco
   'housing_adequacy_pre',
   'housing_basic_living_pre',
   'housing_defects_pre',
-  'm_education_pre')]) 
+  'm_education_pre', 
+  'p_education_pre')]) 
 
 prenatal_stress[,c('pre_PR_percent_missing','pre_parental_risk')] <- domainscore(prenatal_stress[,c(
   'm_criminal_record_pre',

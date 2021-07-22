@@ -38,7 +38,8 @@ pre_CR <- c('income_reduced_pre',
             'housing_adequacy_pre',
             'housing_basic_living_pre',
             'housing_defects_pre',
-            'm_education_pre')
+            'm_education_pre',
+            'p_education_pre')
 pre_PR <- c('m_criminal_record_pre',   #  without 'early_pregnancy': same variable already in postnatal PR score
             'p_criminal_record_pre',
             'm_attempted_suicide_pre',
@@ -450,7 +451,8 @@ pre_CR <- c('income_reduced_pre',
             'housing_adequacy_pre',
             'housing_basic_living_pre',
             'housing_defects_pre',
-            'm_education_pre')
+            'm_education_pre',
+            'p_education_pre')
 pre_PR <- c('criminal_record_parent_pre',
             'm_attempted_suicide_pre',
             # 'early_pregnancy', # without age, as the same variable is already in postnatal PR score
