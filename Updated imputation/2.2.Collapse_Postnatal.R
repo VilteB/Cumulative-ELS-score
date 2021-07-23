@@ -169,16 +169,16 @@ postnatal_stress$change_carer_5y	<- post07$kn4011a_rec # CH 's main carer change
 postnatal_stress$change_carer_6y	<- post07$kq372a_rec  # CH changed care taker since 5th birthday 
 postnatal_stress$change_carer_8y	<- post89$kt5012a_rec # CH changed care taker since 7th birthday 
 # ------------------------------------------------------------------------------
-# SMBD_IMPORTANT_ILL
+# friend_relative_ill
 # ------------------------------------------------------------------------------
-# postnatal_stress$smbd_important_ill_8wk <- post07$e405a_rec  # Friend or REL ill since MID PREG
-postnatal_stress$smbd_important_ill_8m  <- post07$f225a_rec  # Friend or relative ill
-postnatal_stress$smbd_important_ill_21m <- post07$g305a_rec  # Friend or relative ill since 8 months
-postnatal_stress$smbd_important_ill_3y  <- post07$h215a_rec  # Friend or relative ill since 18 months
-postnatal_stress$smbd_important_ill_4y  <- post07$j305a_rec  # Mum's friend or relative ill since 30 months
-postnatal_stress$smbd_important_ill_5y  <- post07$k4005a_rec # Mum's friend or relative ill in the past year
-postnatal_stress$smbd_important_ill_6y  <- post07$l4005a_rec # Respondent's friend/relative ill since 5th birthday
-postnatal_stress$smbd_important_ill_9y  <- post89$p2005a_rec	 # Mum's friend or relative ill since 7th birthday
+# postnatal_stress$friend_relative_ill_8wk <- post07$e405a_rec  # Friend or REL ill since MID PREG
+postnatal_stress$friend_relative_ill_8m  <- post07$f225a_rec  # Friend or relative ill
+postnatal_stress$friend_relative_ill_21m <- post07$g305a_rec  # Friend or relative ill since 8 months
+postnatal_stress$friend_relative_ill_3y  <- post07$h215a_rec  # Friend or relative ill since 18 months
+postnatal_stress$friend_relative_ill_4y  <- post07$j305a_rec  # Mum's friend or relative ill since 30 months
+postnatal_stress$friend_relative_ill_5y  <- post07$k4005a_rec # Mum's friend or relative ill in the past year
+postnatal_stress$friend_relative_ill_6y  <- post07$l4005a_rec # Respondent's friend/relative ill since 5th birthday
+postnatal_stress$friend_relative_ill_9y  <- post89$p2005a_rec	 # Mum's friend or relative ill since 7th birthday
 # ------------------------------------------------------------------------------
 # PARTNER_DIED (instead of 'parent_died' in GenR, we have no mother died item) 
 # ------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ postnatal_stress$new_sibling_5y  <- repmeas(post07[,c('k4030a_rec', 'kn4009a_rec
 # Mum became pregnant in the past year | CH had new brother or sister in past 15 months
 postnatal_stress$new_sibling_6y  <- repmeas(post07[,c('l4030a_rec', 'kq370a_rec')]) 
 # Mum became pregnant | CH had new brother or sister } since 5th birthday
-postnatal_stress$new_sibling_9y  <- repmeas(post07[,c('p2030a_rec', 'kt5010a_rec')]) 
+postnatal_stress$new_sibling_9y  <- repmeas(post89[,c('p2030a_rec', 'kt5010a_rec')]) 
 # Mum became pregnant since 6th birthday | CH had new brother or sister since 7th birthday
 # ------------------------------------------------------------------------------
 # CH_HAD_FRIGHT 
@@ -317,13 +317,11 @@ postnatal_stress$housing_defects_4y	     <- post07$t4n  # Housing Defects 2-4y c
 # ------------------------------------------------------------------------------
 # m_education 
 # ------------------------------------------------------------------------------
-#postnatal_stress$m_education_2y <- post07$b5n (using the c645a variable below instead)
-#postnatal_stress$m_education_4y <- post07$t5n 
-postnatal_stress$m_education <- post07$c645a_rec # Mum's highest education < degree
+postnatal_stress$m_education <- post07$m_ed # Mum's highest education < degree
 # ------------------------------------------------------------------------------
 # p_education 
 # ------------------------------------------------------------------------------
-postnatal_stress$p_education <- post07$c666a_rec # PTNR's highest education < degree
+postnatal_stress$p_education <- post07$p_ed # PTNR's highest education < degree
 # ------------------------------------------------------------------------------
 # neighbourhood_problems
 # ------------------------------------------------------------------------------
@@ -416,9 +414,9 @@ postnatal_stress$p_age <- post07$pb910a_rec # partner younger than 19 at baselin
 # When both EPDS and self reported depression were available we combined both else 
 # we used the available information source
 # postnatal_stress$m_depression_8wk <- anxdep$e391a_rec  # EPDS total score
-postnatal_stress$m_depression_8m  <- repmeas(anxdep[,c('f021a_rec', 'f201a_rec')])  # had depression | EPDS total score
-postnatal_stress$m_depression_21m <- repmeas(anxdep[,c('g021a_rec', 'g291a_rec')])  # had depression | EPDS total score
-postnatal_stress$m_depression_3y  <- repmeas(anxdep[,c('h013a_rec', 'h200ba_rec')]) # had depression | EPDS total score
+postnatal_stress$m_depression_8m  <- repmeas(anxdep[,c('f021a_rec', 'f200a_rec')]) # had depression | EPDS total score
+postnatal_stress$m_depression_21m <- repmeas(anxdep[,c('g021a_rec', 'g290a_rec')]) # had depression | EPDS total score
+postnatal_stress$m_depression_3y  <- repmeas(anxdep[,c('h013a_rec', 'h200a_rec')]) # had depression | EPDS total score
 postnatal_stress$m_depression_4y  <- anxdep$j012a_rec # had depression
 postnatal_stress$m_depression_5y  <- repmeas(anxdep[,c('k1011a_rec', 'm_EPDS_total_5ya_rec')]) # had depression | EPDS total score
 postnatal_stress$m_depression_6y  <- anxdep$l3011a_rec # had depression
@@ -429,8 +427,8 @@ postnatal_stress$m_depression_9y  <- repmeas(anxdep[,c('p1011a_rec', 'm_EPDS_tot
 # When both EPDS and self reported depression were available we combined both else 
 # we used the available information source
 # postnatal_stress$p_depression_8wk <- anxdep$pc103a_rec  #  EPDS total score 
-postnatal_stress$p_depression_8m  <- repmeas(anxdep[,c('pd021a_rec', 'pd201a_rec')])  # had depression | EPDS total score 
-postnatal_stress$p_depression_21m <- repmeas(anxdep[,c('pe021a_rec', 'pe291a_rec')])  # had depression | EPDS total score
+postnatal_stress$p_depression_8m  <- repmeas(anxdep[,c('pd021a_rec', 'pd200a_rec')])  # had depression | EPDS total score 
+postnatal_stress$p_depression_21m <- repmeas(anxdep[,c('pe021a_rec', 'pe290a_rec')])  # had depression | EPDS total score
 postnatal_stress$p_depression_3y  <- repmeas(anxdep[,c('pf1011a_rec', 'p_EPDS_total_3ya_rec')]) # had depression | EPDS total score
 postnatal_stress$p_depression_4y  <- anxdep$pg1011a_rec  # had depression
 postnatal_stress$p_depression_5y  <- repmeas(anxdep[,c('ph1011a_rec', 'p_EPDS_total_5ya_rec')]) # had depression | EPDS total score
@@ -467,10 +465,10 @@ postnatal_stress$p_anxiety_9y  <- anxdep$pm1010a_rec # had anxiety/nerves
 # Divorce
 # ------------------------------------------------------------------------------
 # postnatal_stress$divorce_8wk <- post07$e417a_rec  # Separated since MID PREG
-postnatal_stress$divorce_8m	 <- repmeas(post07[,c('f228a_rec','f237a_rec')])   # Divorce | Separated from partner
-postnatal_stress$divorce_21m <- repmeas(post07[,c('g308a_rec','g317a_rec')])   # Mum divorced | Mum and partner separated } since 8 months
-postnatal_stress$divorce_3y	 <- repmeas(post07[,c('h218a_rec','h227a_rec')])   # Divorced | Mum and partner separated } since 18 months
-postnatal_stress$divorce_4y  <- repmeas(post07[,c('j308a_rec','j317a_rec')])   # Mum divorced | Mum and partner separated } since 30 months
+postnatal_stress$divorce_8m	 <- repmeas(post07[,c('f228a_rec', 'f237a_rec')])  # Divorce | Separated from partner
+postnatal_stress$divorce_21m <- repmeas(post07[,c('g308a_rec', 'g317a_rec')])  # Mum divorced | Mum and partner separated } since 8 months
+postnatal_stress$divorce_3y	 <- repmeas(post07[,c('h218a_rec', 'h227a_rec')])  # Divorced | Mum and partner separated } since 18 months
+postnatal_stress$divorce_4y  <- repmeas(post07[,c('j308a_rec', 'j317a_rec')])  # Mum divorced | Mum and partner separated } since 30 months
 postnatal_stress$divorce_5y	 <- repmeas(post07[,c('k4008a_rec','k4017a_rec')]) # Mum divorced | Mum and partner separated } in the past year
 postnatal_stress$divorce_6y	 <- repmeas(post07[,c('l4008a_rec','l4017a_rec')]) # Respondent divorced | Respondent separated partner } since 5th birthday
 postnatal_stress$divorce_9y	 <- repmeas(post89[,c('p2008a_rec','p2017a_rec')]) # Mum divorced | Mum and partner/husband separated } since 6th birthday
@@ -666,7 +664,7 @@ postnatal_stress[,c('post_LE_percent_missing','post_life_events')] <- domainscor
     'started_nursery',
     'acquired_new_parent',
     'chage_carer',
-    'smbd_important_ill',
+    'friend_relative_ill',
     'partner_died',
     'burglary_or_car_theft',
     'separated_from_smbd',
@@ -721,9 +719,9 @@ postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- d
 ################################################################################
 
 # Save the dataset in the directory where you have the raw data
-saveRDS(prenatal_stress, file.path(alspac_folder, "prenatal_stress.rsd"))
-saveRDS(prenatal_summary, file.path(alspac_folder, "prenatal_summary.rsd"))
+saveRDS(postnatal_stress, file.path(alspac_folder, "postnatal_stress.rsd"))
+saveRDS(postnatal_summary, file.path(alspac_folder, "postnatal_summary.rsd"))
 
 # Also save the dataset in a .csv format
-write.csv(prenatal_stress, file = "prenatal_stress.csv", row.names = FALSE, quote = FALSE)
-write.csv(prenatal_summary, file = "prenatal_summary.csv", row.names = T, quote = FALSE)
+write.csv(postnatal_stress, file = "postnatal_stress.csv", row.names = FALSE, quote = FALSE)
+write.csv(postnatal_summary, file = "postnatal_summary.csv", row.names = T, quote = FALSE)

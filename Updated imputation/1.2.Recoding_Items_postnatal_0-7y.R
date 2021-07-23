@@ -365,7 +365,7 @@ CR_6Y <- dichotomize(
   yes = c("Yes & affected respondent a lot","Yes, moderately affected","Yes, mildly affected","Yes, did not affect respondent at all"),
   no = c("No, did not happen") )
 # "Other", "DK" set to NA
-              
+
 # Neighborhood stress score:  based on the following items:
 # •	G485 Badly fitted doors and windows are problem •	G486 Poor ventilation
 # •	G487 Noise in rooms of home is problem • G488 Noise from other homes is problem 
@@ -393,6 +393,21 @@ NP[, "h366a_rec"] <- ifelse( NP[, "h366"] >= cutoff_3y, 1,
 # Merge all CR variables together 
 CR_postnatal <- cbind(CR_8M, CR_21M, CR_3Y, CR_4Y, CR_5Y, CR_6Y, NP) # CR_8W
 
+# Add maternal and paternal education
+CR_postnatal$m_ed = ifelse( !is.na(alspac.table$k6292) & alspac.table$k6292 == 'Yes', 0,
+                    ifelse((!is.na(alspac.table$k6281) & alspac.table$k6281 == 'Yes')
+                          |(!is.na(alspac.table$k6282) & alspac.table$k6282 == 'Yes')
+                          |(!is.na(alspac.table$k6283) & alspac.table$k6283 == 'Yes')
+                          |(!is.na(alspac.table$k6284) & alspac.table$k6284 == 'Yes')
+                          |(!is.na(alspac.table$k6280) & alspac.table$k6280 == 'Yes'), 1, NA))
+
+CR_postnatal$p_ed = ifelse( !is.na(alspac.table$k6312) & alspac.table$k6312 == 'Yes', 0,
+                    ifelse((!is.na(alspac.table$k6300) & alspac.table$k6300 == 'Yes')
+                          |(!is.na(alspac.table$k6301) & alspac.table$k6301 == 'Yes')
+                          |(!is.na(alspac.table$k6302) & alspac.table$k6302 == 'Yes')
+                          |(!is.na(alspac.table$k6303) & alspac.table$k6303 == 'Yes')
+                          |(!is.na(alspac.table$k6304) & alspac.table$k6304 == 'Yes'), 1, NA))
+
 # Add Housing variables
 CR_postnatal$b2n <- ifelse(alspac.table$b2 == 1, 1, ifelse(alspac.table$b2 == 0, 0, NA)) # Housing adequacy 0-2y composite
 CR_postnatal$t2n <-	ifelse(alspac.table$t2 == 1, 1, ifelse(alspac.table$t2 == 0, 0, NA)) # Housing adequacy 2-4y composite
@@ -400,23 +415,6 @@ CR_postnatal$b3n <-	ifelse(alspac.table$b3 == 1, 1, ifelse(alspac.table$b3 == 0,
 CR_postnatal$t3n <-	ifelse(alspac.table$t3 == 1, 1, ifelse(alspac.table$t3 == 0, 0, NA)) # Housing Basic Living 2-4y composite
 CR_postnatal$b4n <- ifelse(alspac.table$b4 == 1, 1, ifelse(alspac.table$b4 == 0, 0, NA)) # Housing Defects 0-2y composite
 CR_postnatal$t4n <- ifelse(alspac.table$t4 == 1, 1, ifelse(alspac.table$t4 == 0, 0, NA)) # Housing Defects 2-4y composite
-
-
-
-CR_postnatal$m_ed = ifelse(!is.na(alspac.table$k6292) & alspac.table$k6292 == 'Yes', 0, 
-                           ifelse((!is.na(alspac.table$k6281) & alspac.table$k6281 == 'Yes') 
-                                  | (!is.na(alspac.table$k6282) & alspac.table$k6282 == 'Yes') 
-                                  |(!is.na(alspac.table$k6283) & alspac.table$k6283 == 'Yes') 
-                                  |(!is.na(alspac.table$k6284) & alspac.table$k6284 == 'Yes') 
-                                  |(!is.na(alspac.table$k6280) & alspac.table$k6280 == 'Yes'), 1, NA))
-
-CR_postnatal$p_ed = ifelse(!is.na(alspac.table$k6312) & alspac.table$k6312 == 'Yes', 0, 
-                           ifelse((!is.na(alspac.table$k6300) & alspac.table$k6300 == 'Yes') 
-                                  | (!is.na(alspac.table$k6301) & alspac.table$k6301 == 'Yes') 
-                                  |(!is.na(alspac.table$k6302) & alspac.table$k6302 == 'Yes') 
-                                  |(!is.na(alspac.table$k6303) & alspac.table$k6303 == 'Yes') 
-                                  |(!is.na(alspac.table$k6304) & alspac.table$k6304 == 'Yes'), 1, NA))
-
 
 ################################################################################
                            # 3. PARENTAL RISK

@@ -31,7 +31,7 @@ alspac_folder <- dirname(alspac_file)
 
 # Read in the data
 alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) 
-dep <- foreign::read.spss(file.path(alspac_folder, "raw_parent_depr_anxiety.rsd"))
+dep <- readRDS(file.path(alspac_folder, "raw_parent_depr_anxiety.rsd"))
 
 # Change all names to lowercase
 names(alspac.table)=tolower(names(alspac.table))
@@ -46,6 +46,11 @@ cov_out <- data.frame("IDC" = paste(alspac.table$cidb2957, alspac.table$qlet, se
 # Internalizing scale @ 9 yrs # informant: MOTHER.
 cov_out$int.age.10y  <-  as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12  # age 10 (years)
 cov_out$intern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] # 10yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)
+
+#Adding SDQ (contionus) internlaising score from the sum of he SDQ peer problems and emotional symptoms subscales
+#cov_out$SDQ_int_score <- as.numeric((alspac.table$ku709a))[alspac.table$ku709a] + as.numeric(alspac.table$ku707a) #SDQ peer problems + SDQ emotional symptoms subscale
+#cov_out$SDQ_int_age <- as.numeric(levels(alspac.table$ku991a))[alspac.table$ku991a] /12
+
 
 # cov_out$int.age.13y      <- as.numeric(levels(alspac.table$tb9991a))[alspac.table$tb9991a] # age 13 
 # cov_out$intern_score.13y <- as.numeric(levels(alspac.table$tb8603))[alspac.table$tb8603]   # 13yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)    
@@ -69,7 +74,7 @@ cov_out$intern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv
 
 # Converting months @ 10y to years (coded F9 due to focus 9 clinic age in ALSPAC)
 cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12             # age 10 (years)
-cov_out$fat_mass   <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx126] # trunk FM at age 10y
+cov_out$fat_mass   <- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135] # total FM at age 10y
 ## ANDR @10 NOT AVAILABLE
 
 # cov_out$fm.age.13y   <- as.numeric(levels(alspac.table$kg998a))[alspac.table$kg998a]     # age 13
@@ -163,9 +168,9 @@ cov_out$b650r <- ifelse(alspac.table$b650 == 'N', 0, ifelse(alspac.table$b650 ==
 # CIGS smoked per day during pregnancy: none = 0, occasionally or >1 = 1
 cov_out$c482r <- ifelse(alspac.table$c482 == 'None', 0, ifelse(alspac.table$c482 != 'DK', 1, NA)) 
 
-cov_out$m_smoking <- ifelse(alspac.table$b650r == 0 & alspac.table$c482r == 0, 0,        # Never a smoker
-                            ifelse(alspac.table$b650r == 1 & alspac.table$c482r == 0, 1, # Former smoker
-                                   ifelse(alspac.table$c482r == 1, 2, NA)))              # Current smoker
+cov_out$m_smoking <- ifelse(cov_out$b650r == 0 & cov_out$c482r == 0, 0,        # Never a smoker
+                            ifelse(cov_out$b650r == 1 & cov_out$c482r == 0, 1, # Former smoker
+                                   ifelse(cov_out$c482r == 1, 2, NA)))              # Current smoker
 
 #-------------------------------------------------------------------------------
 ### MATERNAL ALCOHOL CONSUMPTION during pregnancy
@@ -182,7 +187,7 @@ cov_out$b721r <- ifelse(alspac.table$b721 == 'never', 0,
 cov_out$e220r <- ifelse(alspac.table$e220 == 'Not at all', 0, 
                         ifelse(alspac.table$e220 == '<1PWK', 1,
                                ifelse(alspac.table$e220 == 'At least 1PWK', 2, 
-                                      felse(alspac.table$e220 == '1-2 glasses daily', 3, 
+                                      ifelse(alspac.table$e220 == '1-2 glasses daily', 3, 
                                             ifelse(alspac.table$e220 == '3-9 glasses daily', 4, 
                                                    ifelse(alspac.table$e220 == '>9 glasses daily', 5, NA))))))
 
@@ -237,7 +242,7 @@ cov_out$m_age_cont     <- as.numeric(levels(alspac.table$mz028b))[alspac.table$m
 # Prenatal 
 cov_out$m_dep_cont_pregnancy <- dep$b371 + dep$c601
 # Postnatal
-cov_out$m_dep_cont_childhood <- dep$f201 + dep$g291 + dep$h200b
+cov_out$m_dep_cont_childhood <- rowSums(dep[,c('f200','g290','h200a')], na.rm = TRUE)
 
 # Prenatal 
 cov_out$p_dep_cont_pregnancy <- dep$pb261

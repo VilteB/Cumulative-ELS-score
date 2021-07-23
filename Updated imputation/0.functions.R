@@ -4,11 +4,11 @@ library(foreign)
 library(tidyverse)
 
 # Chose the folder where the input file is stored and all results will be saved
-if (exists("alspac_file") == F) { alspac_file <- file.choose() }
+if (exists("alspac_file") == F) { alspac_file <- file.choose() 
 alspac_folder <- dirname(alspac_file)
 
 # Read in the data
-alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) 
+alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) } 
 
 ################################################################################
 ################################################################################
@@ -35,7 +35,7 @@ dichotomize <- function(vars,
                         yes = c("affected a lot","fairly affected","mildly affected","N effect at all"), 
                         no = c("didnt happen"), 
                         already_dich = c(), 
-                        check_transf = T) {
+                        check_transf = F) {
   
   dset <- as.data.frame(alspac.table[, vars])  # call columns from alspac.table
   names(dset) <- vars  # rename them using the original variable names 
@@ -157,7 +157,6 @@ ccei_score <- function(set1,
 
 epds_score <- function(set, 
                        revset,
-                       levelz = c(1, 4),
                        check_transf = T) {
   
   vars <- c(set, revset)
@@ -169,7 +168,9 @@ epds_score <- function(set,
     if (substr(v, nchar(v), nchar(v)) == 'a') { appendix = "_rec" } else { appendix = "a_rec" }
     var.out = paste0(v, appendix) # create new (recoded) variable name
     # perform the recoding
-    if (v %in% set) { tr = levelz[1] } else if (v %in% revset) { tr = levelz[2] }
+    if (v %in% set) { tr = min(dset[, v], na.rm = T) 
+    } else if (v %in% revset) { tr = max(dset[, v], na.rm = T) }
+    
     dset[,var.out] <- abs(dset[, v] - tr) 
     
     if (check_transf == T) { 
