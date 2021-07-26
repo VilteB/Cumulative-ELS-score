@@ -736,4 +736,4 @@ DV_postnatal <- cbind(DV_18M, DV_30M, DV_3Y, DV_4Y, DV_5Y, DV_6Y)
 
 postnatal_stress_0to7_raw <-cbind(LE_postnatal, CR_postnatal, PR_postnatal, IR_postnatal, DV_postnatal)
 
-saveRDS(postnatal_stress_0to7_raw, file.path(alspac_folder, "raw_postnatal_stress_0to7.rsd"))
+saveRDS(postnatal_stress_0to7_raw, file.path(alspac_folder, "raw_postnatal_stress_0to7.rds"))

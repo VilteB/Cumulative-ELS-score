@@ -253,10 +253,10 @@ cov_out$p_dep_cont_childhood <- rowSums(post_dep_p, na.rm = T)
 #------------------------------------------------------------------------------#
 
 count <- 0 
-itarations <- 1000
+iterations <- 1000
 set.seed(310896)
 
-for (i in 1:itarations) {
+for (i in 1:iterations) {
   origN <- unname(summary(cov_out$risk_groups)[4])
   randN <- permute(cov_out)
   if (randN > origN) {
@@ -264,14 +264,14 @@ for (i in 1:itarations) {
   }
 }
 
-pval = round(count / itarations, 10)
+pval = round(count / iterations, 10)
 
 ################################################################################
 #### --------------------------- save and run ----------------------------- ####
 ################################################################################
 
 # Save the dataset in the directory where you have the raw data
-saveRDS(cov_out, file.path(alspac_folder, "PCMout_cov_aux.rsd"))
+saveRDS(cov_out, file.path(alspac_folder, "PCMout_cov_aux.rds"))
 
 # Also save the dataset in a .csv format
 write.csv(cov_out, file = "PCMout_cov_aux.csv", row.names = FALSE, quote = FALSE)

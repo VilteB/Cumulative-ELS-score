@@ -149,4 +149,4 @@ DV_9Y <- dichotomize(
 
 postnatal_stress_8to9_raw <-cbind(LE_child_8Y, LE_9Y, CR_9Y, PR_9Y, IR_9Y, DV_8Y, DV_9Y)
 
-saveRDS(postnatal_stress_8to9_raw, file.path(alspac_folder, "raw_postnatal_stress_8to9.rsd"))
+saveRDS(postnatal_stress_8to9_raw, file.path(alspac_folder, "raw_postnatal_stress_8to9.rds"))

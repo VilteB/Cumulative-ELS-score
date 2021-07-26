@@ -13,8 +13,8 @@ source('0.functions.R') # where the repmeas() and domainscore() are defined
 
 # Load the dataframe with dich variables created in script 1.1.Recoding_Items_prenatal.R
 # and 1.4.CCEI_EPDS_calculation.R
-pre <- readRDS(file.path(alspac_folder, "raw_prenatal_stress.rsd"))
-anxdep <- readRDS(file.path(alspac_folder,"raw_parent_depr_anxiety.rsd"))
+pre <- readRDS(file.path(alspac_folder, "raw_prenatal_stress.rds"))
+anxdep <- readRDS(file.path(alspac_folder,"raw_parent_depr_anxiety.rds"))
 
 # Initiate a prenatal_stress dataframe with id of the child as first column
 prenatal_stress <- data.frame("IDC" = paste(alspac.table$cidB2957, alspac.table$qlet, sep = "_"))
@@ -230,8 +230,8 @@ prenatal_stress[,c('pre_IR_percent_missing','pre_interpersonal_risk')] <- domain
 ################################################################################
 
 # Save the dataset in the directory where you have the raw data
-saveRDS(prenatal_stress, file.path(alspac_folder, "prenatal_stress.rsd"))
-saveRDS(prenatal_summary, file.path(alspac_folder, "prenatal_summary.rsd"))
+saveRDS(prenatal_stress, file.path(alspac_folder, "prenatal_stress.rds"))
+saveRDS(prenatal_summary, file.path(alspac_folder, "prenatal_summary.rds"))
 
 # Also save the dataset in a .csv format
 write.csv(prenatal_stress, file = "prenatal_stress.csv", row.names = F, quote = F)

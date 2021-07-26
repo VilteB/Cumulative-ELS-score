@@ -15,7 +15,35 @@ post <- readRDS(file.path(alspac_folder, "postnatal_stress.rsd"))
 out  <- readRDS(file.path(alspac_folder, "PCMout_cov_aux.rsd"))
 
 ELS <- cbind(pre, post, out)
+
 ################################################################################
+#### -------------- Construct CUMULATIVE STRESS variables ----------------- ####
+################################################################################
+
+# compute sum scores for prenatal and postnatal stress exposure
+ELS$prenatal_stress <- rowSums(ELS[,c("pre_life_events", 
+                                              "pre_contextual_risk", 
+                                              "pre_parental_risk", 
+                                              "pre_interpersonal_risk")], na.rm = F)
+
+ELS$postnatal_stress <- rowSums(ELS[,c("post_life_events", 
+                                               "post_contextual_risk", 
+                                               "post_parental_risk", 
+                                               "post_interpersonal_risk", 
+                                               "post_direct_victimization")], na.rm = F)
+
+################################################################################
+
+# add NAs for missing time points so that there would be an equal number of time points for all variable types
+
+ELS <-  cbind(ELS, STARTED_NURSERY_6Y = NA, STARTED_NURSERY_9Y =  NA, BURGLARY_OR_CAR_THEFT_8M = NA,
+              HOUSING_ADEQUACY_8M = NA, HOUSING_ADEQUACY_21M = NA, HOUSING_ADEQUACY_5Y = NA, HOUSING_ADEQUACY_6Y = NA, HOUSING_ADEQUACY_9Y =  NA,
+              HOUSING_BASIC_LIVING_8M = NA, HOUSING_BASIC_LIVING_21M = NA, HOUSING_BASIC_LIVING_5Y = NA, HOUSING_BASIC_LIVING_6Y = NA, HOUSING_BASIC_LIVING_9Y = NA,
+              HOUSING_DEFECTS_8M = NA, HOUSING_DEFECTS_21M  = NA, housing_defects_2y = NA, housing_defects_4y  = NA, HOUSING_DEFECTS_5Y = NA, HOUSING_DEFECTS_6Y = NA, HOUSING_DEFECTS_9Y = NA,
+              NEIGHBOURHOOD_PROBLEMS_8M = NA, NEIGHBOURHOOD_PROBLEMS_4Y = NA, NEIGHBOURHOOD_PROBLEMS_5Y = NA, NEIGHBOURHOOD_PROBLEMS_6Y = NA, NEIGHBOURHOOD_PROBLEMS_9Y = NA,
+              M_ANXIETY_4Y = NA, M_ANXIETY_9Y = NA,
+              M_CRUELTY_EMOTIONAL_8M = NA)
+
 
 # Organize variable names into domains to specify them later more easily
 pre_LE <- c('family_member_died_pre',
@@ -119,7 +147,7 @@ post_DV <- c('bullying_8y',
              'M_CRUELTY_EMOTIONAL_8M', 'm_cruelty_emotional_21m', 'm_cruelty_emotional_3y', 'm_cruelty_emotional_4y', 'm_cruelty_emotional_5y', 'm_cruelty_emotional_6y', 'm_cruelty_emotional_9y')
 
 outcomes <- c('intern_score_z', 'fat_mass_z', 'risk_groups')
-covars   <- c('sex', 'age_child', 'm_bmi_berore_pregnancy', 'm_smoking', 'm_drinking')
+covars   <- c('sex', 'age_child', 'm_bmi_before_pregnancy', 'm_smoking', 'm_drinking')
 auxil    <- c('m_dep_cont_pregnancy', 'p_dep_cont_pregnancy', # for postnatal only
               'm_bmi_7yrs', 'm_dep_cont_childhood', 'p_dep_cont_childhood', # for prenatal only
               'ethnicity', 'parity', 'gest_age_birth', 'gest_weight', 'm_age_cont')
