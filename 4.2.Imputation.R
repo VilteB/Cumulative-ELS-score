@@ -339,24 +339,24 @@ predictormatrix[c(covars, auxil),
 predictormatrix[c(pre_LE), # LE
                 c(pre_CR, pre_PR, pre_IR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables 
-                  'pre_life_events', 'm_bmi_berore_pregnancy', auxil[1:2], 'Time')] <- 0
+                  'pre_life_events', 'm_bmi_before_pregnancy', auxil[1:2], 'Time')] <- 0
 # CR domain
 predictormatrix[c(pre_CR),
                 c(pre_LE, pre_PR, pre_IR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables
-                  'pre_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[1:2], 'Time')] <- 0
+                  'pre_contextual_risk', 'm_bmi_before_pregnancy',  auxil[1:2], 'Time')] <- 0
 
 # PR domain 
 predictormatrix[c(pre_PR),
                 c(pre_LE, pre_CR, pre_IR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables
-                  'pre_parental_risk', 'm_bmi_berore_pregnancy',  auxil[1:2], 'Time')] <- 0
+                  'pre_parental_risk', 'm_bmi_before_pregnancy',  auxil[1:2], 'Time')] <- 0
 
 # IR domain
 predictormatrix[c(pre_IR),
                 c(pre_LE, pre_CR, pre_PR, post_LE_t, post_CR_t[!post_CR_t == 'm_education'], # because m_education is auxiliary for prenatal variables
                   post_PR_t, post_IR_t[!post_IR_t == 'divorce'], post_DV_t,             # divorce is auxiliary for prenatal variables
-                  'pre_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[1:2], 'Time')] <- 0
+                  'pre_interpersonal_risk', 'm_bmi_before_pregnancy',  auxil[1:2], 'Time')] <- 0
 
                                 ### POSTNATAL ###
 # LE domain 
@@ -364,40 +364,41 @@ predictormatrix[c(post_LE_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  marital_status_pregnancy is auxiliary for postnatal variables
                   post_CR_t, post_PR_t, post_IR_t, post_DV_t,
-                  'post_life_events', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0       
+                  'post_life_events', 'm_bmi_before_pregnancy',  auxil[3:5])] <- 0       
 # CR domain
 predictormatrix[c(post_CR_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_PR_t, post_IR_t, post_DV_t,
-                  'post_contextual_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
+                  'post_contextual_risk', 'm_bmi_before_pregnancy',  auxil[3:5])] <- 0
 
 # PR domain 
 predictormatrix[c(post_PR_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_CR_t, post_IR_t, post_DV_t,
-                  'post_parental_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
+                  'post_parental_risk', 'm_bmi_before_pregnancy',  auxil[3:5])] <- 0
 
 # IR domain
 predictormatrix[c(post_IR_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_CR_t, post_PR_t, post_DV_t,
-                  'post_interpersonal_risk', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
+                  'post_interpersonal_risk', 'm_bmi_before_pregnancy',  auxil[3:5])] <- 0
 
 # DV domain 
 predictormatrix[c(post_DV_t),
                 c(pre_LE, pre_CR[!pre_CR == 'm_education_pre'],    #  m_education_pregnancy is auxiliary for postnatal variables
                   pre_PR, pre_IR[!pre_IR == 'divorce_pre'], #  divorce_pre is auxiliary for postnatal variables
                   post_LE_t, post_CR_t, post_PR_t, post_IR_t,
-                  'post_direct_victimization', 'm_bmi_berore_pregnancy',  auxil[3:5])] <- 0
+                  'post_direct_victimization', 'm_bmi_before_pregnancy',  auxil[3:5])] <- 0
 
 # Define the cluster variable and set Time as a first level independent variable
 predictormatrix[c(post_LE_t[!post_LE_t == 'lost_best_friend_8y'], 
                   post_CR_t[!post_CR_t %in% c('m_education', 'p_education')], 
                   post_PR_t[!post_PR_t %in% c('m_age', 'p_age')], post_IR_t, 
                   post_DV_t[!post_DV_t == 'bullying_8y']), c('IDC', 'Time')] <- matrix(rep(c(-2, 2),each=45),nrow=45)
+# Error in predictormatrix[c(post_LE_t[!post_LE_t == "lost_best_friend_8y"],  : number of items to replace is not a multiple of replacement length
 
 # This can help
 mat_lvl1 <- function(dim) {
