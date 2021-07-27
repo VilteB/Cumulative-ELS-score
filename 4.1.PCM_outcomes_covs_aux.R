@@ -57,6 +57,15 @@ cov_out$intern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv
 # cov_out$int.age.22y      <- as.numeric(levels(alspac.table$ypb9992))[alspac.table$ypb9992] # age 22 VB: also not in?
 # cov_out$intern_score.22y <- as.numeric(levels(alspac.table$ypb5180))[alspac.table$ypb5180] # age 22 (SMFQ; might not be the best measure)
 
+#adding SDQ emotional symptoms and peer problem subscale total scores 
+#cov_out$peer_probs <- as.numeric(levels(alspac.table$ku709a))[alspac.table$ku709a]
+#cov_out$emot_symp <- as.numeric(levels(alspac.table$ku707a))[alspac.table$ku707a]
+
+#Adding SDQ (contionus) internlaising score from the sum of he SDQ peer problems and emotional symptoms subscales
+#cov_out$SDQ_int_score <- rowSums(cov_out[,c('peer_probs', 'emot_symp')]) #SDQ peer problems + SDQ emotional symptoms subscale
+#cov_out$SDQ_int_age <- as.numeric(levels(alspac.table$ku991a)) /12
+
+
 ################################################################################
 #### -------------------------- FAT MASS ( @ 9 ) -------------------------- ####
 ################################################################################
@@ -80,6 +89,11 @@ cov_out$fat_mass   <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx
 # cov_out$fm.age.24y   <- as.numeric(levels(alspac.table$fkar0010))[alspac.table$fkar0010] # age 24
 # cov_out$fat_mass.24y <- as.numeric(levels(alspac.table$fkdx1041))[alspac.table$fkdx1041] # andr FM at age 24y
 
+#adding total fat mass @ 10y, and fat mass index 
+#cov_out$fat_mass_tot<- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135] # total FM at age 10y
+#cov_out$height_10y <- as.numeric(levels(alspac.table$pub203))[alspac.table$pub203] / 100
+#cov_out$fmi <- cov_out$fat_mass_tot / ((cov_out$height_10y)^2)
+
 # ------------------------------------------------------------------------------
 # Before we can use them in the analysis, the outcome variables need to be standardized. 
 # so, here we take the standard deviation score.
@@ -95,12 +109,22 @@ cov_out$fat_mass_z <- as.numeric(scale(cov_out$fat_mass))
 # cov_out$fat_mass_z.17y <- as.numeric(scale(cov_out$fat_mass.17y))
 # cov_out$fat_mass_z.24y <- as.numeric(scale(cov_out$fat_mass.24y))
 
+#coverting SDQ, and new fat mass variables into z-scores
+#cov_out$SDQ_score_z <- as.numeric(scale(cov_out$SDQ_int_score))
+#cov_out$fmi_z <- as.numeric(scale(cov_out$fmi))
+#cov_out$fat_mass_tot_z <- as.numeric(scale(cov_out$fat_mass_tot))
+
 ################################################################################
 #### ------------------- Construct RISK GROUPS variable ------------------- ####
 ################################################################################
 
 cov_out$int = ifelse(cov_out$intern_score_z > quantile(cov_out$intern_score_z, probs = 0.8, na.rm = T), 1, 0) 
 cov_out$fat = ifelse(cov_out$fat_mass_z     > quantile(cov_out$fat_mass_z,     probs = 0.8, na.rm = T), 1, 0) 
+
+#constrcuting risk groups with new SDQ and fat mass variables
+#cov_out$int = ifelse(cov_out$SDQ_score_z > quantile(cov_out$SDQ_score_z, probs = 0.8, na.rm = T), 1, 0) 
+#cov_out$fat = ifelse(cov_out$fat_mass_z     > quantile(cov_out$fat_mass_z,     probs = 0.8, na.rm = T), 1, 0)
+#cov_out$fat = ifelse(cov_out$fat_mass_tot_z     > quantile(cov_out$fat_mass_tot_z,     probs = 0.8, na.rm = T), 1, 0) 
 
 cov_out$risk_groups = rep(NA, nrow(cov_out))
 for (i in 1:nrow(cov_out)) {
