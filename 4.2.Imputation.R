@@ -5,6 +5,15 @@
 # in children. 
 # Ok, let's get started!
 
+passive_imp_formula <- function(domain, add = "") {
+  conc <- paste(domain, collapse = " + ")
+  str <- paste0("~I( (", conc, ") / ", length(domain), ")")
+  if (add != "") {
+    str <- paste0("~I( (", conc, " + ", add, ") / ", length(domain)+1, ")")
+  }
+  return(str)
+}
+
 # Load libraries
 library(mice);
 library(miceadds)
@@ -176,8 +185,7 @@ ELS <- ELS[, vars]
 # make some fake data
 # ELS <- data.frame(replicate(length(vars), sample(c(0:1, NA), 1000, rep=TRUE)))
 # colnames(ELS) <- vars
-# ELS[, which(grepl("[A-Z]", names(ELS)))] <- NA
-# ELS$IDC <- 1:1000
+#ELS[, which(grepl("[A-Z]", names(ELS)))] <- NA
 
 post_LE_t <- c('sick_or_accident',
          'family_member_ill',
@@ -259,8 +267,8 @@ ELSlong <- dl[order(dl$IDC, dl$Time), ]
 #------------------------------------------------------------------------------#
 
 # We started with a dry run to specify the default arguments.
-imp0 <- mice(ELSlong, maxit = 0,
-             defaultMethod = 'pmm') #, remove.collinear = F) 
+imp0 <- mice(ELSlong, maxit = 0, remove.collinear = F)
+#             defaultMethod = 'pmm') 
 # set the imputation method to Generalized Linear Mixed model (20-50 iterations 
 # are recommended and may be hard to run in small datasets)
 
@@ -277,21 +285,40 @@ meth[c(which(names(meth) == 'sick_or_accident'):ncol(ELSlong))] <- '2l.bin'
 # We use passive imputation for the domain scores. This means that the indicator items  
 # are imputed first, and then, using these complete items, mean domain scores are 
 # derived by the formula specified below.
-meth['pre_life_events']         <- "~I( rowMeans(ELSlong[,pre_LE]) )"
-meth['pre_contextual_risk']     <- "~I( rowMeans(ELSlong[,pre_CR]) )"
-meth['pre_parental_risk']       <- "~I( rowMeans(ELSlong[,pre_PR]) )"
-meth['pre_interpersonal_risk']  <- "~I( rowMeans(ELSlong[,pre_IR]) )"
+
+meth['pre_life_events']         <- passive_imp_formula(pre_LE)
+meth['pre_contextual_risk']     <- passive_imp_formula(pre_CR)
+meth['pre_parental_risk']       <- passive_imp_formula(pre_PR)
+meth['pre_interpersonal_risk']  <- passive_imp_formula(pre_IR)
 
 # below hasn't been changed to ALSPAC yet ####### NO to fix
-meth['post_life_events']          <- "~I( (rowSums(ELSlong[, post_LE_t])) / 16)"
-meth['post_contextual_risk']      <- "~I( (rowSums(ELSlong[, post_CR_t])) / 10)"
-meth['post_parental_risk']        <- "~I( (rowSums(ELSlong[, post_PR_t])) / 10)"
-meth['post_interpersonal_risk']   <- "~I( (rowSums(ELSlong[, post_IR_t])) / 7)"
-meth['post_direct_victimization'] <- "~I( (rowSums(ELSlong[, post_DV_t])) / 7)"
+meth['post_life_events']          <- passive_imp_formula(post_LE_t)
+meth['post_contextual_risk']      <- passive_imp_formula(post_CR_t)
+meth['post_parental_risk']        <- passive_imp_formula(post_PR_t)
+meth['post_interpersonal_risk']   <- passive_imp_formula(post_IR_t)
+meth['post_direct_victimization'] <- passive_imp_formula(post_DV_t)
 
 # We also use passive imputation for the period specific cumulative ELS scores.
 meth['prenatal_stress'] <- "~I( pre_life_events + pre_contextual_risk + pre_parental_risk + pre_interpersonal_risk )"
 meth['postnatal_stress'] <- "~I( post_life_events + post_contextual_risk + post_parental_risk + post_interpersonal_risk + post_direct_victimization )"
+
+
+
+# meth['pre_life_events']         <- "~I( (ELSlong[,pre_LE]) )"
+# meth['pre_contextual_risk']     <- "~I( rowMeans(ELSlong[,pre_CR]) )"
+# meth['pre_parental_risk']       <- "~I( rowMeans(ELSlong[,pre_PR]) )"
+# meth['pre_interpersonal_risk']  <- "~I( rowMeans(ELSlong[,pre_IR]) )"
+# 
+# # below hasn't been changed to ALSPAC yet ####### NO to fix
+# meth['post_life_events']          <- "~I( (rowSums(ELSlong[, post_LE_t])) / 16)"
+# meth['post_contextual_risk']      <- "~I( (rowSums(ELSlong[, post_CR_t])) / 10)"
+# meth['post_parental_risk']        <- "~I( (rowSums(ELSlong[, post_PR_t])) / 10)"
+# meth['post_interpersonal_risk']   <- "~I( (rowSums(ELSlong[, post_IR_t])) / 7)"
+# meth['post_direct_victimization'] <- "~I( (rowSums(ELSlong[, post_DV_t])) / 7)"
+# 
+# # We also use passive imputation for the period specific cumulative ELS scores.
+# meth['prenatal_stress'] <- "~I( pre_life_events + pre_contextual_risk + pre_parental_risk + pre_interpersonal_risk )"
+# meth['postnatal_stress'] <- "~I( post_life_events + post_contextual_risk + post_parental_risk + post_interpersonal_risk + post_direct_victimization )"
 
 
 # We are going to need a different set of predictors for the different variables we impute 
@@ -397,8 +424,7 @@ predictormatrix[c(post_DV_t),
 predictormatrix[c(post_LE_t[!post_LE_t == 'lost_best_friend_8y'], 
                   post_CR_t[!post_CR_t %in% c('m_education', 'p_education')], 
                   post_PR_t[!post_PR_t %in% c('m_age', 'p_age')], post_IR_t, 
-                  post_DV_t[!post_DV_t == 'bullying_8y']), c('IDC', 'Time')] <- matrix(rep(c(-2, 2),each=45),nrow=45)
-# Error in predictormatrix[c(post_LE_t[!post_LE_t == "lost_best_friend_8y"],  : number of items to replace is not a multiple of replacement length
+                  post_DV_t[!post_DV_t == 'bullying_8y']), c('IDC', 'Time')] <- matrix(rep(c(-2, 2),each=44),nrow=44)
 
 # This can help
 mat_lvl1 <- function(dim) {
