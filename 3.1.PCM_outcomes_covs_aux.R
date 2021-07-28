@@ -44,9 +44,19 @@ cov_out <- data.frame("IDC" = paste(alspac.table$cidb2957, alspac.table$qlet, se
 #### ------------------ INTERNALIZING PROBLEMS ( @ 9 ) -------------------- ####
 ################################################################################
 
-# Internalizing scale @ 9 yrs # informant: MOTHER.
-cov_out$int.age.10y  <-  as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12  # age 10 (years)
-cov_out$intern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] # 10yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)
+# Age of study child at completion (months)	
+cov_out$int.age.10y <- as.numeric(levels(alspac.table$ku991a)) / 12 
+
+# SDQ emotional symptoms and peer problems scores (complete cases)
+cov_out$peer_probs <- as.numeric(levels(alspac.table$ku709a))[alspac.table$ku709a]
+cov_out$emot_symp <- as.numeric(levels(alspac.table$ku707a))[alspac.table$ku707a]
+
+# SDQ (continuous) internalizing score: i.e sum of he SDQ peer problems and emotional symptoms subscales
+cov_out$intern_score <- rowSums(cov_out[,c('peer_probs', 'emot_symp')])
+
+# ALTERNATIVE: DAWBA depression prediction  @ 9 yrs # informant: MOTHER.
+cov_out$DAWBAint.age.10y  <-  as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12  # age 10 (years)
+cov_out$DAWBAintern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] # 10yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)
 
 # cov_out$int.age.13y      <- as.numeric(levels(alspac.table$tb9991a))[alspac.table$tb9991a] # age 13 
 # cov_out$intern_score.13y <- as.numeric(levels(alspac.table$tb8603))[alspac.table$tb8603]   # 13yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)    
@@ -57,30 +67,25 @@ cov_out$intern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv
 # cov_out$int.age.22y      <- as.numeric(levels(alspac.table$ypb9992))[alspac.table$ypb9992] # age 22 VB: also not in?
 # cov_out$intern_score.22y <- as.numeric(levels(alspac.table$ypb5180))[alspac.table$ypb5180] # age 22 (SMFQ; might not be the best measure)
 
-#adding SDQ emotional symptoms and peer problem subscale total scores 
-#cov_out$peer_probs <- as.numeric(levels(alspac.table$ku709a))[alspac.table$ku709a]
-#cov_out$emot_symp <- as.numeric(levels(alspac.table$ku707a))[alspac.table$ku707a]
-
-#Adding SDQ (contionus) internlaising score from the sum of he SDQ peer problems and emotional symptoms subscales
-#cov_out$SDQ_int_score <- rowSums(cov_out[,c('peer_probs', 'emot_symp')]) #SDQ peer problems + SDQ emotional symptoms subscale
-#cov_out$SDQ_int_age <- as.numeric(levels(alspac.table$ku991a)) /12
-
-
 ################################################################################
 #### -------------------------- FAT MASS ( @ 9 ) -------------------------- ####
 ################################################################################
 
-# Although the original plan for this project involved a more comprehensive measure
-# of child metabolic syndrome (see CMR_score.R file for specifics), android fat mass
-# was the only metabolic risk variable that showed appreciable variance in such young 
+# Fat mass is a metabolic risk variable that showed appreciable variance in such young 
 # children and the highest correlation with internalizing (small but significant r =.12)
 # It was also selected on the base of data availability both cross-sectionally and 
 # for future longitudinal assessment. 
 
-# Converting months @ 10y to years (coded F9 due to focus 9 clinic age in ALSPAC)
-cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12             # age 10 (years)
-cov_out$fat_mass   <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx126] # trunk FM at age 10y
-## ANDR @10 NOT AVAILABLE
+# Age of study child at f9 visit (months)	
+cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12
+# Trunk fat mass (g)
+cov_out$fat_mass_trunk <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx126] # trunk FM at age 10y
+# Total body fat mass (g)
+cov_out$fat_mass_total <- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135] # total FM at age 10y
+
+# Fat Mass Index (FMI)
+cov_out$height.10y <- as.numeric(levels(alspac.table$pub203))[alspac.table$pub203] / 100 # Child's height in m
+cov_out$fmi        <- cov_out$fat_mass_total / ((cov_out$height.10y)^2) # Total fat / squared height
 
 # cov_out$fm.age.13y   <- as.numeric(levels(alspac.table$kg998a))[alspac.table$kg998a]     # age 13
 # cov_out$fat_mass.13y <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]     # andr FM at age 13y
@@ -89,62 +94,87 @@ cov_out$fat_mass   <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx
 # cov_out$fm.age.24y   <- as.numeric(levels(alspac.table$fkar0010))[alspac.table$fkar0010] # age 24
 # cov_out$fat_mass.24y <- as.numeric(levels(alspac.table$fkdx1041))[alspac.table$fkdx1041] # andr FM at age 24y
 
-#adding total fat mass @ 10y, and fat mass index 
-#cov_out$fat_mass_tot<- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135] # total FM at age 10y
-#cov_out$height_10y <- as.numeric(levels(alspac.table$pub203))[alspac.table$pub203] / 100
-#cov_out$fmi <- cov_out$fat_mass_tot / ((cov_out$height_10y)^2)
-
+# ------------------------------------------------------------------------------
+cor_outcome <- round(cor(cov_out, use = 'complete.obs'), 2)
+write.csv(cor_outcome, file = "corr_mat_outcomes.csv", row.names = T, quote = F)
 # ------------------------------------------------------------------------------
 # Before we can use them in the analysis, the outcome variables need to be standardized. 
 # so, here we take the standard deviation score.
-cov_out$intern_score_z <- as.numeric(scale(cov_out$intern_score))
+cov_out$intern_score_z      <- as.numeric(scale(cov_out$intern_score)) # SDQ
+cov_out$DAWBAintern_score_z <- as.numeric(scale(cov_out$DAWBAintern_score)) # DAWBA
 # cov_out$intern_score_z.13y <- as.numeric(scale(cov_out$intern_score.13y))
 # cov_out$intern_score_z.15y <- as.numeric(scale(cov_out$intern_score.15y))
 # cov_out$intern_score_z.17y <- as.numeric(scale(cov_out$intern_score.17y))
 # cov_out$intern_score_z.22y <- as.numeric(scale(cov_out$intern_score.22y))
 
-cov_out$fat_mass_z <- as.numeric(scale(cov_out$fat_mass))
+
+cov_out$fmi_z <- as.numeric(scale(cov_out$fmi))
+cov_out$fat_mass_tot_z <- as.numeric(scale(cov_out$fat_mass_total))
+cov_out$fat_mass_tru_z <- as.numeric(scale(cov_out$fat_mass_trunk))
 # cov_out$fat_mass_z.13y <- as.numeric(scale(cov_out$fat_mass.13y))
 # cov_out$fat_mass_z.15y <- as.numeric(scale(cov_out$fat_mass.15y))
 # cov_out$fat_mass_z.17y <- as.numeric(scale(cov_out$fat_mass.17y))
 # cov_out$fat_mass_z.24y <- as.numeric(scale(cov_out$fat_mass.24y))
 
-#coverting SDQ, and new fat mass variables into z-scores
-#cov_out$SDQ_score_z <- as.numeric(scale(cov_out$SDQ_int_score))
-#cov_out$fmi_z <- as.numeric(scale(cov_out$fmi))
-#cov_out$fat_mass_tot_z <- as.numeric(scale(cov_out$fat_mass_tot))
-
 ################################################################################
 #### ------------------- Construct RISK GROUPS variable ------------------- ####
 ################################################################################
 
-cov_out$int = ifelse(cov_out$intern_score_z > quantile(cov_out$intern_score_z, probs = 0.8, na.rm = T), 1, 0) 
-cov_out$fat = ifelse(cov_out$fat_mass_z     > quantile(cov_out$fat_mass_z,     probs = 0.8, na.rm = T), 1, 0) 
+# make some fake data
+# cov_out <- data.frame(replicate(5, sample(c(-2.0:7.0, NA), 1000, rep=TRUE)))
+# colnames(cov_out) <- c('intern_score_z', 'DAWBAintern_score_z', 'fmi_z', 'fat_mass_tot_z', 'fat_mass_tru_z')
 
-#constrcuting risk groups with new SDQ and fat mass variables
-#cov_out$int = ifelse(cov_out$SDQ_score_z > quantile(cov_out$SDQ_score_z, probs = 0.8, na.rm = T), 1, 0) 
-#cov_out$fat = ifelse(cov_out$fat_mass_z     > quantile(cov_out$fat_mass_z,     probs = 0.8, na.rm = T), 1, 0)
-#cov_out$fat = ifelse(cov_out$fat_mass_tot_z     > quantile(cov_out$fat_mass_tot_z,     probs = 0.8, na.rm = T), 1, 0) 
-
-cov_out$risk_groups = rep(NA, nrow(cov_out))
-for (i in 1:nrow(cov_out)) {
-  if ( is.na(cov_out$int[i]) | is.na(cov_out$fat[i]) )  { cov_out$risk_groups[i] = NA
-  } else if (cov_out$int[i] == 0 & cov_out$fat[i] == 0) { cov_out$risk_groups[i] = 0   # Healthy
-  } else if (cov_out$int[i] == 1 & cov_out$fat[i] == 0) { cov_out$risk_groups[i] = 1   # High internalizing  only
-  } else if (cov_out$int[i] == 0 & cov_out$fat[i] == 1) { cov_out$risk_groups[i] = 2   # High fat mass only
-  } else {                                                cov_out$risk_groups[i] = 3 } # Multimorbid
+construct_grp <- function(int_var, fm_var, cutoff = 0.8, df = cov_out, permute = T) {
+  df$int = ifelse(df[, int_var] > quantile(df[, int_var], probs = cutoff, na.rm = T), 1, 0) 
+  df$fat = ifelse(df[, fm_var]  > quantile(df[, fm_var],  probs = cutoff, na.rm = T), 1, 0) 
+  
+  df$risk_groups = rep(NA, nrow(df))
+  for (i in 1:nrow(df)) {
+    if ( is.na(df$int[i]) | is.na(df$fat[i]) )  { df$risk_groups[i] = NA
+    } else if (df$int[i] == 0 & df$fat[i] == 0) { df$risk_groups[i] = 0   # Healthy
+    } else if (df$int[i] == 1 & df$fat[i] == 0) { df$risk_groups[i] = 1   # High internalizing  only
+    } else if (df$int[i] == 0 & df$fat[i] == 1) { df$risk_groups[i] = 2   # High fat mass only
+    } else {                                      df$risk_groups[i] = 3 } # Multimorbid
+  }
+  # # Let's first factor that bad boy 
+  df$risk_groups = factor(df$risk_groups, 
+                         levels = c(0:3), 
+                         labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
+  message(paste("Combining:", int_var, "and", fm_var, "\n"))
+  print(summary(df$risk_groups))
+  corz = cor(df[, c(int_var, fm_var)], use = 'complete.obs')
+  plot(df[, int_var], df[, fm_var], main = paste("Corr =", round(corz[1,2], 2)), xlab = int_var, ylab = fm_var, 
+       col = c("green", "blue", "darkgoldenrod2", "red")[df$risk_groups])
+  
+  if (permute == T) {
+    count <- 0 
+    iterations <- 1000
+    set.seed(310896)
+    
+    for (i in 1:iterations) {
+      origN <- unname(summary(df$risk_groups)[4])
+      randN <- permute(df)
+      if (randN > origN) {
+        count <- count + 1
+      }
+    }
+    
+    pval = round(count / iterations, 10)
+    cat("Permutation p-value:", pval)
+  }
+  
+  return(df$risk_groups)
 }
 
-# # Let's first factor that bad boy 
-cov_out$risk_groups = factor(cov_out$risk_groups, 
-                             levels = c(0:3), 
-                             labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
+# DAWBA
+cov_out$dawba_trunk_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_tru_z')
+cov_out$dawba_total_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_tot_z')
+cov_out$dawba_fmi_grp   <- construct_grp('DAWBAintern_score_z', 'fmi_z')
 
-summary(cov_out$risk_groups)
-
-# attach(cov_out); plot(intern_score_z, fat_mass_z, 
-# col=c("cornflowerblue","black", "red", "darkgrey", "darkgoldenrod2","chartreuse4")[risk_groups]); detach(cov_out)
-
+# SDQ 
+cov_out$sdq_trunk_grp <- construct_grp('intern_score_z', 'fat_mass_tru_z')
+cov_out$sdq_total_grp <- construct_grp('intern_score_z', 'fat_mass_tot_z')
+cov_out$sdq_fmi_grp   <- construct_grp('intern_score_z', 'fmi_z')
 
 ################################################################################
 #### ---------------------------- COVARIATES ------------------------------ ####
@@ -211,7 +241,7 @@ cov_out$e220r <- ifelse(alspac.table$e220 == 'Not at all', 0,
                                             ifelse(alspac.table$e220 == '3-9 glasses daily', 4, 
                                                    ifelse(alspac.table$e220 == '>9 glasses daily', 5, NA))))))
 
-cov_out$m_drinking <- rowSums(cov_out[, c('b721r', 'e220r')], na.rm = T)
+cov_out$m_drinking <- rowSums(cov_out[, c('b721r', 'e220r')], na.rm = F)
 
 
 #-------------------------------------------------------------------------------
@@ -275,20 +305,20 @@ cov_out$p_dep_cont_childhood <- rowSums(post_dep_p, na.rm = T)
 #------------------------------------------------------------------------------#
 # ------------------------- PERMUTATION TESTING -------------------------------#
 #------------------------------------------------------------------------------#
-
-count <- 0 
-iterations <- 1000
-set.seed(310896)
-
-for (i in 1:iterations) {
-  origN <- unname(summary(cov_out$risk_groups)[4])
-  randN <- permute(cov_out)
-  if (randN > origN) {
-    count <- count + 1
-  }
-}
-
-pval = round(count / iterations, 10)
+# 
+# count <- 0 
+# iterations <- 1000
+# set.seed(310896)
+# 
+# for (i in 1:iterations) {
+#   origN <- unname(summary(cov_out$risk_groups)[4])
+#   randN <- permute(cov_out)
+#   if (randN > origN) {
+#     count <- count + 1
+#   }
+# }
+# 
+# pval = round(count / iterations, 10)
 
 ################################################################################
 #### --------------------------- save and run ----------------------------- ####
@@ -298,5 +328,5 @@ pval = round(count / iterations, 10)
 saveRDS(cov_out, file.path(alspac_folder, "PCMout_cov_aux.rds"))
 
 # Also save the dataset in a .csv format
-write.csv(cov_out, file = "PCMout_cov_aux.csv", row.names = FALSE, quote = FALSE)
+write.csv(cov_out, file = "PCMout_cov_aux.csv", row.names = F, quote = F)
 
