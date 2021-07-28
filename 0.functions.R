@@ -274,7 +274,7 @@ percent_missing <- function(var) { sum(is.na(var)) / length(var) * 100 }
 # Rijlaarsdam et al. (2016) and Cecil et al. (2014) (set score_type = 'sum_weighted') 
 # that both also allow for 25% missing.
 
-domainscore <- function(df, 
+domainscore <- function(df, save_cor_mat = "",
                         score_type = 'mean_simple', 
                         postnatal = F, 
                         check_corrs = T) {
@@ -289,7 +289,8 @@ domainscore <- function(df,
       
       if (ncol(items) > 1 & check_corrs == T) {
         mat <- cor(items, method = "spearman", use = "complete.obs") 
-        print(mat)
+        print(round(mat, 2))
+        if (length(save_cor_mat) > 1) { write.csv(mat, file = save_cor_mat, row.names = T, quote = F) }
       }
       
       if (ncol(items) > 1) {

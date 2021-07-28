@@ -225,6 +225,13 @@ prenatal_stress[,c('pre_IR_percent_missing','pre_interpersonal_risk')] <- domain
   'social_network_emotional',
   'social_network_practical')]) 
 
+# compute sum scores for prenatal stress exposure ##############################
+prenatal_stress$prenatal_stress <- rowSums(prenatal_stress[,c(
+                                      "pre_life_events", 
+                                      "pre_contextual_risk", 
+                                      "pre_parental_risk", 
+                                      "pre_interpersonal_risk")], na.rm = F)
+
 ################################################################################
                               # SAVE DATASET
 ################################################################################

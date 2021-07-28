@@ -670,7 +670,7 @@ postnatal_stress[,c('post_LE_percent_missing','post_life_events')] <- domainscor
     'separated_from_smbd',
     'lost_best_friend',
     'new_sibling',
-    'ch_had_fright'), postnatal = T)
+    'ch_had_fright'), postnatal = T, save_cor_mat = "le_mat.csv")
 
 postnatal_stress[,c('post_CR_percent_missing','post_contextual_risk')] <- domainscore(
   c('homeless_childhood',
@@ -682,7 +682,7 @@ postnatal_stress[,c('post_CR_percent_missing','post_contextual_risk')] <- domain
     'housing_defects',
     'm_education' ,
     'p_education' ,
-    'neighbourhood_problems'), postnatal = T)
+    'neighbourhood_problems'), postnatal = T, save_cor_mat = "cr_mat.csv")
 
 postnatal_stress[,c('post_PR_percent_missing','post_parental_risk')] <- domainscore( 
   c('work_problems',
@@ -694,7 +694,7 @@ postnatal_stress[,c('post_PR_percent_missing','post_parental_risk')] <- domainsc
     'm_depression',
     'p_depression',
     'm_anxiety',
-    'p_anxiety'), postnatal = T)
+    'p_anxiety'), postnatal = T, save_cor_mat = "pr_mat.csv")
 
 postnatal_stress[,c('post_IR_percent_missing','post_interpersonal_risk')] <- domainscore( 
   c('divorce',
@@ -703,7 +703,7 @@ postnatal_stress[,c('post_IR_percent_missing','post_interpersonal_risk')] <- dom
     'conflict_in_family',
     'conflict_family_violence',
     'm_new_partner',
-    'argued_fam_friends'),  postnatal = T)
+    'argued_fam_friends'),  postnatal = T, save_cor_mat = "ir_mat.csv")
 
 postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- domainscore(
   c('bullying',
@@ -712,7 +712,16 @@ postnatal_stress[,c('post_DV_percent_missing','post_direct_victimization')] <- d
     'p_cruelty_physical',
     'm_cruelty_physical',
     'p_cruelty_emotional',
-    'm_cruelty_emotional'),  postnatal = T)
+    'm_cruelty_emotional'),  postnatal = T, save_cor_mat = "dv_mat.csv")
+
+# compute sum scores for postnatal stress exposure #############################
+
+postnatal_stress$postnatal_stress <- rowSums(postnatal_stress[,c( 
+                                       "post_life_events", 
+                                       "post_contextual_risk", 
+                                       "post_parental_risk", 
+                                       "post_interpersonal_risk", 
+                                       "post_direct_victimization")], na.rm = F)
 
 ################################################################################
                               # SAVE DATASET
@@ -723,5 +732,5 @@ saveRDS(postnatal_stress, file.path(alspac_folder, "postnatal_stress.rds"))
 saveRDS(postnatal_summary, file.path(alspac_folder, "postnatal_summary.rds"))
 
 # Also save the dataset in a .csv format
-write.csv(postnatal_stress, file = "postnatal_stress.csv", row.names = FALSE, quote = FALSE)
-write.csv(postnatal_summary, file = "postnatal_summary.csv", row.names = T, quote = FALSE)
+write.csv(postnatal_stress, file = "postnatal_stress.csv", row.names = F, quote = F)
+write.csv(postnatal_summary, file = "postnatal_summary.csv", row.names = T, quote = F)
