@@ -5,6 +5,10 @@
 # risk), the covariates that are going to be used as well as the auxiliary variables 
 # used in the imputation of the final dataset. 
 
+#In this script, outcome measures in ALSPAC including internlising and fatmass variables, were recorded 
+#at 10y, 13y, 15y, 17y and 22y. These scores can be added in order to construct multiple analyses between 
+#ELS and PCM outcomes at repeated timepoints. 
+
 #### ---------------------------- Dependencies ---------------------------- ####
 
 # First, let's point to the necessary libraries
