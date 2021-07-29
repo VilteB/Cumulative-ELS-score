@@ -109,7 +109,7 @@ cov_out$DAWBAintern_score_z <- as.numeric(scale(cov_out$DAWBAintern_score)) # DA
 
 
 cov_out$fmi_z <- as.numeric(scale(cov_out$fmi))
-cov_out$fat_mass_tot_z <- as.numeric(scale(cov_out$fat_mass_total))
+cov_out$fat_mass_z     <- as.numeric(scale(cov_out$fat_mass_total))
 cov_out$fat_mass_tru_z <- as.numeric(scale(cov_out$fat_mass_trunk))
 # cov_out$fat_mass_z.13y <- as.numeric(scale(cov_out$fat_mass.13y))
 # cov_out$fat_mass_z.15y <- as.numeric(scale(cov_out$fat_mass.15y))
@@ -144,7 +144,7 @@ construct_grp <- function(int_var, fm_var, cutoff = 0.8, df = cov_out, permute =
   print(summary(df$risk_groups))
   corz = cor(df[, c(int_var, fm_var)], use = 'complete.obs')
   plot(df[, int_var], df[, fm_var], main = paste("Corr =", round(corz[1,2], 2)), xlab = int_var, ylab = fm_var, 
-       col = c("green", "blue", "darkgoldenrod2", "red")[df$risk_groups])
+       col = c("darkgreen", "blue", "darkgoldenrod2", "red")[df$risk_groups])
   
   if (permute == T) {
     count <- 0 
@@ -168,13 +168,16 @@ construct_grp <- function(int_var, fm_var, cutoff = 0.8, df = cov_out, permute =
 
 # DAWBA
 cov_out$dawba_trunk_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_tru_z')
-cov_out$dawba_total_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_tot_z')
+cov_out$dawba_total_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_z')
 cov_out$dawba_fmi_grp   <- construct_grp('DAWBAintern_score_z', 'fmi_z')
 
 # SDQ 
 cov_out$sdq_trunk_grp <- construct_grp('intern_score_z', 'fat_mass_tru_z')
-cov_out$sdq_total_grp <- construct_grp('intern_score_z', 'fat_mass_tot_z')
+cov_out$sdq_total_grp <- construct_grp('intern_score_z', 'fat_mass_z')
 cov_out$sdq_fmi_grp   <- construct_grp('intern_score_z', 'fmi_z')
+
+# for now
+cov_out$risk_groups <- cov_out$sdq_total_grp
 
 ################################################################################
 #### ---------------------------- COVARIATES ------------------------------ ####

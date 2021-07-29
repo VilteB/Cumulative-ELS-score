@@ -128,8 +128,7 @@ post_LE <- c('sick_or_accident_18m','sick_or_accident_30m','sick_or_accident_3y'
              'burglary_or_car_theft_21m', 'burglary_or_car_theft_3y', 'burglary_or_car_theft_4y', 'burglary_or_car_theft_5y', 'burglary_or_car_theft_6y', 'burglary_or_car_theft_9y',
              'separated_from_smbd_18m', 'separated_from_smbd_30m', 'separated_from_smbd_3y', 'separated_from_smbd_4y', 'separated_from_smbd_5y', 'separated_from_smbd_6y', 'separated_from_smbd_8y', 
              'lost_best_friend_8y',
-             'm_pregnant_8m', 'm_pregnant_21m', 'm_pregnant_3y', 'm_pregnant_4y', 'm_pregnant_5y', 'm_pregnant_6y', 'm_pregnant_9y',
-             'new_sibling_18m', 'new_sibling_30m', 'new_sibling_3y', 'new_sibling_4y', 'new_sibling_5y', 'new_sibling_6y', 'new_sibling_8y',
+             'new_sibling_18m', 'new_sibling_30m', 'new_sibling_3y', 'new_sibling_4y', 'new_sibling_5y', 'new_sibling_6y', 'new_sibling_9y',
              'ch_had_fright_18m', 'ch_had_fright_30m', 'ch_had_fright_3y', 'ch_had_fright_4y', 'ch_had_fright_5y', 'ch_had_fright_6y', 'ch_had_fright_8y')
 
 post_CR <- c('homeless_childhood_8m', 'homeless_childhood_21m', 'homeless_childhood_3y', 'homeless_childhood_4y', 'homeless_childhood_5y', 'homeless_childhood_6y', 'homeless_childhood_9y',
@@ -337,14 +336,51 @@ VisSeq <- imp0$visitSequence
 # Run the actual imputation. To ensure convergence among the variables but retain
 # low computational load, we do 60 iterations using 30 imputed datasets (following 
 # Isabel's approach)
-imp <- mice(ELS, m = 2, # nr of imputed datasets
-            maxit = 2, #nr of iteration taken to impute missing values
+imp <- mice(ELS, m = 30, # nr of imputed datasets
+            maxit = 60, #nr of iteration taken to impute missing values
             seed = 310896, # set a seed for the random number generation in case i need to generate the same dataset again
             method = meth,
             visitSequence = VisSeq, 
             predictorMatrix = predictormatrix)
 
-try <- complete(imp, 2)
-warnings()
-imp$loggedEvents
+################### OPTIONAL CHECKS (beware: it takes time) ####################
+# # Inspecting the distribution of observed and imputed values
+# stripplot(imp, pch = 20, cex = 1.2) # red dots are imputed values
+# # A scatter plot is also useful to spot unusual patterns in two vars
+# xyplot(imp, pre_life_events ~ post_life_events | .imp, pch = 20, cex = 1.4)
 
+pren50cutoff <- miceadds::subset_datlist( imp, subset = imp$data$pre_percent_missing < 50.0,  toclass = 'mids')
+post50cutoff <- miceadds::subset_datlist( pren50cutoff, subset = pren50cutoff$data$post_percent_missing < 50.0 )
+# Not specifying toclass argument in the last call transforms mids object into a datalist object.
+
+# Standardize prenatal and postnatal stress to obtain standard betas from regression
+sdatlist <- miceadds::scale_datlist(post50cutoff, orig_var = c('prenatal_stress', 'postnatal_stress'), 
+                                    trafo_var = paste0( c('prenatal_stress', 'postnatal_stress'), "_z") )
+# Reconvert back to mids object
+post50cutoff <- miceadds::datlist2mids(sdatlist)
+
+out_int      <- miceadds::subset_datlist( post50cutoff, subset = !is.na(post50cutoff$data$intern_score_z),  toclass = 'mids')
+out_fat      <- miceadds::subset_datlist( out_int,      subset = !is.na(out_int$data$fat_mass_z),  toclass = 'mids') # fat_mass_z
+no_twins     <- miceadds::subset_datlist( out_fat,      subset = out_fat$data$twin == 0,  toclass = 'mids') 
+finalset     <- miceadds::subset_datlist( no_twins,     subset = no_twins$data$sibling == 0, toclass = 'mids')
+
+################################################################################
+#### ------------------------- complete and save -------------------------- ####
+################################################################################
+
+# I save the mids object (i.e. list of imputed datasets)
+saveRDS(imputation, paste0(pathtodata,'imputation_list_full.rds'))
+saveRDS(post50cutoff, paste0(pathtodata,'imputation_list_ELS.rds'))
+saveRDS(finalset, paste0(pathtodata,'imputation_list_ELSPCM.rds'))
+
+# I also save the last imputed dataset for sanity checks
+full_imputed <- complete(imputation, 30) 
+saveRDS(full_imputed, paste0(pathtodata,'full_imputed.rds'))
+
+# I also save the last imputed dataset for sanity checks
+ELS_PCM_imputed <- complete(finalset, 30) 
+saveRDS(ELS_PCM_imputed, paste0(pathtodata,'ELSPCM_imputed.rds'))
+
+# I also save the last imputed dataset for sanity checks
+ELS_imputed <- complete(post50cutoff, 30) 
+saveRDS(ELS_imputed, paste0(pathtodata,'ELS_imputed.rds'))
