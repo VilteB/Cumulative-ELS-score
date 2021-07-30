@@ -18,9 +18,9 @@ source('0.functions.R') # where the repmeas() and domainscore() are defined
 
 # Load the dataframe with dich variables created in script 1.2.Recoding_Items_postnatal0-7.R
 # 1.3.Recoding_Items_postnatal8-9.R and 1.4.CCEI_EPDS_calculation.R
-post07 <- readRDS(file.path(alspac_folder, "raw_postnatal_stress_0to7.rsd"))
-post89 <- readRDS(file.path(alspac_folder, "raw_postnatal_stress_8to9.rsd"))
-anxdep <- readRDS(file.path(alspac_folder, "raw_parent_depr_anxiety.rsd"))
+post07 <- readRDS(file.path(alspac_folder, "raw_postnatal_stress_0to7.rds"))
+post89 <- readRDS(file.path(alspac_folder, "raw_postnatal_stress_8to9.rds"))
+anxdep <- readRDS(file.path(alspac_folder, "raw_parent_depr_anxiety.rds"))
 
 
 # Initiate a postnatal_stress dataframe with id of the child as first column
