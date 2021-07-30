@@ -57,9 +57,9 @@ library(mice);
 library(miceadds)
 
 # Load the dataframes with prenatal, postnatal stress and the outcome dataset
-pre  <- readRDS(file.path(alspac_folder, "prenatal_stress.rsd"))
-post <- readRDS(file.path(alspac_folder, "postnatal_stress.rsd"))
-out  <- readRDS(file.path(alspac_folder, "PCMout_cov_aux.rsd"))
+pre  <- readRDS(file.path(alspac_folder, "prenatal_stress.rds"))
+post <- readRDS(file.path(alspac_folder, "postnatal_stress.rds"))
+out  <- readRDS(file.path(alspac_folder, "PCMout_cov_aux.rds"))
 
 ELS <- cbind(pre, post, out)
 
@@ -239,7 +239,7 @@ predictormatrix[, c('prenatal_stress', 'postnatal_stress') ]  <- 0
 # Do not impute nor use IDC, any of the outcomes, exclusion criteria or age_child 
 # as predictors (no reason to believe age at outcome is associated with missingness)
 predictormatrix[, c("IDC", outcomes, "age_child", exclusion_criteria)] <- 0
-predictormatrix[c("IDC", outcomes, "age_child", exclusion_criteria, 'Time'), ] <- 0
+predictormatrix[c("IDC", outcomes, "age_child", exclusion_criteria), ] <- 0
 
 
                ### Impute auxiliary variables and covariates ###

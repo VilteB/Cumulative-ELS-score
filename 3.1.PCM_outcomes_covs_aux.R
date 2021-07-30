@@ -49,7 +49,7 @@ cov_out <- data.frame("IDC" = paste(alspac.table$cidb2957, alspac.table$qlet, se
 ################################################################################
 
 # Age of study child at completion (months)	
-cov_out$int.age.10y <- as.numeric(levels(alspac.table$ku991a)) / 12 
+cov_out$int.age.10y <- as.numeric(as.character(alspac.table$ku991a)) / 12 
 
 # SDQ emotional symptoms and peer problems scores (complete cases)
 cov_out$peer_probs <- as.numeric(levels(alspac.table$ku709a))[alspac.table$ku709a]
@@ -99,7 +99,7 @@ cov_out$fmi        <- cov_out$fat_mass_total / ((cov_out$height.10y)^2) # Total 
 # cov_out$fat_mass.24y <- as.numeric(levels(alspac.table$fkdx1041))[alspac.table$fkdx1041] # andr FM at age 24y
 
 # ------------------------------------------------------------------------------
-cor_outcome <- round(cor(cov_out, use = 'complete.obs'), 2)
+cor_outcome <- round(cor(cov_out[2:16], use = 'complete.obs'), 2) #  rest are not numeric, change to numbers instead of levels?
 write.csv(cor_outcome, file = "corr_mat_outcomes.csv", row.names = T, quote = F)
 # ------------------------------------------------------------------------------
 # Before we can use them in the analysis, the outcome variables need to be standardized. 
@@ -300,7 +300,7 @@ cov_out$m_age_cont     <- as.numeric(levels(alspac.table$mz028b))[alspac.table$m
 # Prenatal maternal depression
 cov_out$m_dep_cont_pregnancy <- dep$m_EPDS_total_18wg + dep$m_EPDS_total_32wg
 # Postnatal maternal depression
-post_dep_m <- sapply(dep[, c('f200', 'g290', 'h200a')], as.integer) 
+post_dep_m <- sapply(dep[, c('f200', 'g290', 'h200a')], as.integer) #  NAs introduced by coercion from not depressed and very depressed
 cov_out$m_dep_cont_childhood <- rowSums(post_dep_m, na.rm = T)
 
 # Prenatal paternal depression
