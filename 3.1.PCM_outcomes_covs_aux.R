@@ -99,7 +99,7 @@ cov_out$fmi        <- cov_out$fat_mass_total / ((cov_out$height.10y)^2) # Total 
 # cov_out$fat_mass.24y <- as.numeric(levels(alspac.table$fkdx1041))[alspac.table$fkdx1041] # andr FM at age 24y
 
 # ------------------------------------------------------------------------------
-cor_outcome <- round(cor(cov_out[2:16], use = 'complete.obs'), 2) #  rest are not numeric, change to numbers instead of levels?
+cor_outcome <- round(cor(cov_out[, -1], use = 'complete.obs'), 2) 
 write.csv(cor_outcome, file = "corr_mat_outcomes.csv", row.names = T, quote = F)
 # ------------------------------------------------------------------------------
 # Before we can use them in the analysis, the outcome variables need to be standardized. 
