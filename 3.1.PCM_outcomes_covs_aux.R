@@ -7,7 +7,7 @@
 
 #In this script, outcome measures in ALSPAC including internlising (line 55-75) and fatmass (line 75-100) variables, were recorded 
 #at 10y, 13y, 15y, 17y and 22y. These scores can be added in order to construct multiple analyses between 
-#ELS and PCM outcomes at repeated timepoints. 
+#ELS and PCM outcomes at subsequent timepoints. 
 
 #### ---------------------------- Dependencies ---------------------------- ####
 
@@ -61,7 +61,6 @@ cov_out$intern_score <- rowSums(cov_out[,c('peer_probs', 'emot_symp')])
 # ALTERNATIVE: DAWBA depression prediction  @ 9 yrs # informant: MOTHER.
 cov_out$DAWBAint.age.10y  <-  as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12  # age 10 (years)
 cov_out$DAWBAintern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] # 10yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)
-
 # cov_out$int.age.13y      <- as.numeric(levels(alspac.table$tb9991a))[alspac.table$tb9991a] # age 13 
 # cov_out$intern_score.13y <- as.numeric(levels(alspac.table$tb8603))[alspac.table$tb8603]   # 13yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)    
 # cov_out$int.age.15y      <- as.numeric(levels(alspac.table$fh0011a))[alspac.table$fh0011a] # age 15 
@@ -80,8 +79,6 @@ cov_out$DAWBAintern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.tab
 # It was also selected on the base of data availability both cross-sectionally and 
 # for future longitudinal assessment. 
 
-# Age of study child at f9 visit (months)	
-cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12
 # Trunk fat mass (g)
 cov_out$fat_mass_trunk <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx126] # trunk FM at age 10y
 # Total body fat mass (g)
@@ -91,6 +88,8 @@ cov_out$fat_mass_total <- as.numeric(levels(alspac.table$f9dx135))[alspac.table$
 cov_out$height.10y <- as.numeric(levels(alspac.table$pub203))[alspac.table$pub203] / 100 # Child's height in m
 cov_out$fmi        <- cov_out$fat_mass_total / ((cov_out$height.10y)^2) # Total fat / squared height
 
+# Age of study child at fatmass measurement: these variables can be modified in order to adjust for changes in the fatmass score in lines 74-89. 
+cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12
 # cov_out$fm.age.13y   <- as.numeric(levels(alspac.table$kg998a))[alspac.table$kg998a]     # age 13
 # cov_out$fat_mass.13y <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]     # andr FM at age 13y
 # cov_out$fat_mass.15y <- as.numeric(levels(alspac.table$fh2257))[alspac.table$fh2257]     # andr FM at age 15y
@@ -203,7 +202,7 @@ cov_out$sex <- alspac.table$kz021 # 1 = Male; 2 = Female.
 
 # ------------------------------------------------------------------------------
 ### AGE of the child
-# Combine age of the child measured during first visit and at CBCL administration
+# Combine age of the child measured during internalising and fatmass measurement
 # This value will serve as a covariate in the first adjusted model.
 
 cov_out$age_child <- (cov_out$int.age.10y + cov_out$fm.age.10y) / 2
