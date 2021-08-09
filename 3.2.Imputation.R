@@ -336,8 +336,8 @@ VisSeq <- imp0$visitSequence
 # Run the actual imputation. To ensure convergence among the variables but retain
 # low computational load, we do 60 iterations using 30 imputed datasets (following 
 # Isabel's approach)
-imp <- mice(ELS, m = 30, # nr of imputed datasets
-            maxit = 60, #nr of iteration taken to impute missing values
+imp <- mice(ELS, m = 2, # nr of imputed datasets
+            maxit = 2, #nr of iteration taken to impute missing values
             seed = 310896, # set a seed for the random number generation in case i need to generate the same dataset again
             method = meth,
             visitSequence = VisSeq, 
@@ -347,7 +347,7 @@ imp <- mice(ELS, m = 30, # nr of imputed datasets
 # # Inspecting the distribution of observed and imputed values
 # stripplot(imp, pch = 20, cex = 1.2) # red dots are imputed values
 # # A scatter plot is also useful to spot unusual patterns in two vars
-# xyplot(imp, pre_life_events ~ post_life_events | .imp, pch = 20, cex = 1.4)
+xyplot(imp, p_anxiety_9y ~ m_attempted_suicide_5y | .imp, pch = 20, cex = 1.4)
 
 pren50cutoff <- miceadds::subset_datlist( imp, subset = imp$data$pre_percent_missing < 50.0,  toclass = 'mids')
 post50cutoff <- miceadds::subset_datlist( pren50cutoff, subset = pren50cutoff$data$post_percent_missing < 50.0 )
@@ -369,18 +369,18 @@ finalset     <- miceadds::subset_datlist( no_twins,     subset = no_twins$data$s
 ################################################################################
 
 # I save the mids object (i.e. list of imputed datasets)
-saveRDS(imputation, paste0(pathtodata,'imputation_list_full.rds'))
-saveRDS(post50cutoff, paste0(pathtodata,'imputation_list_ELS.rds'))
-saveRDS(finalset, paste0(pathtodata,'imputation_list_ELSPCM.rds'))
+saveRDS(imp, paste0(alspac_file,'imputation_list_full.rds'))
+saveRDS(post50cutoff, paste0(alspac_file,'imputation_list_ELS.rds'))
+saveRDS(finalset, paste0(alspac_file,'imputation_list_ELSPCM.rds'))
 
 # I also save the last imputed dataset for sanity checks
 full_imputed <- complete(imputation, 30) 
-saveRDS(full_imputed, paste0(pathtodata,'full_imputed.rds'))
+saveRDS(full_imputed, paste0(alspac_file,'full_imputed.rds'))
 
 # I also save the last imputed dataset for sanity checks
 ELS_PCM_imputed <- complete(finalset, 30) 
-saveRDS(ELS_PCM_imputed, paste0(pathtodata,'ELSPCM_imputed.rds'))
+saveRDS(ELS_PCM_imputed, paste0(alspac_file,'ELSPCM_imputed.rds'))
 
 # I also save the last imputed dataset for sanity checks
 ELS_imputed <- complete(post50cutoff, 30) 
-saveRDS(ELS_imputed, paste0(pathtodata,'ELS_imputed.rds'))
+saveRDS(ELS_imputed, paste0(alspac_file,'ELS_imputed.rds'))

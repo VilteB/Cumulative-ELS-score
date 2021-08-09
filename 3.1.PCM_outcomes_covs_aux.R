@@ -247,7 +247,7 @@ cov_out$e220r <- ifelse(alspac.table$e220 == 'Not at all', 0,
                                             ifelse(alspac.table$e220 == '3-9 glasses daily', 4, 
                                                    ifelse(alspac.table$e220 == '>9 glasses daily', 5, NA))))))
 
-cov_out$m_drinking <- rowSums(cov_out[, c('b721r', 'e220r')], na.rm = F)
+cov_out$m_drinking <- rowMeans(cov_out[, c('b721r', 'e220r')], na.rm = F)
 
 
 #-------------------------------------------------------------------------------
@@ -300,13 +300,13 @@ cov_out$m_age_cont     <- as.numeric(levels(alspac.table$mz028b))[alspac.table$m
 cov_out$m_dep_cont_pregnancy <- dep$m_EPDS_total_18wg + dep$m_EPDS_total_32wg
 # Postnatal maternal depression
 post_dep_m <- sapply(dep[, c('f200', 'g290', 'h200a')], as.integer) #  NAs introduced by coercion from not depressed and very depressed
-cov_out$m_dep_cont_childhood <- rowSums(post_dep_m, na.rm = T)
+cov_out$m_dep_cont_childhood <- rowMeans(post_dep_m, na.rm = T)
 
 # Prenatal paternal depression
 cov_out$p_dep_cont_pregnancy <- dep$p_EPDS_total_18wg
 # Postnatal paternal depression
 post_dep_p <- sapply(dep[, c('pe290', 'pd200')], as.integer) 
-cov_out$p_dep_cont_childhood <- rowSums(post_dep_p, na.rm = T)
+cov_out$p_dep_cont_childhood <- rowMeans(post_dep_p, na.rm = T)
 
 #------------------------------------------------------------------------------#
 # ------------------------- PERMUTATION TESTING -------------------------------#
