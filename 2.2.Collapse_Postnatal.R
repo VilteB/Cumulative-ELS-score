@@ -498,7 +498,7 @@ postnatal_stress$p_went_away_9y	 <- post89$p2015a_rec	# Mum's PTNR/husband went 
 # conflict_in_family
 # ------------------------------------------------------------------------------
 # postnatal_stress$conflict_in_family_8wk <- post07$e437a_rec  # PTNR EMOT cruel to Mum since MID PREG
-postnatal_stress$conflict_in_family_8m  <- post07$f239a_rec  # Argued with partner
+# postnatal_stress$conflict_in_family_8m  <- post07$f239a_rec  # Argued with partner
 postnatal_stress$conflict_in_family_21m <- post07$g336a_rec  # PTNR EMOT cruel to Mum since 8 months
 postnatal_stress$conflict_in_family_3y  <- post07$h246a_rec  # PTNR EMOT cruel to Mum since 18 months
 postnatal_stress$conflict_in_family_4y  <- post07$j336a_rec  # PTNR EMOT cruel to Mum since 30 months
@@ -563,8 +563,8 @@ postnatal_stress$physical_violence_3y  <- post07$kf454a_rec  # CH physically hur
 postnatal_stress$physical_violence_4y  <- post07$kl474a_rec  # CH physically hurt by someone since age 3
 postnatal_stress$physical_violence_5y  <- post07$kn4004a_rec # CH physically hurt by someone in past 15 months
 postnatal_stress$physical_violence_6y  <- post07$kq364a_rec  # CH physically hurt by someone since 5th birthday
-postnatal_stress$physical_violence_9y  <- repmeas(post89[,c('kt5004a_rec', 'ku298a_rec')]) 
-# CH physically hurt by someone since 7th birthday [8y] | Child is hit or slapped [9y]
+postnatal_stress$physical_violence_8y  <- post89$kt5004a_rec # CH physically hurt by someone since 7th birthday [8y]  
+# NOT: repmeas(post89[,c('kt5004a_rec', 'ku298a_rec')]) i.e., | Child is hit or slapped [9y]
 # ------------------------------------------------------------------------------
 # sexual_abuse
 # ------------------------------------------------------------------------------

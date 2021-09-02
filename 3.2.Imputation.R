@@ -156,13 +156,13 @@ post_PR <- c('work_problems_8m','work_problems_21m','work_problems_3y','work_pro
 post_IR <- c( 'divorce_8m', 'divorce_21m', 'divorce_3y', 'divorce_4y', 'divorce_5y', 'divorce_6y', 'divorce_9y',
               'p_rejected_child_8m', 'p_rejected_child_21m', 'p_rejected_child_3y', 'p_rejected_child_4y', 'p_rejected_child_5y', 'p_rejected_child_6y', 'p_rejected_child_9y',
               'p_went_away_8m', 'p_went_away_21m', 'p_went_away_3y', 'p_went_away_4y', 'p_went_away_5y', 'p_went_away_6y', 'p_went_away_9y',
-              'conflict_in_family_8m', 'conflict_in_family_21m', 'conflict_in_family_3y', 'conflict_in_family_4y', 'conflict_in_family_5y', 'conflict_in_family_6y', 'conflict_in_family_9y',
+              'conflict_in_family_21m', 'conflict_in_family_3y', 'conflict_in_family_4y', 'conflict_in_family_5y', 'conflict_in_family_6y', 'conflict_in_family_9y',
               'conflict_family_violence_8m', 'conflict_family_violence_21m', 'conflict_family_violence_3y', 'conflict_family_violence_4y', 'conflict_family_violence_5y', 'conflict_family_violence_6y', 'conflict_family_violence_9y',
               'm_new_partner_8m', 'm_new_partner_21m', 'm_new_partner_3y', 'm_new_partner_4y', 'm_new_partner_5y', 'm_new_partner_6y', 'm_new_partner_9y',
               'argued_fam_friends_8m', 'argued_fam_friends_21m', 'argued_fam_friends_3y', 'argued_fam_friends_4y', 'argued_fam_friends_5y', 'argued_fam_friends_6y', 'argued_fam_friends_9y')
 
 post_DV <- c('bullying_8y',
-             'physical_violence_18m', 'physical_violence_30m', 'physical_violence_3y', 'physical_violence_4y', 'physical_violence_5y', 'physical_violence_6y', 'physical_violence_9y',
+             'physical_violence_18m', 'physical_violence_30m', 'physical_violence_3y', 'physical_violence_4y', 'physical_violence_5y', 'physical_violence_6y', 'physical_violence_8y',
              'sexual_abuse_18m', 'sexual_abuse_30m', 'sexual_abuse_3y', 'sexual_abuse_4y', 'sexual_abuse_5y', 'sexual_abuse_6y', 'sexual_abuse_8y',
              'p_cruelty_physical_8m', 'p_cruelty_physical_21m', 'p_cruelty_physical_3y', 'p_cruelty_physical_4y', 'p_cruelty_physical_5y', 'p_cruelty_physical_6y', 'p_cruelty_physical_9y',
              'm_cruelty_physical_8m', 'm_cruelty_physical_21m', 'm_cruelty_physical_3y', 'm_cruelty_physical_4y', 'm_cruelty_physical_5y', 'm_cruelty_physical_6y', 'm_cruelty_physical_9y',
@@ -343,11 +343,9 @@ imp <- mice(ELS, m = 2, # nr of imputed datasets
             visitSequence = VisSeq, 
             predictorMatrix = predictormatrix)
 
-################### OPTIONAL CHECKS (beware: it takes time) ####################
-# # Inspecting the distribution of observed and imputed values
-# stripplot(imp, pch = 20, cex = 1.2) # red dots are imputed values
-# # A scatter plot is also useful to spot unusual patterns in two vars
-xyplot(imp, p_anxiety_9y ~ m_attempted_suicide_5y | .imp, pch = 20, cex = 1.4)
+
+#-------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
 
 pren50cutoff <- miceadds::subset_datlist( imp, subset = imp$data$pre_percent_missing < 50.0,  toclass = 'mids')
 post50cutoff <- miceadds::subset_datlist( pren50cutoff, subset = pren50cutoff$data$post_percent_missing < 50.0 )
