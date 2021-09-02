@@ -9,6 +9,7 @@
 #at 10y, 13y, 15y, 17y and 22y. These scores can be added in order to construct multiple analyses between 
 #ELS and PCM outcomes at subsequent timepoints. 
 
+
 #### ---------------------------- Dependencies ---------------------------- ####
 
 # First, let's point to the necessary libraries
@@ -48,19 +49,51 @@ cov_out <- data.frame("IDC" = paste(alspac.table$cidb2957, alspac.table$qlet, se
 #### ------------------ INTERNALIZING PROBLEMS ( @ 9 ) -------------------- ####
 ################################################################################
 
+#age = 10 
+
+#{
+#  if (age = 10) {
+#  cov_out$int.age <- as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12 & 
+#  cov_out$internscore <- as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] & 
+#    cov_out$fm.age <- as.numeric(as.character(alspac.table$f9003c)) / 12 &
+#      cov_out$fmscore <- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135]
+#      } else if (age = 13) {
+#  cov_out$int.age <- as.numeric(levels(alspac.table$tb9991a))[alspac.table$tb9991a] & 
+#  cov_out$internscore <- as.numeric(levels(alspac.table$tb8603))[alspac.table$tb8603] & 
+#    cov_out$fm.age <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257] & 
+#      cov_out$fmscore <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]
+#      } else if (age = 15)  {
+#  cov_out$int.age <- as.numeric(levels(alspac.table$fh0011a))[alspac.table$fh0011a] &
+#  cov_out$internscore <- as.numeric(alspac.table$fh6876) &
+#    cov_out$fm.age <- as.numeric(levels(alspac.table$fh2257))[alspac.table$fh2257] &
+#    cov_out$fmscore <- as.numeric(levels(alspac.table$fh2257))[alspac.table$fh2257]
+#    } else if (age = 17) {
+#  cov_out$int.age <- as.numeric(levels(alspac.table$fj003a))[alspac.table$fj003a]  
+#cov_out$intern.score <- as.numeric(levels(alspac.table$fjci350))[alspac.table$fjci350] &
+#  cov_out$fm.age <- as.numeric(levels(alspac.table$fj003b))[alspac.table$fj003b] &
+#  cov_out$fmscore <- as.numeric(levels(alspac.table$fjdx138))[alspac.table$fjdx138]
+#   } else if (age = 22) {cov_out$int.age.22y      <- as.numeric(levels(alspac.table$ypb9992))[alspac.table$ypb9992] & 
+#  cov_out$intern_score.22y <- as.numeric(levels(alspac.table$ypb5180))[alspac.table$ypb5180] &
+#    cov_out$fm.age.24y   <- as.numeric(levels(alspac.table$fkar0010))[alspac.table$fkar0010] &
+#      cov_out$fat_mass.24y <- as.numeric(levels(alspac.table$fkdx1041))[alspac.table$fkdx1041]} else {NULL}
+#  }
+
 # Age of study child at completion (months)	
-cov_out$int.age.10y <- as.numeric(as.character(alspac.table$ku991a)) / 12 
+#cov_out$int.age.10y <- as.numeric(as.character(alspac.table$ku991a)) / 12 
 
 # SDQ emotional symptoms and peer problems scores (complete cases)
-cov_out$peer_probs <- as.numeric(levels(alspac.table$ku709a))[alspac.table$ku709a]
-cov_out$emot_symp <- as.numeric(levels(alspac.table$ku707a))[alspac.table$ku707a]
+#cov_out$peer_probs <- as.numeric(levels(alspac.table$ku709a))[alspac.table$ku709a]
+
+cov_out$emot_symp <- as.numeric(levels(alspac.table$ta7025a))[alspac.table$ta7025a] #SDQ emotional symptoms at 13y 
+cov_out$emot_symp_age <- as.numeric(levels(alspac.table$ta9991a))[alspac.table$ta9991a] / 12 #age @ SDQ emotional symptoms
 
 # SDQ (continuous) internalizing score: i.e sum of he SDQ peer problems and emotional symptoms subscales
-cov_out$intern_score <- rowSums(cov_out[,c('peer_probs', 'emot_symp')])
+#cov_out$intern_score <- rowSums(cov_out[,c('peer_probs', 'emot_symp')])
+
 
 # ALTERNATIVE: DAWBA depression prediction  @ 9 yrs # informant: MOTHER.
-cov_out$DAWBAint.age.10y  <-  as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12  # age 10 (years)
-cov_out$DAWBAintern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] # 10yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)
+#cov_out$DAWBAint.age.10y  <-  as.numeric(levels(alspac.table$kv9991a))[alspac.table$kv9991a] / 12  # age 10 (years)
+#cov_out$DAWBAintern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.table$kv8603] # 10yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)
 # cov_out$int.age.13y      <- as.numeric(levels(alspac.table$tb9991a))[alspac.table$tb9991a] # age 13 
 # cov_out$intern_score.13y <- as.numeric(levels(alspac.table$tb8603))[alspac.table$tb8603]   # 13yr Depression (parent 6-band computer prediction, ICD-10 and DSM-IV)    
 # cov_out$int.age.15y      <- as.numeric(levels(alspac.table$fh0011a))[alspac.table$fh0011a] # age 15 
@@ -80,19 +113,22 @@ cov_out$DAWBAintern_score <-  as.numeric(levels(alspac.table$kv8603))[alspac.tab
 # for future longitudinal assessment. 
 
 # Trunk fat mass (g)
-cov_out$fat_mass_trunk <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx126] # trunk FM at age 10y
+#cov_out$fat_mass_trunk <- as.numeric(levels(alspac.table$f9dx126))[alspac.table$f9dx126] # trunk FM at age 10y
 # Total body fat mass (g)
-cov_out$fat_mass_total <- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135] # total FM at age 10y
+#cov_out$fat_mass_total <- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135] # total FM at age 10y
 
 # Fat Mass Index (FMI)
-cov_out$height.10y <- as.numeric(levels(alspac.table$pub203))[alspac.table$pub203] / 100 # Child's height in m
-cov_out$fmi        <- cov_out$fat_mass_total / ((cov_out$height.10y)^2) # Total fat / squared height
+#cov_out$height.10y <- as.numeric(levels(alspac.table$pub203))[alspac.table$pub203] / 100 # Child's height in m
+#cov_out$fmi        <- cov_out$fat_mass_total / ((cov_out$height.10y)^2) # Total fat / squared height
 
 # Age of study child at fatmass measurement: these variables can be modified in order to adjust for changes in the fatmass score in lines 74-89. 
-cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12
-# cov_out$fm.age.13y   <- as.numeric(levels(alspac.table$kg998a))[alspac.table$kg998a]     # age 13
-# cov_out$fat_mass.13y <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]     # andr FM at age 13y
-# cov_out$fat_mass.15y <- as.numeric(levels(alspac.table$fh2257))[alspac.table$fh2257]     # andr FM at age 15y
+#cov_out$fm.age.10y <- as.numeric(as.character(alspac.table$f9003c)) / 12
+#cov_out$fat_mass.10y<- as.numeric(levels(alspac.table$f9dx135))[alspac.table$f9dx135] # total FM at age 10y
+cov_out$fm.age.13y   <- as.numeric(levels(alspac.table$fg0011a))[alspac.table$fg0011a] / 12     # age 13 android fat mass
+cov_out$fat_mass.13y <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]     # andr FM at age 13y
+# cov_out$fm.age.15y <- as.numeric(levels(alspac.table$fh2257))[alspac.table$fh2257]     # andr FM at age 15y
+# cov_out$fat_mass.15y <- as.numeric(levels(alspac.table$fh2257))[alspac.table$fh2257] #age 15
+# cov_out$fm.age.17y <- as.numeric(levels(alspac.table$fj003b))[alspac.table$fj003b] #age 17
 # cov_out$fat_mass.17y <- as.numeric(levels(alspac.table$fjdx138))[alspac.table$fjdx138]   # andr FM at age 17y
 # cov_out$fm.age.24y   <- as.numeric(levels(alspac.table$fkar0010))[alspac.table$fkar0010] # age 24
 # cov_out$fat_mass.24y <- as.numeric(levels(alspac.table$fkdx1041))[alspac.table$fkdx1041] # andr FM at age 24y
@@ -103,18 +139,18 @@ write.csv(cor_outcome, file = "corr_mat_outcomes.csv", row.names = T, quote = F)
 # ------------------------------------------------------------------------------
 # Before we can use them in the analysis, the outcome variables need to be standardized. 
 # so, here we take the standard deviation score.
-cov_out$intern_score_z      <- as.numeric(scale(cov_out$intern_score)) # SDQ
-cov_out$DAWBAintern_score_z <- as.numeric(scale(cov_out$DAWBAintern_score)) # DAWBA
+cov_out$intern_score_z      <- as.numeric(scale(cov_out$emot_symp)) # SDQ
+#cov_out$DAWBAintern_score_z <- as.numeric(scale(cov_out$DAWBAintern_score)) # DAWBA
 # cov_out$intern_score_z.13y <- as.numeric(scale(cov_out$intern_score.13y))
 # cov_out$intern_score_z.15y <- as.numeric(scale(cov_out$intern_score.15y))
 # cov_out$intern_score_z.17y <- as.numeric(scale(cov_out$intern_score.17y))
 # cov_out$intern_score_z.22y <- as.numeric(scale(cov_out$intern_score.22y))
 
 
-cov_out$fmi_z <- as.numeric(scale(cov_out$fmi))
-cov_out$fat_mass_z     <- as.numeric(scale(cov_out$fat_mass_total))
-cov_out$fat_mass_tru_z <- as.numeric(scale(cov_out$fat_mass_trunk))
-# cov_out$fat_mass_z.13y <- as.numeric(scale(cov_out$fat_mass.13y))
+#cov_out$fmi_z <- as.numeric(scale(cov_out$fmi))
+#cov_out$fat_mass_z     <- as.numeric(scale(cov_out$fat_mass_total))
+#cov_out$fat_mass_tru_z <- as.numeric(scale(cov_out$fat_mass_trunk))
+cov_out$fat_mass_z <- as.numeric(scale(cov_out$fat_mass.13y))
 # cov_out$fat_mass_z.15y <- as.numeric(scale(cov_out$fat_mass.15y))
 # cov_out$fat_mass_z.17y <- as.numeric(scale(cov_out$fat_mass.17y))
 # cov_out$fat_mass_z.24y <- as.numeric(scale(cov_out$fat_mass.24y))
@@ -170,17 +206,20 @@ construct_grp <- function(int_var, fm_var, cutoff = 0.8, df = cov_out, permute =
 }
 
 # DAWBA
-cov_out$dawba_trunk_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_tru_z')
-cov_out$dawba_total_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_z')
-cov_out$dawba_fmi_grp   <- construct_grp('DAWBAintern_score_z', 'fmi_z')
+#cov_out$dawba_trunk_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_tru_z')
+#cov_out$dawba_total_grp <- construct_grp('DAWBAintern_score_z', 'fat_mass_z')
+#cov_out$dawba_fmi_grp   <- construct_grp('DAWBAintern_score_z', 'fmi_z')
 
 # SDQ 
-cov_out$sdq_trunk_grp <- construct_grp('intern_score_z', 'fat_mass_tru_z')
-cov_out$sdq_total_grp <- construct_grp('intern_score_z', 'fat_mass_z')
-cov_out$sdq_fmi_grp   <- construct_grp('intern_score_z', 'fmi_z')
+#cov_out$sdq_trunk_grp <- construct_grp('intern_score_z', 'fat_mass_tru_z')
+#cov_out$sdq_total_grp <- construct_grp('intern_score_z', 'fat_mass_z')
+#cov_out$sdq_fmi_grp   <- construct_grp('intern_score_z', 'fmi_z')
 
 # for now
-cov_out$risk_groups <- cov_out$sdq_total_grp
+#cov_out$risk_groups <- cov_out$sdq_total_grp
+
+#SDQ and android FM @ 13y 
+cov_out$sdq_android_grp <- construct_grp('intern_score_z', 'fat_mass_z')
 
 ################################################################################
 #### ---------------------------- COVARIATES ------------------------------ ####
@@ -205,15 +244,15 @@ cov_out$sex <- alspac.table$kz021 # 1 = Male; 2 = Female.
 # Combine age of the child measured during internalising and fatmass measurement
 # This value will serve as a covariate in the first adjusted model.
 
-cov_out$age_child <- (cov_out$int.age.10y + cov_out$fm.age.10y) / 2
+cov_out$age_child <- (cov_out$emot_symp_age + cov_out$fm.age.13y) / 2
 # cov_out$age_child.13y <- (cov_out$int.age.13y + cov_out$fm.age.13y) / 2
 # cov_out$age_child.15y <-  cov_out$int.age.15y
 # cov_out$age_child.17y <-  cov_out$int.age.17y
 # cov_out$age_child.23y <- (cov_out$int.age.22y + cov_out$fm.age.24y) / 2
 
 # OPTIONAL: check age difference between measurements
-plot(cov_out$int.age.10y, cov_out$fm.age.10y)
-summary(cov_out$int.age.10y - cov_out$fm.age.10y)
+plot(cov_out$emot_symp_age, cov_out$fm.age.13y)
+summary(cov_out$emot_symp_age - cov_out$fm.age.13y)
 
 #-------------------------------------------------------------------------------
 ### MATERNAL SMOKING during pregnancy 
