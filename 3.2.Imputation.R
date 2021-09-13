@@ -336,8 +336,8 @@ VisSeq <- imp0$visitSequence
 # Run the actual imputation. To ensure convergence among the variables but retain
 # low computational load, we do 60 iterations using 30 imputed datasets (following 
 # Isabel's approach)
-imp <- mice(ELS, m = 2, # nr of imputed datasets
-            maxit = 2, #nr of iteration taken to impute missing values
+imp <- mice(ELS, m = 30, # nr of imputed datasets
+            maxit = 60, #nr of iteration taken to impute missing values
             seed = 310896, # set a seed for the random number generation in case i need to generate the same dataset again
             method = meth,
             visitSequence = VisSeq, 
@@ -372,7 +372,7 @@ saveRDS(post50cutoff, paste0(alspac_file,'imputation_list_ELS.rds'))
 saveRDS(finalset, paste0(alspac_file,'imputation_list_ELSPCM.rds'))
 
 # I also save the last imputed dataset for sanity checks
-full_imputed <- complete(imputation, 30) 
+full_imputed <- complete(imp, 30) 
 saveRDS(full_imputed, paste0(alspac_file,'full_imputed.rds'))
 
 # I also save the last imputed dataset for sanity checks
