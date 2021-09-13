@@ -159,9 +159,13 @@ orig_sds <- sapply(original_set, sd, na.rm = T, USE.NAMES = T)
 
 # Stack imputed datasets in long format, exclude the original data
 impdat <- complete(imp, action="long", include = FALSE)
+
+
 # Create mean of imputation dataset
+#BEWARE: with ALSPAC dataset, this next step takes ~ 7 hours
 dataset <- replance_med(original_set, c(pre_LE, pre_CR, pre_PR, pre_IR,
                                        post_LE, post_CR, post_PR, post_IR, post_DV))
+
 # dataset_final <- replance_mean(dataset, c(covars[-1], auxil)) # > REMOVE BINARY VARIABLES ADD THEM ABOVE
 
 misslist <- original_set$IDC[which(is.na(original_set[, 'p_criminal_record']))]
