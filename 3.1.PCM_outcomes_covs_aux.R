@@ -39,13 +39,14 @@ permute <- function(df) {
 }
 
 # Check if the path to the data is already in memory, otherwise ask for it. 
+
 if (exists("alspac_file") == F) { 
   alspac_file <- file.choose() 
   alspac_folder <- dirname(alspac_file) 
   # Read in the data
   alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) }
 
-dep <- readRDS(file.path(alspac_folder, "raw_parent_depr_anxiety.rsd"))
+dep <- readRDS(file.path(alspac_folder, "raw_parent_depr_anxiety.rds"))
 
 # Change all names to lowercase
 names(alspac.table)=tolower(names(alspac.table))
@@ -58,68 +59,58 @@ cov_out <- data.frame("IDC" = paste(alspac.table$cidb2957, alspac.table$qlet, se
 ##############################################################################################################
 
 
+
+# ignore line 70- for serenas body fat percentage analysis
 select_age_outcome <- function(age, df) {
-  #SDQ emotional problems & total fatmass
-  if (age == 10){  vars = c('ku991a', 'ku707a','f9003c', 'f9dx135') 
+  #SDQ emotional problems & total fatmass & weight
+  if (age == 10){  vars = c('ku991a', 'ku707a','f9003c', 'f9dx135', 'f9dx010') 
+  }
+  #SDQ emotional problems & total fatmass & weight
+  else if (age == 11) { vars = c('kw9991a', 'kw6602a','fe003c', 'fedx135','fedx016')
+  
+  }
+  #SDQ emotional problems & total fatmass & weight
+  else if (age == 13) { vars = c('ta9991a', 'ta7025a','fg0011a', 'fg3254', 'fg3207')
+  
+  }
+  #SDQ emotional problems & total fatmass & weight
+  else if (age == 15) { vars = c('fh0011a', 'fh6876','fh0011a', 'fh2254', 'fh2208')
+  
+  }
+  #SDQ emotional problems & total fatmass & weight
+  else if (age == 17) { vars = c('tc9991a', 'tc4025a','fj003b', 'FJDX135', 'FJMR022')
+  }
+  #SDQ emotional problems & total fatmass & weight
+  else if (age == 22) { vars = c('ypb9992', 'ypb5180','FKAR0010', 'FKDX1001', 'FKMS1030')
+  }
+  
+  div = 12 
+  
+  if (vars[3] == 'fj003b') { div = 1 }
   
   df$int.age = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]]/ 12
   df$int.score = as.numeric(levels(df[, vars [2]]))[df[, vars[2]]]
-  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]/ 12
+  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]/ div
   df$fat.mass = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]]
+  df$weight = as.numeric(levels(df[, vars[4]]))[df[, vars[5]]]
   
-  }
-  #SDQ emotional problems & total fatmass
-  else if (age == 11) { vars = c('kw9991a', 'kw6602a','fe003c', 'fedx135') 
-  
-  df$int.age = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]] / 12
-  df$int.score = as.numeric(levels(df[, vars [2]]))[df[, vars[2]]]
-  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]/ 12
-  df$fat.mass = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]]
-  
-  }
-  #SDQ emotional problems & android fatmass
-  else if (age == 13) { vars = c('ta9991a', 'ta7025a','fg0011a', 'fg3257')
-  
-  df$int.age = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]] / 12
-  df$int.score = as.numeric(levels(df[, vars [2]]))[df[, vars[2]]]
-  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]/ 12
-  df$fat.mass = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]]
-  
-  }
-  #SDQ emotional problems & android fatmass
-  else if (age == 15) { vars = c('fh0011a', 'fh6876','fh0011a', 'fh2257')
-  
-  df$int.age = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]] / 12
-  df$int.score = as.numeric(levels(df[, vars [2]]))[df[, vars[2]]]
-  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]] / 12
-  df$fat.mass = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]]
-  
-  }
-  #SDQ emotional problems & android fatmass
-  else if (age == 17) { vars = c('tc9991a', 'tc4025a','fj003b', 'fjdx138')
-  
-  df$int.age = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]] /12
-  df$int.score = as.numeric(levels(df[, vars [2]]))[df[, vars[2]]]
-  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]
-  df$fat.mass = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]]
-  
-  
-  }
-  #SDQ emotional problems & android fatmass
-  else if (age == 22) { vars = c('ypb9992', 'ypb5180','FKAR0010', 'FKDX1041')
-  
-  df$int.age = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]]/ 12
-  df$int.score = as.numeric(levels(df[, vars [2]]))[df[, vars[2]]]
-  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]/ 12
-  df$fat.mass = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]]
-  }
-  return(df[, c('int.age', 'int.score', 'fat.age', 'fat.mass')])       
+  return(df[, c('int.age', 'int.score', 'fat.age', 'fat.mass', 'weight')])       
   
 }
 
 cov_out_temp = select_age_outcome(agetemp, alspac.table)
 
 cov_out = cbind(cov_out, cov_out_temp)
+
+
+#13y fatmass variables ONLY
+#cov_out$and_fat_mass <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]# andr FM at age 13y
+#cov_out$fat_mass_tot <- as.numeric(levels(alspac.table$fg3254))[alspac.table$fg3254] # total FM at age 13y
+#cov_out$dxa_weight   <- as.numeric(levels(alspac.table$fg3207))[alspac.table$fg3207] # body weight at scanner
+
+# Body fat percentage calculation
+cov_out$fat_perc <- (cov_out$fat.mass / (cov_out$weight*1000)) * 100
+alspac.table$fat_perc <- cov_out$fat_perc
 
 
 # ------------------------------------------------------------------------------
@@ -129,7 +120,8 @@ write.csv(cor_outcome, file = "corr_mat_outcomes.csv", row.names = T, quote = F)
 # Before we can use them in the analysis, the outcome variables need to be standardized. 
 # so, here we take the standard deviation score.
 cov_out$intern_score_z <- as.numeric(scale(cov_out$int.score)) # SDQ
-cov_out$fat_mass_z     <- as.numeric(scale(cov_out$fat.mass))
+cov_out$fat_mass_z     <- as.numeric(scale(cov_out$fat_perc))
+#cov_out$android_f_z    <- as.numeric(scale(cov_out$and_fat_mass))
 
 ################################################################################
 #### ------------------- Construct RISK GROUPS variable ------------------- ####
