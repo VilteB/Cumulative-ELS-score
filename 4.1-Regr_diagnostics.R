@@ -24,18 +24,23 @@ if (exists("imp") == F) {
 
 # original dataset (with missing data)
 data <- mice::complete(imp, action = 0)
+
+# add correct fat mass 
+out  <- readRDS(file.choose()) # choose "PCMout_cov_aux.rds"
+data$FAT_MASS_Z <- out$fat_mass_z
+
 # data1 <- data[-c(1751, 336, 785, 2371, 1297, 1645), ] # influential point
 # data2 <- data[-c(604, 1710, 2030, 397, 2480, 3274), ] # influential point
 
-fit1 <- lm(intern_score_z ~ prenatal_stress_z * postnatal_stress_z + sex + age_child + 
-            ethnicity +  m_bmi_berore_pregnancy + m_smoking + m_drinking, data = data) 
-fit2 <- lm(fat_mass_z ~ prenatal_stress_z * postnatal_stress_z + 
+fit1 <- lm(intern_score_z ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
+            ethnicity +  m_bmi_before_pregnancy + m_smoking + m_drinking, data = data) 
+fit2 <- lm(FAT_MASS_Z ~ prenatal_stress_z + postnatal_stress_z + 
             # I(prenatal_stress_z^2) + I(postnatal_stress_z^2) + 
              sex + age_child + 
-             ethnicity + m_bmi_berore_pregnancy + m_smoking + m_drinking, data = data)
-fit3 <- nnet::multinom(risk_groups_rec ~ prenatal_stress_z*postnatal_stress_z + 
-                  sex + age_child + ethnicity + m_bmi_berore_pregnancy + m_smoking + m_drinking, 
-                  model = T, data = data)
+             ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, data = data)
+# fit3 <- nnet::multinom(risk_groups_rec ~ prenatal_stress_z + postnatal_stress_z + 
+#                   sex + age_child + ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, 
+#                   model = T, data = data)
 
 ### ======================= GENERAL FIT DIAGNOSTICS ======================== ###
 
@@ -146,21 +151,21 @@ car::avPlots(fit2, main = "Fat mass")
 # Cook's D plot: identify D values > 4/(n-k-1)
 plot(fit1, which=4, cook.levels = 4/((nrow(data) - length(fit1$coefficients) - 2)))
 # Compare combination of exclusions
-fit1.1 <- update(fit1, subset = ! rownames(data) %in% c(2559))
-fit1.2 <- update(fit1, subset = ! rownames(data) %in% c(2045))
-fit1.3 <- update(fit1, subset = ! rownames(data) %in% c(1751))
-fit1.4 <- update(fit1, subset = ! rownames(data) %in% c(2045, 2559))
-fit1.5 <- update(fit1, subset = ! rownames(data) %in% c(1751, 2045, 2559))
-compareCoefs(fit1, fit1.1, fit1.2, fit1.3, fit1.4, fit1.5)
+# fit1.1 <- update(fit1, subset = ! rownames(data) %in% c(2559))
+# fit1.2 <- update(fit1, subset = ! rownames(data) %in% c(2045))
+# fit1.3 <- update(fit1, subset = ! rownames(data) %in% c(1751))
+# fit1.4 <- update(fit1, subset = ! rownames(data) %in% c(2045, 2559))
+# fit1.5 <- update(fit1, subset = ! rownames(data) %in% c(1751, 2045, 2559))
+# compareCoefs(fit1, fit1.1, fit1.2, fit1.3, fit1.4, fit1.5)
 # Cook's D plot: identify D values > 4/(n-k-1)
 plot(fit2, which=4, cook.levels = 4/((nrow(data) - length(fit2$coefficients) - 2)))
 # Compare combination of exclusions
-fit2.1 <- update(fit2, subset = ! rownames(data) %in% c(1751))
-fit2.2 <- update(fit2, subset = ! rownames(data) %in% c(1710))
-fit2.3 <- update(fit2, subset = ! rownames(data) %in% c(604))
-fit2.4 <- update(fit2, subset = ! rownames(data) %in% c(3326))
-fit2.5 <- update(fit2, subset = ! rownames(data) %in% c(604, 1710, 3326, 1751))
-compareCoefs(fit2, fit2.1, fit2.2, fit2.3, fit2.4, fit2.5)
+# fit2.1 <- update(fit2, subset = ! rownames(data) %in% c(1751))
+# fit2.2 <- update(fit2, subset = ! rownames(data) %in% c(1710))
+# fit2.3 <- update(fit2, subset = ! rownames(data) %in% c(604))
+# fit2.4 <- update(fit2, subset = ! rownames(data) %in% c(3326))
+# fit2.5 <- update(fit2, subset = ! rownames(data) %in% c(604, 1710, 3326, 1751))
+# compareCoefs(fit2, fit2.1, fit2.2, fit2.3, fit2.4, fit2.5)
 
 # Rather than summarizing influence by looking at all coefficients simultaneously, 
 # we could look at individual differences:
@@ -214,9 +219,9 @@ sqrt(vif(fit2)) > 2 # problem?
 ### ============================ NONLINEARITY ============================== ###
 # These do not work for models with interactions
 fit1s <- lm(intern_score_z ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
-             ethnicity +  m_bmi_berore_pregnancy + m_smoking + m_drinking, data = data)
-fit2s <- lm(fat_mass_z ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
-            ethnicity +  m_bmi_berore_pregnancy + m_smoking + m_drinking, data = data)
+             ethnicity +  m_bmi_before_pregnancy + m_smoking + m_drinking, data = data)
+fit2s <- lm(FAT_MASS_Z ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
+            ethnicity +  m_bmi_before_pregnancy + m_smoking + m_drinking, data = data)
 # Component + residual plot
 car::crPlots(fit1s) 
 car::crPlots(fit1s)

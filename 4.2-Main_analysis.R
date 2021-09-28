@@ -12,7 +12,7 @@ if (exists("imp") == F) {
   imp <- readRDS(imp_path)
 }
 
-out  <- readRDS(file.choose()) # choose "PCMout_cov_aux.rds"))
+out  <- readRDS(file.choose()) # choose "PCMout_cov_aux.rds"
 
 # outlier exclusion
 # imp <- miceadds::subset_datlist( imp, subset = ! imp$data$IDC %in% c(5105), toclass = 'mids')
@@ -44,7 +44,7 @@ imp <- miceadds::datlist2mids(dat)
 # ============================================================================ #
 # ============================================================================ #
 
- pool_fit <- function(outcome, datalist, ymod = "linear", n_imputations = 30) {
+pool_fit <- function(outcome, datalist, ymod = "linear", n_imputations = 30) {
   # initiate lists where model fits per imputation will be stored
   yregr_fit <- list(); mregr_fit <- list(); decom_fit <- list()
   drink_fit <- list(); smoke_fit <- list()
@@ -148,7 +148,7 @@ pool_decomp <- function(fit, n_parameters = 15) {
   return(d)
 }
 # ============================================================================ #
-# Define a customized function that pools regression results and builds a dataframe 
+# Customized function that pools regression results and builds a dataframe 
 # that is easy to read and save
 modeltable <- function(fit, logm = FALSE, rev = FALSE) {
   p_fit <- mice::pool(fit) # pool results 
@@ -165,7 +165,46 @@ modeltable <- function(fit, logm = FALSE, rev = FALSE) {
   return(mod)
 }
 # ============================================================================ #
+# INTERNALIZING
+int_pre_fit <- with(imp, lm(intern_score_z ~ prenatal_stress_z + sex + age_child + 
+                          ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+i_pre <- modeltable(int_pre_fit)
 
+int_pos_fit <- with(imp, lm(intern_score_z ~ postnatal_stress_z + sex + age_child + 
+                              ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+i_pos <- modeltable(int_pos_fit)
+
+int_fit <- with(imp, lm(intern_score_z ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
+                              ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+i_prepos <- modeltable(int_fit) 
+
+# FAT MASS
+fat_pre_fit <- with(imp, lm(FAT_MASS_Z ~ prenatal_stress_z + sex + age_child + 
+                              ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+f_pre <- modeltable(fat_pre_fit)
+
+fat_pos_fit <- with(imp, lm(FAT_MASS_Z ~ postnatal_stress_z + sex + age_child + 
+                              ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+f_pos <- modeltable(fat_pos_fit)
+
+fat_fit <- with(imp, lm(FAT_MASS_Z ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
+                          ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+f_prepos <- modeltable(fat_fit) 
+
+# MULTIMORBID
+g_pre_fit <- with(imp, nnet::multinom(RISK_GROUPS_REC ~ prenatal_stress_z + sex + age_child + 
+                                      ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, model = T))
+g_pre <- modeltable(g_pre_fit, logm = T, rev = T)
+
+g_pos_fit <- with(imp, nnet::multinom(RISK_GROUPS_REC ~ postnatal_stress_z + sex + age_child + 
+                                      ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, model = T))
+g_pos <- modeltable(g_pos_fit, logm = T, rev = T)
+
+g_fit <- with(imp, nnet::multinom(RISK_GROUPS_REC ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
+                                  ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, model = T))
+g_prepos <- modeltable(g_fit, logm = T, rev = T)
+# ============================================================================ #
+# MEDIATION ANALYSIS
 fit_is <- pool_fit('intern_score_z', dat)
 fit_fm <- pool_fit('FAT_MASS_Z', dat)
 fit_gr <- pool_fit('RISK_GROUPS_REC', dat, ymod = "multinomial")
@@ -190,30 +229,49 @@ dec_gr <- pool_decomp(fit_gr, 17)
 # of belonging to each group. Again fist a minumally adjusted and then a fully adjusted 
 # model is run. 
 
-# Fully adjusted model
-fit_int_dm_full <- with(imp, nnet::multinom(intern_score_z ~ pre_life_events + pre_contextual_risk +  pre_parental_risk + pre_interpersonal_risk +
+fit_int_dm_full <- with(imp, lm(intern_score_z ~ pre_life_events + pre_contextual_risk +  pre_parental_risk + pre_interpersonal_risk +
                                               post_life_events + post_contextual_risk + post_parental_risk + post_interpersonal_risk + post_direct_victimization +
-                                              sex + age_child + ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, model = T))
-dm_int <- modeltable(fit_int_dm_full, logm = T)
+                                              sex + age_child + ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+dm_int <- modeltable(fit_int_dm_full)
 
-# Fully adjusted model
-fit_ftm_dm_full <- with(imp, nnet::multinom(FAT_MASS_Z ~ pre_life_events + pre_contextual_risk +  pre_parental_risk + pre_interpersonal_risk +
-                                              post_life_events + post_contextual_risk + post_parental_risk + post_interpersonal_risk + post_direct_victimization +
-                                              sex + age_child + ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, model = T))
-dm_ftm <- modeltable(fit_ftm_dm_full, logm = T)
+fit_ftm_dm_full <- with(imp, lm(FAT_MASS_Z ~ pre_life_events + pre_contextual_risk +  pre_parental_risk + pre_interpersonal_risk +
+                                           post_life_events + post_contextual_risk + post_parental_risk + post_interpersonal_risk + post_direct_victimization +
+                                           sex + age_child + ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+dm_ftm <- modeltable(fit_ftm_dm_full)
 
-# Fully adjusted model
 fit_grp_dm_full <- with(imp, nnet::multinom(RISK_GROUPS_REC ~ pre_life_events + pre_contextual_risk +  pre_parental_risk + pre_interpersonal_risk +
-                                              post_life_events + post_contextual_risk + post_parental_risk + post_interpersonal_risk + post_direct_victimization +
-                                              sex + age_child + ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, model = T))
-dm_grp <- modeltable(fit_grp_dm_full, logm = T)
-
+                                            post_life_events + post_contextual_risk + post_parental_risk + post_interpersonal_risk + post_direct_victimization +
+                                            sex + age_child + ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking, model = T))
+dm_grp <- modeltable(fit_grp_dm_full, logm = T, rev = T)
 
 # ============================================================================ #
-modls <- list("1.intern" = y_is, "1.1.intern_dec" = dec_is,
-              "2.fatmas" = y_fm, "2.1.fatmas_dec" = dec_fm, 
-              "3.groups" = y_gr, "3.1.groups_dec" = dec_gr, 
+# SENSITIVITY FAT MASS ANDROID 
+fat_pre_fit2 <- with(imp, lm(fat_mass_z ~ prenatal_stress_z + sex + age_child + 
+                              ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+f_pre2 <- modeltable(fat_pre_fit2)
+
+fat_pos_fit2 <- with(imp, lm(fat_mass_z ~ postnatal_stress_z + sex + age_child + 
+                              ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+f_pos2 <- modeltable(fat_pos_fit2)
+
+fat_fit2 <- with(imp, lm(fat_mass_z ~ prenatal_stress_z + postnatal_stress_z + sex + age_child + 
+                          ethnicity + m_bmi_before_pregnancy + m_smoking + m_drinking))
+f_prepos2 <- modeltable(fat_fit2) 
+
+fit_fm2 <- pool_fit('fat_mass_z', dat)
+y_fm2 <- pool_regs(fit_fm2@yreg)
+dec_fm2 <- pool_decomp(fit_fm2)
+
+# ============================================================================ #
+modls <- list('1.1.INT_pre' = i_pre, '1.2.INT_pos' = i_pos, '1.3.INT_prepos' = i_prepos, 
+              "1.4.INT_*" = y_is, "1.5.INT_dec" = dec_is,
+              '2.1.FAT_pre' = f_pre, '2.2.FAT_pos' = f_pos, '2.3.FAT_prepos' = f_prepos, 
+              "2.4.FAT_*" = y_fm, "2.5.FAT_dec" = dec_fm, 
+              '3.1.GRP_pre' = g_pre, '3.2.GRP_pos' = g_pos, '3.3.GRP_prepos' = g_prepos, 
+              "3.4.GRP_*" = y_gr, "3.5.GRP_dec" = dec_gr, 
               "med_reg" = medr, "drink_reg" = drink, "smoke_reg" = smoke, 
-              "4.DM_int" = dm_int, "5.DM_fat" = dm_ftm, "6.DM_grp" = dm_grp) 
+              "4.DM_int" = dm_int, "5.DM_fat" = dm_ftm, "6.DM_grp" = dm_grp, 
+              '7.1.aFAT_pre' = f_pre2, '7.2.aFAT_pos' = f_pos2, '7.3.aFAT_prepos' = f_prepos2, 
+              "7.4.aFAT_*" = y_fm2, "7.5.aFAT_dec" = dec_fm2) 
 
 openxlsx::write.xlsx(modls, file = paste0(dirname(imp_path), "/Results_cma.xlsx"), overwrite = T)
