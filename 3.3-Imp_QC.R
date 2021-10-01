@@ -3,7 +3,7 @@ library(mice);
 
 # Load the list of imputed dataset
 if (exists("imp") == F) { 
-  imp_path <- file.choose() # choose the 'imputation_list_full.rds' file
+  imp_path <- file.choose() # choose the 'imputation_list_ELSPCM.rds' file
   imp <- readRDS(imp_path)
 }
 
