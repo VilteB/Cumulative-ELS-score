@@ -5,20 +5,12 @@
 # risk), the covariates that are going to be used as well as the auxiliary variables 
 # used in the imputation of the final dataset. 
 
-
-#here i am creating a function in order to autonomate age variables in the ALSPAC cohort
-#simply input the age below, and the function will automatically update the outcome variables to match
-
-agetemp = 13
-
-
-
-#In this script, outcome measures in ALSPAC including internlising (line 55-75) and fatmass (line 75-100) variables, were recorded 
-#at 10y, 13y, 15y, 17y and 22y. These scores can be added in order to construct multiple analyses between 
-#ELS and PCM outcomes at subsequent timepoints. 
-
+# Outcome measures in ALSPAC including internalizing and fat mass variables, were recorded at 
+# 10y, 13y, 15y, 17y and 22y. 
 
 #### ---------------------------- Dependencies ---------------------------- ####
+
+PATH_RESULTS <- '' # ATTENTION! DEFINE HERE THE PATH WHERE YOU WANT ALL RESULTS TO BE STORED.
 
 # First, let's point to the necessary libraries
 library(foreign)
@@ -39,142 +31,91 @@ permute <- function(df) {
 }
 
 # Check if the path to the data is already in memory, otherwise ask for it. 
-
 if (exists("alspac_file") == F) { 
   alspac_file <- file.choose() 
   alspac_folder <- dirname(alspac_file) 
   # Read in the data
-  alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) }
+  alspac.table <- foreign::read.spss(alspac_file, use.value.label=TRUE, to.data.frame=TRUE) 
+}
 
+# Read in the data on parental depression 
 dep <- readRDS(file.path(alspac_folder, "raw_parent_depr_anxiety.rds"))
 
-# Change all names to lowercase
+# Change all names in alspac.table to lowercase
 names(alspac.table)=tolower(names(alspac.table))
 
 # Initiate a cov_out dataframe with id of the child as first column
 cov_out <- data.frame("IDC" = paste(alspac.table$cidb2957, alspac.table$qlet, sep = "_"))
 
-##############################################################################################################
-#### ------------------ INTERNALIZING PROBLEMS and FATMASS ( @ 10, 13, 15, 15 & 22 ) -------------------- ####
-##############################################################################################################
+################################################################################
+#### ---- INTERNALIZING PROBLEMS and FATMASS ( @ 10, 13, 15, 15 & 22 ) -_-- ####
+################################################################################
 
-
-
-# ignore line 70- for serenas body fat percentage analysis
 select_age_outcome <- function(age, df) {
-  #SDQ emotional problems & total fatmass & weight
-  if (age == 10){  vars = c('ku991a', 'ku707a','f9003c', 'f9dx135', 'f9dx010') 
+  
+  if (age == 10) { vars = c('ku991a',    # DV: Age of study child at completion (months)
+                            'ku707a',    # DV: SDQ emotional symptoms score (complete cases) 
+                            'f9003c',    # Age (months) at F9 visit	
+                            'f9dx135',   # Total Body - fat mass (g): F9
+                            'f9dx010') } # DV: DXA weight (Kg): F9
+  else if (age == 11) { vars = c('kw9991a',  # DV: Age of study child at completion (months)
+                                 'kw6602a',  # DV: SDQ - Emotional symptoms score (complete cases)
+                                 'fe003c',   # Age (months) at F11+ visit	
+                                 'fedx135',  # Total Body - fat mass (g): DXA: F11
+                                 'fedx016') } # DV: DXA weight (Kg): F11
+  else if (age == 13) { vars = c('ta9991a',  # DV: Age of study child at completion (months)
+                                 'ta7025a',  # DV: SDQ emotional symptoms score (prorated)
+                                 'fg0011a',  # DV: Age of study child at attendance (months): TF2
+                                 'fg3254',   # Total Body - fat mass (g): DXA: TF2
+                                 'fg3207',   # DV: DXA weight (Kg): DXA: TF2
+                                 'fg3257') } # Android - fat mass (g): DXA: TF2
+  else if (age == 15) { vars = c('fh0011a',  # DV: Age of study child at attendance (months): TF3
+                                 'fh6876',   # DV: Depression (self-report 6-band computer prediction, ICD-10 and DSM-IV): TF3
+                                 'fh0011a',  # DV: Age of study child at attendance (months): TF3
+                                 'fh2254',   # Total - fat mass (g): DXA: TF3
+                                 'fh2208',   # Keyed Weight (kg): DXA: TF3	
+                                 'fh2257') } # Android - fat mass (g): DXA: TF3
+  else if (age == 17) { vars = c('tc9991a',  # DV: Age of study teenager at completion (months)
+                                 'tc4025a',  # DV: SDQ emotional symptoms score (prorated)
+                                 'fj003b',   # Age in years at clinic visit [F17]
+                                 'fjdx135',  # Total: fat mass (g) [F17]	
+                                 'fjmr022',  # M15: Weight (kgs) [F17]	
+                                 'fjdx138') } # Android: fat mass (g) [F17]
+  else if (age == 22) { vars = c('ypb9992',   # DV: Respondent age at completion (months)
+                                 'ypb5180',   # DV: MFQ (moods and feelings questionnaire) score
+                                 'fkar0010',  # Age at clinic visit (in months): F@24
+                                 'fkdx1001',  # Total body fat mass (g): F@24
+                                 'fkms1030',  # Weight (kg): F@24	
+                                 'fkdx1041')} # Android fat mass (g): F@24
+  
+  div = 12; if (vars[3] == 'fj003b') { div = 1 }
+  
+  out.df <- data.frame( 
+    paste0('age_child_sdq_', age) = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]]/ 12,
+     paste0('intern_score_', age) = as.numeric(levels(df[, vars[2]]))[df[, vars[2]]],
+    paste0('age_child_dxa_', age) = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]/ div,
+        paste0('total_fat_', age) = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]],
+       paste0('weight_dxa_', age) = as.numeric(levels(df[, vars[5]]))[df[, vars[5]]] ) 
+  
+  if (length(vars) > 5) {
+    out.df[paste0('andr_fat_mass_', age)] <- as.numeric(levels(df[, vars[6]]))[df[, vars[6]]] 
   }
-  #SDQ emotional problems & total fatmass & weight
-  else if (age == 11) { vars = c('kw9991a', 'kw6602a','fe003c', 'fedx135','fedx016')
-  
-  }
-  #SDQ emotional problems & total fatmass & weight
-  else if (age == 13) { vars = c('ta9991a', 'ta7025a','fg0011a', 'fg3254', 'fg3207')
-  
-  }
-  #SDQ emotional problems & total fatmass & weight
-  else if (age == 15) { vars = c('fh0011a', 'fh6876','fh0011a', 'fh2254', 'fh2208')
-  
-  }
-  #SDQ emotional problems & total fatmass & weight
-  else if (age == 17) { vars = c('tc9991a', 'tc4025a','fj003b', 'FJDX135', 'FJMR022')
-  }
-  #SDQ emotional problems & total fatmass & weight
-  else if (age == 22) { vars = c('ypb9992', 'ypb5180','FKAR0010', 'FKDX1001', 'FKMS1030')
-  }
-  
-  div = 12 
-  
-  if (vars[3] == 'fj003b') { div = 1 }
-  
-  df$int.age = as.numeric(levels(df[, vars[1]]))[df[, vars[1]]]/ 12
-  df$int.score = as.numeric(levels(df[, vars [2]]))[df[, vars[2]]]
-  df$fat.age = as.numeric(levels(df[, vars[3]]))[df[, vars[3]]]/ div
-  df$fat.mass = as.numeric(levels(df[, vars[4]]))[df[, vars[4]]]
-  df$weight = as.numeric(levels(df[, vars[4]]))[df[, vars[5]]]
-  
-  return(df[, c('int.age', 'int.score', 'fat.age', 'fat.mass', 'weight')])       
-  
+  return(out.df)       
 }
 
-cov_out_temp = select_age_outcome(agetemp, alspac.table)
-
-cov_out = cbind(cov_out, cov_out_temp)
-
-
-#13y fatmass variables ONLY
-#cov_out$and_fat_mass <- as.numeric(levels(alspac.table$fg3257))[alspac.table$fg3257]# andr FM at age 13y
-#cov_out$fat_mass_tot <- as.numeric(levels(alspac.table$fg3254))[alspac.table$fg3254] # total FM at age 13y
-#cov_out$dxa_weight   <- as.numeric(levels(alspac.table$fg3207))[alspac.table$fg3207] # body weight at scanner
+out_10 <- select_age_outcome(10, alspac.table)
+out_13 <- select_age_outcome(13, alspac.table)
 
 # Body fat percentage calculation
-cov_out$fat_perc <- (cov_out$fat.mass / (cov_out$weight*1000)) * 100
-alspac.table$fat_perc <- cov_out$fat_perc
+out_10$tot_fat_percent_10 <- (out_10$total_fat_10 / (out_10$weight_dxa_10*1000)) * 100
+out_13$tot_fat_percent_13 <- (out_13$total_fat_13 / (out_13$weight_dxa_13*1000)) * 100
 
+cov_out = cbind(cov_out, out_10, out_13)
 
 # ------------------------------------------------------------------------------
-cor_outcome <- round(cor(cov_out[, -1], use = 'complete.obs'), 2) 
-write.csv(cor_outcome, file = "corr_mat_outcomes.csv", row.names = T, quote = F)
-# ------------------------------------------------------------------------------
-# Before we can use them in the analysis, the outcome variables need to be standardized. 
-# so, here we take the standard deviation score.
-cov_out$intern_score_z <- as.numeric(scale(cov_out$int.score)) # SDQ
-cov_out$fat_mass_z     <- as.numeric(scale(cov_out$fat_perc))
-#cov_out$android_f_z    <- as.numeric(scale(cov_out$and_fat_mass))
-
-################################################################################
-#### ------------------- Construct RISK GROUPS variable ------------------- ####
-################################################################################
-
-# make some fake data
-# cov_out <- data.frame(replicate(5, sample(c(-2.0:7.0, NA), 1000, rep=TRUE)))
-# colnames(cov_out) <- c('intern_score_z', 'DAWBAintern_score_z', 'fmi_z', 'fat_mass_tot_z', 'fat_mass_tru_z')
-
-construct_grp <- function(int_var, fm_var, cutoff = 0.8, df = cov_out, permute = T) {
-  df$int = ifelse(df[, int_var] > quantile(df[, int_var], probs = cutoff, na.rm = T), 1, 0) 
-  df$fat = ifelse(df[, fm_var]  > quantile(df[, fm_var],  probs = cutoff, na.rm = T), 1, 0) 
-  
-  df$risk_groups = rep(NA, nrow(df))
-  for (i in 1:nrow(df)) {
-    if ( is.na(df$int[i]) | is.na(df$fat[i]) )  { df$risk_groups[i] = NA
-    } else if (df$int[i] == 0 & df$fat[i] == 0) { df$risk_groups[i] = 0   # Healthy
-    } else if (df$int[i] == 1 & df$fat[i] == 0) { df$risk_groups[i] = 1   # High internalizing  only
-    } else if (df$int[i] == 0 & df$fat[i] == 1) { df$risk_groups[i] = 2   # High fat mass only
-    } else {                                      df$risk_groups[i] = 3 } # Multimorbid
-  }
-  # # Let's first factor that bad boy 
-  df$risk_groups = factor(df$risk_groups, 
-                         levels = c(0:3), 
-                         labels = c("healthy", "internalizing_only", "cardiometabolic_only", "multimorbid"))
-  message(paste("Combining:", int_var, "and", fm_var, "\n"))
-  print(summary(df$risk_groups))
-  corz = cor(df[, c(int_var, fm_var)], use = 'complete.obs')
-  plot(df[, int_var], df[, fm_var], main = paste("Corr =", round(corz[1,2], 2)), xlab = int_var, ylab = fm_var, 
-       col = c("darkgreen", "blue", "darkgoldenrod2", "red")[df$risk_groups])
-  
-  if (permute == T) {
-    count <- 0 
-    iterations <- 1000
-    set.seed(310896)
-    
-    for (i in 1:iterations) {
-      origN <- unname(summary(df$risk_groups)[4])
-      randN <- permute(df)
-      if (randN > origN) {
-        count <- count + 1
-      }
-    }
-    
-    pval = round(count / iterations, 10)
-    cat("Permutation p-value:", pval)
-  }
-  
-  return(df$risk_groups)
-}
-
-cov_out$risk_groups <- construct_grp('intern_score_z', 'fat_mass_z')
-cov_out$risk_groups_rec <- relevel(cov_out$risk_groups, 'multimorbid')
+# Inspect the correlations between outcome variables
+cor_outcome <- round(cor(cov_out[, -1], use = 'pairwise.complete.obs'), 2) 
+write.csv(cor_outcome, file = file.path(PATH_RESULTS, "corr_mat_outcomes.csv"), row.names = T, quote = F)
 
 ################################################################################
 #### ---------------------------- COVARIATES ------------------------------ ####
@@ -199,11 +140,11 @@ cov_out$sex <- alspac.table$kz021 # 1 = Male; 2 = Female.
 # Combine age of the child measured during internalising and fatmass measurement
 # This value will serve as a covariate in the first adjusted model.
 
-cov_out$age_child <- (cov_out$int.age + cov_out$fat.age) / 2
+cov_out$age_child <- (cov_out$age_child_sdq_13 + cov_out$age_child_dxa_13) / 2
 
 # OPTIONAL: check age difference between measurements
-plot(cov_out$int.age, cov_out$fat.age)
-summary(cov_out$int.age - cov_out$fat.age)
+plot(cov_out$age_child_sdq_13, cov_out$age_child_dxa_13)
+summary(cov_out$age_child_sdq_13 - cov_out$age_child_dxa_13)
 
 #-------------------------------------------------------------------------------
 ### MATERNAL SMOKING during pregnancy 
@@ -251,11 +192,7 @@ cov_out$ethnicity <- ifelse(is.na(alspac.table$c800) & is.na(alspac.table$c801),
 
 # Maternal weight (Kg)
 cov_out$weight_pre <- as.numeric(levels(alspac.table$dw002))[alspac.table$dw002] # Pre-pregnancy weight (Kg)
-cov_out$weight_8wk <- as.numeric(levels(alspac.table$ew002))[alspac.table$ew002] # kg 8w
 cov_out$weight_7y  <- as.numeric(levels(alspac.table$m4220))[alspac.table$m4220] # kg 7y
-cov_out$weight_8y  <- as.numeric(levels(alspac.table$n1140))[alspac.table$n1140] # kg 8y
-cov_out$weight_9y  <- as.numeric(levels(alspac.table$p1290))[alspac.table$p1290] # kg 9y
-cov_out$weight_avg <- rowMeans(cov_out[, c('weight_8wk','weight_7y','weight_8y','weight_9y')], na.rm = T)
 
 # Maternal height (cm) 7y 1m (we treat height as a constant)
 cov_out$height_7y <- as.numeric(levels(alspac.table$m4221))[alspac.table$m4221] / 100 # transform into meters
@@ -263,7 +200,6 @@ cov_out$height_7y <- as.numeric(levels(alspac.table$m4221))[alspac.table$m4221] 
 # BMI
 cov_out$m_bmi_before_pregnancy <- cov_out$weight_pre / ((cov_out$height_7y)^2) # calculating pregnancy BMI 
 cov_out$m_bmi_7yrs             <- cov_out$weight_7y  / ((cov_out$height_7y)^2) # calculating BMI at age 7
-cov_out$m_bmi_childhood        <- cov_out$weight_avg / ((cov_out$height_7y)^2) # calculating childhood BMI 
 
 # Siblings identifier
 cov_out$sibling <- ifelse(alspac.table$mult == 1, 1, ifelse(alspac.table$mult == 0, 0, NA))  # multiple pregnancies in ALSPAC (exclusion criteria)
@@ -300,8 +236,5 @@ cov_out$p_dep_cont_childhood <- rowMeans(post_dep_p, na.rm = T)
 ################################################################################
 
 # Save the dataset in the directory where you have the raw data
-saveRDS(cov_out, file.path(alspac_folder, "PCMout_cov_aux.rds"))
-
-# Also save the dataset in a .csv format
-write.csv(cov_out, file = "PCMout_cov_aux.csv", row.names = F, quote = F)
+saveRDS(cov_out, file.path(PATH_RESULTS, "PCMout_cov_aux.rds"))
 
