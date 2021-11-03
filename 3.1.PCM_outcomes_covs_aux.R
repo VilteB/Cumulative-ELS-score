@@ -15,21 +15,6 @@ PATH_RESULTS <- '' # ATTENTION! DEFINE HERE THE PATH WHERE YOU WANT ALL RESULTS 
 # First, let's point to the necessary libraries
 library(foreign)
 
-# define a function that randomly shuffles internalizing and fat mass values and 
-# returns the new size of the "randomly multimorbid" group.
-permute <- function(df) { 
-  # create empty dataset for permutation
-  perm <- data.frame(1:nrow(df))
-  
-  perm$new_int <- sample(df$int)
-  perm$new_fat <- sample(df$fat)
-  perm$new_groups <- ifelse(perm$new_int == 0 & perm$new_fat == 0, 0, 
-                            ifelse(perm$new_int == 1 & perm$new_fat == 0, 1, 
-                                   ifelse(perm$new_int == 0 & perm$new_fat == 1, 2, 3)))
-  new_n <- unname(summary(as.factor(perm$new_groups))[4])
-  return(new_n)
-}
-
 # Check if the path to the data is already in memory, otherwise ask for it. 
 if (exists("alspac_file") == F) { 
   alspac_file <- file.choose() 
