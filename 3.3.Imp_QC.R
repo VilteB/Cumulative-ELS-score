@@ -2,50 +2,15 @@
 library(mice);
 
 # Load the list of imputed dataset
-if (exists("imp") == F) { 
-  imp_path <- file.choose() # choose the 'imputation_list_ELSPCM.rds' file
-  imp <- readRDS(imp_path)
+if (exists("imp_samp") == F) { 
+  imp_path <- file.choose() # ATTENTION! Choose the 'imputation_list_sample.rds' file
+  dirname <- dirname(imp_path)
+  ifelse(!dir.exists(file.path(dirname, 'imp-QC')), dir.create(file.path(dirname, 'imp-QC')), F)
+  imp_samp <- readRDS(imp_path)
+  imp_full <- readRDS(file.path(dirname, "imputation_list_full.rds"))
 }
 
-# for dichotomous variables, replace NA with the median across imputations
-replance_med <- function(orig, variables) {
-  for (var in variables) {
-    misslist <- orig$IDC[which(is.na(orig[, var]))]
-    cat(paste(var, length(misslist), sep = " - "))
-    cat('\n')
-    
-    pool_mean <- with(impdat, by(impdat, IDC, function(x) c(median(x[,var]),
-                                                            sd(x[,var]))))
-    for (cld in orig$IDC) {
-      child_m = pool_mean[dimnames(pool_mean)$IDC == cld]
-      if (child_m[[1]][2] > 0.000) {
-        orig[orig$IDC == cld, var] <- as.integer(child_m[[1]][1])
-      }
-    }
-  }
-  return(orig)
-}
-
-# for continuous (numeric) variables, replace NA with the mean across imputations
-replance_mean <- function(orig, variables) {
-  for (var in variables) {
-    misslist <- orig$IDC[which(is.na(orig[, var]))]
-    cat(paste(var, length(misslist), sep = " - "))
-    cat('\n')
-    
-    pool_mean <- with(impdat, by(impdat, IDC, function(x) c(mean(x[,var]),
-                                                            sd(x[,var]))))
-    for (cld in orig$IDC) {
-      child_m = pool_mean[dimnames(pool_mean)$IDC == cld]
-      if (child_m[[1]][2] > 0.000) {
-        orig[orig$IDC == cld, var] <- child_m[[1]][1]
-      }
-    }
-  }
-  return(orig)
-}
-
-# structure variables into domains 
+# Organize variable names into domains to specify them later more easily
 pre_LE <- c('family_member_died_pre',
             'friend_relative_died_pre',
             'family_member_ill_pre', 
@@ -140,74 +105,79 @@ post_DV <- c('bullying_8y',
              'm_cruelty_physical_8m', 'm_cruelty_physical_21m', 'm_cruelty_physical_3y', 'm_cruelty_physical_4y', 'm_cruelty_physical_5y', 'm_cruelty_physical_6y', 'm_cruelty_physical_9y',
              'p_cruelty_emotional_8m', 'p_cruelty_emotional_21m', 'p_cruelty_emotional_3y', 'p_cruelty_emotional_4y', 'p_cruelty_emotional_5y', 'p_cruelty_emotional_6y', 'p_cruelty_emotional_9y',
              'm_cruelty_emotional_21m', 'm_cruelty_emotional_3y', 'm_cruelty_emotional_4y', 'm_cruelty_emotional_5y', 'm_cruelty_emotional_6y', 'm_cruelty_emotional_9y')
-outcomes <- c('intern_score_z', 'fat_mass_z', 'risk_groups')
+domains <- c('pre_life_events', 'pre_contextual_risk', 'pre_parental_risk', 'pre_interpersonal_risk', 
+             'post_life_events', 'post_contextual_risk', 'post_parental_risk', 'post_interpersonal_risk', 'post_direct_victimization')
+outcomes_13y <- c('intern_score_13', 'total_fat_13', 'tot_fat_percent_13', 'andr_fat_mass_13')
+outcomes_10y <- c('intern_score_10', 'total_fat_10', 'tot_fat_percent_10')
+risk_grps <-c("risk_groups_tot", "risk_groups_andr", "risk_groups_perc", "risk_groups_tot_REC", "risk_groups_andr_REC", "risk_groups_perc_REC")
 covars   <- c('sex', 'age_child', 'm_bmi_before_pregnancy', 'm_smoking', 'm_drinking')
 auxil    <- c('m_dep_cont_pregnancy', 'p_dep_cont_pregnancy', # for postnatal only
               'm_bmi_7yrs', 'm_dep_cont_childhood', 'p_dep_cont_childhood', # for prenatal only
               'ethnicity', 'parity', 'gest_age_birth', 'gest_weight', 'm_age_cont')
 exclusion_criteria <- c('pre_percent_missing', 'post_percent_missing', 'twin', 'sibling')
 
-# retrieve original (pre-imputation) dataset
-original_set <- imp$data
-# > ADD ANY OTHER NON NUMERIC VARIABLE PLS
-original_set$sex <- as.numeric(as.character(original_set$sex))
-original_set$risk_groups <- as.numeric(as.character(original_set$risk_groups))
+################################################################################
+# Assess the validity of a mean solution vs the single imputations. 
+################################################################################
+# for dichotomous variables, replace NA with the median across imputations
+# for continuous (numeric) variables, replace NA with the mean across imputations
+replance_mean <- function(orig) {
+  for (var in colnames(orig)) {
+    misslist <- orig$IDC[which(is.na(orig[, var]))]
+    cat(paste(var, length(misslist), sep = " - "))
+    cat('\n')
+    if (var %in% c(pre_LE, pre_CR, pre_PR, pre_IR, post_LE, post_CR, post_PR, post_IR, post_DV, 
+                   'sex', 'ethnicity', risk_grps)) {
+      pool_mean <- with(impdat, by(impdat, IDC, function(x) c(median(x[,var]), sd(x[,var]))))
+    } else { 
+      pool_mean <- with(impdat, by(impdat, IDC, function(x) c(mean(x[,var]), sd(x[,var]))))
+    }
+    
+    for (cld in orig$IDC) {
+      child_m = pool_mean[dimnames(pool_mean)$IDC == cld]
+      if (child_m[[1]][2] > 0.000) {
+        orig[orig$IDC == cld, var] <- child_m[[1]][1] }
+    }
+  } 
+  return(orig)
+}
+# ------------------------------------------------------------------------------
+# Retrieve original (pre-imputation) dataset
+original_set <- imp_samp$data
+# Stack imputed datasets in long format, exclude the original data
+impdat <- complete(imp_samp, action="long", include = FALSE)
+
+# Resolve problem with categorical variables 
+for (cat_var in c('sex', 'ethnicity', risk_grps)) {
+  original_set[, cat_var] <- as.numeric(original_set[, cat_var])
+  impdat[, cat_var] <- as.numeric(impdat[, cat_var])
+}
 
 # Compute pre imp means and sds
 orig_means <- sapply(original_set, mean, na.rm = T, USE.NAMES = T)
 orig_sds <- sapply(original_set, sd, na.rm = T, USE.NAMES = T)
 
-# Stack imputed datasets in long format, exclude the original data
-impdat <- complete(imp, action="long", include = FALSE)
-
-
 # Create mean of imputation dataset
-#BEWARE: with ALSPAC dataset, this next step takes ~ 7 hours
-dataset <- replance_med(original_set, c(pre_LE, pre_CR, pre_PR, pre_IR,
-                                       post_LE, post_CR, post_PR, post_IR, post_DV))
-
-# dataset_final <- replance_mean(dataset, c(covars[-1], auxil)) # > REMOVE BINARY VARIABLES ADD THEM ABOVE
-
-misslist <- original_set$IDC[which(is.na(original_set[, 'p_criminal_record']))]
-cat(paste('p_criminal_record', length(misslist), sep = " - "))
-cat('\n')
-
-pool_mean <- with(impdat, by(impdat, IDC, function(x) median(x[,'p_criminal_record'])))
-mean <- with(impdat, by(impdat, .imp, function(x) mean(x[,'p_criminal_record'])))
-pool_mean <- as.vector(pool_mean)
-mean <- as.vector(mean)
-summary(original_set$p_criminal_record)
-summary(pool_mean)
-v = pool_mean[2]
-for (cld in original_set$IDC) {
-  child_m = pool_mean[dimnames(pool_mean)$IDC == cld]
-  if (child_m[[1]][2] > 0.000) {
-    original_set[original_set$IDC == cld, 'p_criminal_record'] <- as.integer(child_m[[1]][1])
-  }
-}
-
+# BEWARE: with ALSPAC dataset, this next step takes ~ 7 hours
+dataset <- replance_mean(original_set)
 
 best = data.frame(1:31)
-
-for (var in c(pre_LE, pre_CR, pre_PR, pre_IR,
-              post_LE, post_CR, post_PR, post_IR, post_DV, covars[-1], auxil[-7])) {
+for (var in colnames(original_set)) {
   m = orig_means[var]
   m_avg = mean(dataset[, var], na.rm = T)
   pool_imp <- with(impdat, by(impdat, .imp, function(x) abs(mean(as.numeric(x[, var])) - m)))
   pool_imp[['31']] <- abs(m_avg - m)
-  
   best[, var] = pool_imp
-  
 }
+best = best[, -1]
+cols <- rainbow(ncol(best))
+i = 1
 
-cols <- rainbow(ncol(best)); i = 1
-
-pdf("mean-diff-iterations.pdf")
-for (var in c(pre_LE, pre_CR, pre_PR, pre_IR,
-              post_LE, post_CR, post_PR, post_IR, post_DV, covars[-1], auxil)) { # ditto
-  plot(best[,var], type = 'l', col = cols[i], lwd=3, 
-       xlim = c(0, 32), ylim = c(0, 0.5), main = var,  xlab="Iteration",
-       ylab="Absolute mean difference", xaxt="n")
+pdf(file.path(dirname, "imp-QC", "mean-diff-iterations.pdf"))
+for (var in colnames(original_set)) {
+  plot(best[,var], type = 'l', col = 'red', lwd=3, 
+       xlim = c(0, 32), ylim = c(0, 0.5), main = paste(var, '- NA:', sum(is.na(original_set[, var]))),  
+       xlab="Iteration", ylab="Absolute mean difference", xaxt="n")
   axis(side = 1, at = seq(1, 31, by = 1), las=2)
   segments(1, best[1, var], 30, best[30, var], col = 'black')
   i = i+1
@@ -221,9 +191,8 @@ dev.off()
 # The length of each chain is equal to the number of iterations.
 
 # The convergence can be visualised by plotting the means in a convergence plot. 
-pdf("covergence-plots.pdf")
-plot(imp, c(pre_LE, pre_CR, pre_PR, pre_IR,
-            post_LE, post_CR, post_PR, post_IR, post_DV, covars, auxil))
+pdf(file.path(dirname, "imp-QC", "covergence-plots-full.pdf")) # this works only for full imp
+plot(imp_full)
 dev.off()
 # The variance between the imputation chains should be equal to the variance within 
 # the chains, which indicates healthy convergence.
@@ -235,7 +204,7 @@ dev.off()
 # for (var in c(pre_LE, pre_CR, pre_PR, pre_IR, post_LE, post_CR, post_PR, post_IR, post_DV, covars, auxil)) {
 #    cat(paste('densityplot(imp, ~', var, ')', '\n')) }
 
-pdf("imp-vs-obs.pdf")
+pdf(file.path(dirname,"imp-QC","imp-vs-obs.pdf"))
 densityplot(imp, ~ family_member_died_pre ) 
 densityplot(imp, ~ friend_relative_died_pre ) 
 densityplot(imp, ~ family_member_ill_pre ) 
@@ -567,21 +536,25 @@ densityplot(imp, ~ m_cruelty_emotional_4y )
 densityplot(imp, ~ m_cruelty_emotional_5y ) 
 densityplot(imp, ~ m_cruelty_emotional_6y ) 
 densityplot(imp, ~ m_cruelty_emotional_9y ) 
-densityplot(imp, ~ sex ) 
-densityplot(imp, ~ age_child ) 
-densityplot(imp, ~ m_bmi_before_pregnancy ) 
-densityplot(imp, ~ m_smoking ) 
-densityplot(imp, ~ m_drinking ) 
-densityplot(imp, ~ m_dep_cont_pregnancy ) 
-densityplot(imp, ~ p_dep_cont_pregnancy ) 
-densityplot(imp, ~ m_bmi_7yrs ) 
-densityplot(imp, ~ m_dep_cont_childhood ) 
-densityplot(imp, ~ p_dep_cont_childhood ) 
-densityplot(imp, ~ ethnicity ) 
-densityplot(imp, ~ parity ) 
-densityplot(imp, ~ gest_age_birth ) 
-densityplot(imp, ~ gest_weight ) 
-densityplot(imp, ~ m_age_cont )
+
+densityplot(imp_samp, ~ sex ) 
+densityplot(imp_samp, ~ age_child ) 
+densityplot(imp_samp, ~ m_bmi_before_pregnancy ) 
+densityplot(imp_samp, ~ m_smoking ) 
+densityplot(imp_samp, ~ m_drinking ) 
+densityplot(imp_samp, ~ ethnicity ) 
+densityplot(imp_samp, ~ prenatal_stress_z ) 
+densityplot(imp_samp, ~ postnatal_stress_z ) 
+densityplot(imp_samp, ~ intern_score_13_z )
+densityplot(imp_samp, ~ tot_fat_percent_13_z )
+densityplot(imp_samp, ~ andr_fat_mass_13_z ) 
+densityplot(imp_samp, ~ total_fat_13_z )
+densityplot(imp_samp, ~ risk_groups_perc ) 
+densityplot(imp_samp, ~ risk_groups_andr ) 
+densityplot(imp_samp, ~ risk_groups_tot )
+densityplot(imp_samp, ~ risk_groups_perc_REC ) 
+densityplot(imp_samp, ~ risk_groups_andr_REC )
+densityplot(imp_samp, ~ risk_groups_tot_REC ) 
 dev.off()
 
 # Make a missing data indicator (name it miss) for domain scores and check the 
@@ -590,22 +563,28 @@ dev.off()
 
 # same story: For loops do not work with this wacky mice function so just run the 
 # loop below and paste it: lil help
-passive_imp_formula <- function(domain) {
-  conc <- paste(domain[[1]], collapse = " + ")
-  str <- paste0("~I (", conc, " / ", length(domain[[1]]))
-  return(str)
-}
-dnames <- c('pre_life_events', 'pre_contextual_risk', 'pre_parental_risk', 'pre_interpersonal_risk',
-            'post_life_events', 'post_contextual_risk', 'post_parental_risk', 'post_interpersonal_risk', 'post_direct_victimization')
-ds <- list(pre_LE, pre_CR, pre_PR, pre_IR,
-        post_LE, post_CR, post_PR, post_IR, post_DV)
+# passive_imp_formula <- function(domain) {
+#   conc <- paste(domain[[1]], collapse = " + ")
+#   str <- paste0("~I (", conc, " / ", length(domain[[1]]))
+#   return(str)
+# }
+# dnames <- c('pre_life_events', 'pre_contextual_risk', 'pre_parental_risk', 'pre_interpersonal_risk',
+#             'post_life_events', 'post_contextual_risk', 'post_parental_risk', 'post_interpersonal_risk', 'post_direct_victimization')
+# ds <- list(pre_LE, pre_CR, pre_PR, pre_IR,
+#         post_LE, post_CR, post_PR, post_IR, post_DV)
+# 
+# for (i in 1:9) {
+#   cat(paste0('miss <- is.na(original_set[, "', dnames[i], '" ])', '\n',
+#             'xyplot(imp, ', dnames[i], ' ', passive_imp_formula(ds[i]), '),', '\n',
+#             'na.groups = miss, cex = c(1, 1), pch = c(1, 20), ylab = "Domain Imputed", xlab = "Domain Calculated", main = "',dnames[i], '") \n')) }
 
-for (i in 1:9) {
-  cat(paste0('miss <- is.na(original_set[, "', dnames[i], '" ])', '\n',
-            'xyplot(imp, ', dnames[i], ' ', passive_imp_formula(ds[i]), '),', '\n',
-            'na.groups = miss, cex = c(1, 1), pch = c(1, 20), ylab = "Domain Imputed", xlab = "Domain Calculated", main = "',dnames[i], '") \n')) }
-
-pdf("domain-passive-imp.pdf")
+pdf(file.path(dirname,"imp-QC","main-&-domains.pdf"))
+stripplot(imp_samp, prenatal_stress_z ) 
+stripplot(imp_samp, postnatal_stress_z ) 
+stripplot(imp_samp, intern_score_13_z ) 
+stripplot(imp_samp, tot_fat_percent_13_z ) 
+stripplot(imp_samp, andr_fat_mass_13_z ) 
+stripplot(imp_samp, total_fat_13_z ) 
 miss <- is.na(original_set[, "pre_life_events" ])
 xyplot(imp, pre_life_events ~I (family_member_died_pre + friend_relative_died_pre + family_member_ill_pre + friend_relative_ill_pre + sick_or_accident_pre + moved_pre + blood_loss + pregnancy_worried + baby_worried + burglary_or_car_theft_pre + work_problems_pre + abortion_pre + married_pre + unemployed_pre / 14),
        na.groups = miss, cex = c(1, 1), pch = c(1, 20), ylab = "Domain Imputed", xlab = "Domain Calculated", main = "pre_life_events") 
