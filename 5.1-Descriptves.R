@@ -1,4 +1,34 @@
-require(openxlsx)
+
+require(openxlsx, mice, miceadds)
+
+pathtoresults <- '' # ATTENTION! DEFINE HERE THE PATH WHERE YOU WANT ALL RESULTS TO BE STORED.
+                    # that should be also where the imputation_list files are stored.
+
+# ------------------------------------------------------------------------------
+# Define some useful functions
+flowchart <- function(df, return_selected_sample = F) {
+  fc <- list(initial_sample = nrow(df))
+  # enough prenatal variables
+  step1 <- df[df$pre_percent_missing < 50.0,]
+  loss <- nrow(step1) - as.numeric(fc[length(fc)])
+  fc <- c(fc, no_pren = loss, after_pren_selection = nrow(step1))
+  # enough postnatal variables
+  step2 <- step1[step1$post_percent_missing < 50.0,]
+  loss <- nrow(step2) - as.numeric(fc[length(fc)])
+  fc <- c(fc, no_post = loss, after_post_selection = nrow(step2))
+  # no selection on the outcome
+  step3 <- step2[step2$twin == 0,] 
+  loss <- nrow(step3) - as.numeric(fc[length(fc)])
+  fc <- c(fc, no_twins = loss, after_twin_selection = nrow(step3))
+  #  exclude siblings
+  finalsample <- step3[step3$sibling == 0,]
+  loss <- nrow(finalsample) - as.numeric(fc[length(fc)])
+  fc <- c(fc, no_siblings = loss, final_sample = nrow(finalsample))
+  
+  print(fc)
+  
+  if (return_selected_sample == T) { return(finalsample) }
+}
 
 summdf <- function(object) {
   # take summary object, clean the strings and note them as row.names, return a data.frame
@@ -9,95 +39,89 @@ summdf <- function(object) {
   return(m[, -1])
 }
 
-flowchart <- function(df, return_selected_sample = F) {
+pool_descriptives <- function(implist, column_names, categorical = c()) {
+  num_pool <- lapply(implist, function(m) matrix(as.numeric(sapply(strsplit(m, ":"), "[[", 2)), nrow = dim(m)[1], ncol=dim(m)[2]))
+  pool_mean <- Reduce("+",num_pool)/length(num_pool)
+  colnames(pool_mean) <- column_names
+  if (length(categorical)<1) {
+    rownames(pool_mean) <- c( 'Min.', '1st Qu.', 'Median', 'Mean', '3rd Qu.','Max.')
+  } else { rownames(pool_mean) <- categorical }
   
-  fc <- list(initial_sample = nrow(df))
-  # enough prenatal variables
-  step1 <- df[df$pre_percent_missing < 50.0,]
-  loss <- nrow(step1) - as.numeric(fc[length(fc)])
-  fc <- c(fc, no_pren = loss, after_pren_selection = nrow(step1))
-  # enough postnatal variables
-  step2 <- step1[step1$post_percent_missing < 50.0,]
-  loss <- nrow(step2) - as.numeric(fc[length(fc)])
-  fc <- c(fc, no_post = loss, after_post_selection = nrow(step2))
-  # internalizing score
-  step3 <- step2[!is.na(step2$intern_score_z),] 
-  loss <- nrow(step3) - as.numeric(fc[length(fc)])
-  fc <- c(fc, no_intern = loss, after_inte_selection = nrow(step3))
-  # fat mass 
-  step4 <- step3[!is.na(step3$FAT_MASS_Z),] # fmi_z
-  loss <- nrow(step4) - as.numeric(fc[length(fc)])
-  fc <- c(fc, no_fatmass = loss, after_fatm_selection = nrow(step4))
-  # exclude twins
-  step5 <- step4[step4$twin == 0,] 
-  loss <- nrow(step5) - as.numeric(fc[length(fc)])
-  fc <- c(fc, no_twins = loss, after_twin_selection = nrow(step5))
-  #  exclude siblings
-  finalsample <- step5[step5$sibling == 0,]
-  loss <- nrow(finalsample) - as.numeric(fc[length(fc)])
-  fc <- c(fc, no_siblings = loss, final_sample = nrow(finalsample))
-  
-  print(fc)
-  
-  if (return_selected_sample == T) { return(finalsample) }
-  
+  return(data.frame(pool_mean))
 }
 
+risk_grps <-c("risk_groups_tot", "risk_groups_andr", "risk_groups_perc", "risk_groups_tot_REC", "risk_groups_andr_REC", "risk_groups_perc_REC")
+
+################################################################################
 # Load datasets
-if (exists("imp") == F) { 
-  imp_path <- file.choose() # choose the 'imputation_list_full.rds' file
-  imp <- readRDS(imp_path)
-}
-# original dataset (with missing data)
-data <- mice::complete(imp, action = 0)
+imp_samp <- readRDS(file.path(pathtoresults, 'imputation_list_sample.rds'))
+imp_full <- readRDS(file.path(pathtoresults, 'imputation_list_full.rds'))
 
-# add correct fat mass 
-out  <- readRDS(file.choose()) # choose "PCMout_cov_aux.rds"
-data$FAT_MASS_Z <- out$fat_mass_z
-data$RISK_GROUPS <- out$risk_groups
+# Extract the original set (with NAs)
+full <- complete(imp_full, 0) 
+sample <- complete(imp_samp, 0) 
+# Stack imputed datasets in long format, excluding the original data
+impdat <- complete(imp_samp, action="long", include = FALSE)
 
 ################################################################################
 
-sample <- flowchart(data, return_selected_sample = T)
-# ============================================================================ #
-
-# Flowchart
-fc <- capture.output(flowchart(ELSPCM_essentials))[1:(which(fc=='$final_sample')+2)]
-fcm <- as.data.frame(t(matrix(unlist(fc), ncol = 13)[1:2, ])) 
+# Flowchart capture the output of the flowchart function defined in 0-Functions
+fc <- capture.output(flowchart(full, return_selected_sample = T))
+# select on the relevant output are reshape it in a more readable format
+fcm <- as.data.frame(t(matrix(unlist(fc[1:(which(fc =='$final_sample')+2)]), ncol = 9)[1:2, ])) 
 fcm <- data.frame(fcm[,-1], row.names = fcm[,1])
 names(fcm) = 'N'
 fcm$N <- as.numeric(sub("\\[1]", "", fcm$N))
 
-# Sample summary
+# ============================================================================ #
+# Sample summary (before imputation!)
 s <- summdf(summary(sample))
 
-# Group specific summary
-bys <- by(sample, sample$RISK_GROUPS, summary)
+# ------------------------------------------------------------------------------
+# Sample summary (after imputation!)
+# split the sample in only continuous and other categorical variables 
+cont <- impdat[, -c(which(colnames(impdat) %in% c('sex', "ethnicity", risk_grps)))]
+cate <- impdat[, c(".imp", "ethnicity", risk_grps[1:3])]
+# compute mean and standard deviation in each imputed dataset, dividing variables into
+# continuous and categorical and slitting categorical further according to the number of categories
+cont_summary <- with(cont, by(cont, .imp, function(x) summary(x[, -c(1, 2)]))) # exclude .imp and .id cols
+grps_summary <- with(cate, by(cate, .imp, function(x) summary(x[, -c(1, 2)]))) # exclude .imp and ethnicity
+ethn_summary <- with(cate, by(cate, .imp, function(x) summary(x[, 2]))) # select ethnicity only
+# Pool descriptive s
+cont_pooled <- pool_descriptives(cont_summary, colnames(cont[-c(1,2)]))
+grps_pooled <- pool_descriptives(grps_summary, risk_grps[1:3], categorical = c( 'healthy', 'internalizing_only', 'cardiometabolic_only', 'multimorbid'))
+ethn_pooled <- data.frame(Reduce("+",ethn_summary)/length(ethn_summary))
+names(ethn_pooled) <- "ethnicity"
+
+# ============================================================================ #
+notcat <- names(sample)[names(sample) %notin% c('IDC', 'twin', 'mother', 'sex', 'ethnicity', risk_grps)]
+# Correlation matrix in the original set
+cors <- as.data.frame(cor(sample[, notcat], use = 'pairwise.complete.obs'))
+#  Correlation matrix in the imputed set
+cors_imp <- miceadds::micombine.cor(mi.res = sample, variables = notcat) 
+
+# ============================================================================ #
+# Group specific summary (before imputation only)
+bys <- by(sample, sample$risk_groups_perc, summary)
 
 ht <- summdf(bys[["healthy"]])
 it <- summdf(bys[["internalizing_only"]])
 ft <- summdf(bys[["cardiometabolic_only"]])
 mm <- summdf(bys[["multimorbid"]])
 
-# sex and ethnicity
+# sex 
 bysex <- by(sample, sample$sex, summary)
 
 boys <- summdf(bysex[[1]])
 girl <- summdf(bysex[[2]])
 
-# Correlation matrix
-cors <- as.data.frame(cor(sample[, !names(sample) %in% c('IDC', 'twin', 'mother', 
-                                                         'sex', 'ethnicity', 'RISK_GROUPS',
-                                                         'risk_groups', 'risk_groups_rec')], 
-            use = 'pairwise.complete.obs'))
-
 ################################################################################
 
 # Export the outputs of summary statistics into an xlsx file with one model per sheet
-
-stats <- list("flowchart" = fcm, "summ_full" = s, "corr_mat" = cors,
+stats <- list("flowchart" = fcm, "summ_orig" = s, "summ_imp" = cont_pooled, 
+              "summ_imp_gr" = grps_pooled, "summ_imp_eth" = ethn_pooled, "corr_mat" = cors, "corr_imp" = cors_imp,
               "summ_health" = ht, "summ_intern" = it, "summ_fatmas" = ft, "summ_multim" = mm, 
               "summ_boys" = boys, "summ_girls" = girl)
 
-openxlsx::write.xlsx(stats, file = paste0(pathtodata, "Descriptives.xlsx"), 
+openxlsx::write.xlsx(stats, file = file.path(pathtoresults, "Descriptives.xlsx"), 
                      row.names = T, overwrite = T)
